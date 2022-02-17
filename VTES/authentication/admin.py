@@ -5,6 +5,7 @@ from .models import Profile
 
 
 
+
 admin.site.site_header= "VTES"
 admin.site.site_title= "VTES"
 admin.site.register(LogEntry)
