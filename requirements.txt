@@ -1,2 +1,4 @@
 Django==4.0.2
 django-jalali==5.1.0
+django-mptt==0.13.4
+Pillow==9.0.1
