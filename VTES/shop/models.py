@@ -14,6 +14,21 @@ from django.utils.html import format_html
 
 
 #------------------------------------------------------------------------------
+class Attributes(models.Model):
+    name = models.CharField(max_length=60, verbose_name='ویژگی')
+
+    def __str__(self):
+        return str(self.name)
+
+    class Meta:
+        verbose_name = "ویژگی"
+        verbose_name_plural = "ویژگی ها"
+
+
+
+
+
+#------------------------------------------------------------------------------
 class Category(MPTTModel):
     name = models.CharField(max_length=50, unique=True, verbose_name = "نام")
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='والد', verbose_name = "والد")
@@ -100,6 +115,24 @@ class Product(models.Model):
     class Meta:
         verbose_name = "محصول"
         verbose_name_plural = "محصولات"
+
+
+
+
+class Product_Attr(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_attr',  verbose_name = "محصول مربوطه")
+    attribute = models.ForeignKey(Attributes, on_delete=models.CASCADE, verbose_name='ویژگی')
+
+    class Meta:
+        verbose_name = "ویژگی محول"
+        verbose_name_plural = "ویژگی محصولات"
+
+
+
+
+
+
+
 
 
 
