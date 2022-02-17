@@ -82,10 +82,10 @@ class Product(models.Model):
     price = models.IntegerField(verbose_name = "قیمت")
     qty = models.IntegerField(verbose_name = "تعداد")
     brand = models.CharField(max_length=50, verbose_name = "برند محصول")
-    link = models.URLField(max_length=200, verbose_name = "لینک محصول")
+    link = models.URLField(max_length=200, null=True, blank=True, verbose_name = "لینک محصول")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='product_category', verbose_name = "دسته بند")
     description = models.TextField(max_length=1000,null=True, blank=True, verbose_name = "توضیحات")
-    datasheet = models.FileField(upload_to='datasheet', max_length=254, verbose_name = "فایل و Datasheet")
+    datasheet = models.FileField(upload_to='datasheet', null=True, blank=True, max_length=254, verbose_name = "فایل و Datasheet")
     date_created = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
 
     def __str__(self):
