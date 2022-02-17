@@ -11,12 +11,15 @@ from django_jalali.db import models as jmodels
 
 
 
- 
+
 
 #------------------------------------------------------------------------------
 class Profile(models.Model):
   user = models.OneToOneField(User, on_delete=models.CASCADE,unique=True,related_name='profile',verbose_name = "کاربر")
-  phone = models.CharField(max_length=50,null=True, blank=True,verbose_name = " شماره تماس  ")
+  legal = models.BooleanField(default=False, verbose_name = "شخصیت حقوقی")
+  phone = models.CharField(max_length=50,null=True, blank=True,verbose_name = "شماره تماس")
+  company = models.CharField(max_length=80, verbose_name = "نام شرکت")
+  address = models.CharField(max_length=200, null=True, blank=True, verbose_name = "آدرس")
   date_created = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
 
   def __str__(self):
