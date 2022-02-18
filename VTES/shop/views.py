@@ -10,6 +10,6 @@ from .models import Shop, Product, Product_Attr, Category , Attributes
 
 
 
-class ShopSerializer(viewsets.ModelViewSet):
-    serializer_class = TodoSerializer
-    queryset = Todo.objects.all()
+class ShopView(viewsets.ModelViewSet):
+    serializer_class = ShopSerializer
+    queryset = Shop.objects.all()
