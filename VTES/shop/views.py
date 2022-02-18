@@ -3,6 +3,24 @@ from .serializers import ShopSerializer, ProductSerializer, CategorySerializer, 
 from rest_framework import viewsets, filters
 from .models import Shop, Product, Product_Attr, Category , Attributes
 from django_filters.rest_framework import DjangoFilterBackend
+from django.views import generic
+
+
+
+
+
+#------------------------------------------------------------------------------
+class shops(generic.ListView):
+    model = Shop
+    template_name = 'shop/shops.html'
+    context_object_name = 'shops'
+    queryset = Shop.objects.all()
+    ordering = ['-date_created']
+    paginate_by = 6
+
+
+
+
 
 
 
