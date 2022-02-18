@@ -31,10 +31,10 @@ class AttributesView(viewsets.ModelViewSet):
 class ShopView(viewsets.ModelViewSet):
     serializer_class = ShopSerializer
     queryset = Shop.objects.all()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['category', 'user']
     search_fields = ['name', 'phone', 'description']
-
+    ordering_fields = ['name', 'email', 'date_created']
 
 
 
