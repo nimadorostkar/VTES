@@ -10,7 +10,10 @@ from shop import views
 
 router = routers.DefaultRouter()
 router.register(r'shop', views.ShopView, 'shop')
-
+router.register(r'product', views.ProductView, 'product')
+router.register(r'category', views.CategoryView, 'category')
+router.register(r'product_attr', views.Product_AttrView, 'product_attr')
+router.register(r'attributes', views.AttributesView, 'attributes')
 
 
 

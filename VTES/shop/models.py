@@ -119,6 +119,8 @@ class Product(models.Model):
 
 
 
+
+#------------------------------------------------------------------------------
 class Product_Attr(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_attr',  verbose_name = "محصول مربوطه")
     attribute = models.ForeignKey(Attributes, on_delete=models.CASCADE, verbose_name='ویژگی')
