@@ -21,12 +21,6 @@ from . import serializers
 
 
 
-def dashboard(request):
-    return render(request, 'dashboard.html')
-
-
-
-
 
 
 class MyUserView(APIView):
