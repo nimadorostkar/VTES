@@ -97,7 +97,7 @@ class Products(GenericAPIView):
     search_fields = ['name', 'code', 'description']
     ordering_fields = ['id', 'price', 'qty', 'date_created']
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, format=None):
         queryset = Product.objects.all()
         query = self.filter_queryset(Product.objects.all())
         page = self.paginate_queryset(queryset)
@@ -107,7 +107,7 @@ class Products(GenericAPIView):
         serializer = ProductSerializer(query, many=True)
         return Response(serializer.data)
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, format=None):
         serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -117,12 +117,19 @@ class Products(GenericAPIView):
 
 
 
-class Product(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
+class ProductItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
     serializer_class = ProductSerializer
 
     def get(self, request, *args, **kwargs):
         product = get_object_or_404(Product, id=self.kwargs["id"])
         serializer = ProductSerializer(product)
+        return Response(serializer.data)
+
+    def put(self, request, *args, **kwargs):
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.data)
 
     def delete(self, request, *args, **kwargs):

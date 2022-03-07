@@ -22,8 +22,8 @@ router.register(r'profile', auth_views.ProfileAPI, 'profile')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
-    path('api/shops/', include('shop.urls')),
+    #path('api/', include(router.urls)),
+    path('api/', include('shop.urls')),
     path('api/login/', include(("authentication.urls", 'authentication'), namespace='authentication')),
 ]
 if settings.DEBUG:
