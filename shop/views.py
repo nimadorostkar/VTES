@@ -1,9 +1,15 @@
 from django.shortcuts import render
 from .serializers import ShopSerializer, ProductSerializer, CategorySerializer, Product_AttrSerializer, AttributesSerializer
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, status
 from .models import Shop, Product, Product_Attr, Category , Attributes
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+
+
+
 
 
 
@@ -53,6 +59,17 @@ class ProductView(viewsets.ModelViewSet):
 
 
 
+@api_view(['GET', 'POST'])
+def Product_list(request):
+    if request.method == 'GET':
+        queryset = Product.objects.all()
+        serializer = ProductSerializer(queryset, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 

@@ -45,9 +45,28 @@ class ShopSerializer(serializers.ModelSerializer):
 
 
 
-
+'''
 #------------------------------------------------------------------------------
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('name', 'id', 'code', 'approved', 'available', 'provider_shop', 'provider_shop_name', 'image', 'price', 'qty', 'brand', 'link', 'category', 'category_name', 'description', 'datasheet', 'date_created')
+'''
+
+#------------------------------------------------------------------------------
+class ProductSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Product
+        fields = ('name', 'code', 'approved', 'available', 'provider_shop', 'provider_shop_name', 'image', 'price', 'qty', 'brand', 'link', 'category', 'category_name', 'description', 'datasheet', 'date_created')
+
+
+
+
+
+
+
+
+
+
+#End
