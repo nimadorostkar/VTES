@@ -116,7 +116,6 @@ class Products(GenericAPIView):
 
 
 
-
 class ProductItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
     serializer_class = ProductSerializer
 
@@ -126,7 +125,8 @@ class ProductItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIV
         return Response(serializer.data)
 
     def put(self, request, *args, **kwargs):
-        serializer = ProductSerializer(data=request.data)
+        product = get_object_or_404(Product, id=self.kwargs["id"])
+        serializer = ProductSerializer(product, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
