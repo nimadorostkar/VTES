@@ -4,17 +4,10 @@ from .models import User
 
 
 
-'''
-#------------------------------------------------------------------------------
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('mobile',)
-
-'''
-
 class RequestOTPSerializer(serializers.Serializer):
     mobile = serializers.CharField(max_length=64, allow_null=False)
+
+
 
 
 class verifyOTPSerializer(serializers.Serializer):
@@ -23,7 +16,7 @@ class verifyOTPSerializer(serializers.Serializer):
 
 
 
-#------------------------------------------------------------------------------
+
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

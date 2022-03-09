@@ -25,7 +25,9 @@ from rest_framework.generics import GenericAPIView
 
 
 
-class UserView(APIView):
+# ------------------------------------------------------- Login ---------------
+
+class Login(APIView):
     def get(self, request, **kwargs):
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -71,7 +73,9 @@ class UserView(APIView):
 
 
 
-class verifyView(APIView):
+# ------------------------------------------------------- verifyView ---------------
+
+class Verify(APIView):
     def get(self, request, **kwargs):
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -112,7 +116,7 @@ class verifyView(APIView):
 
 
 
-# ------------------------------------------------------- Users ------------
+# ------------------------------------------------------- Users ---------------
 
 class Users(GenericAPIView):
     permission_classes = [AllowAny]
