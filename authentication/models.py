@@ -1,9 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from authentication.myusermanager import MyUserManager
+from authentication.myusermanager import UserManager
 
 
-class MyUser(AbstractUser):
+class User(AbstractUser):
     username = None
     mobile = models.CharField(max_length=11, unique=True, verbose_name = "شماره موبایل")
     otp = models.PositiveIntegerField(blank=True, null=True, verbose_name = "کد ورود")
@@ -12,7 +12,7 @@ class MyUser(AbstractUser):
     company = models.CharField(max_length=80, null=True, blank=True, verbose_name = "نام شرکت")
     address = models.CharField(max_length=200, null=True, blank=True, verbose_name = "آدرس")
 
-    objects = MyUserManager()
+    objects = UserManager()
 
     USERNAME_FIELD = 'mobile'
     REQUIRED_FIELDS = []

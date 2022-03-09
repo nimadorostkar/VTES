@@ -2,11 +2,11 @@ from django.contrib.auth import login, authenticate, get_user_model
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import render, get_object_or_404
-from .models import MyUser
+from .models import User
 from . import forms
 from . import helper
 from django.contrib import messages
-from .serializers import MyUserSerializer, RequestOTPSerializer, verifyOTPSerializer, UsersSerializer
+from .serializers import RequestOTPSerializer, verifyOTPSerializer, UsersSerializer
 from rest_framework import viewsets, filters, status, pagination, mixins
 from django_filters.rest_framework import DjangoFilterBackend
 from django.views import generic
@@ -16,7 +16,6 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from . import serializers
-
 from rest_framework.generics import GenericAPIView
 
 
@@ -26,7 +25,7 @@ from rest_framework.generics import GenericAPIView
 
 
 
-class MyUserView(APIView):
+class UserView(APIView):
     def get(self, request, **kwargs):
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -39,7 +38,7 @@ class MyUserView(APIView):
 
         try:
             mobile = data['mobile']      # request.POST.get('mobile') # mobile = request.POST['mobile']
-            user = MyUser.objects.get(mobile=mobile)  #user = get_object_or_404(MyUser, mobile=mobile)
+            user = User.objects.get(mobile=mobile)  #user = get_object_or_404(MyUser, mobile=mobile)
             # send otp
             otp = helper.get_random_otp()
             print(otp)
@@ -51,8 +50,8 @@ class MyUserView(APIView):
             #request.session['user_mobile'] = user.mobile
             return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-        except MyUser.DoesNotExist:
-            user=MyUser()
+        except User.DoesNotExist:
+            user=User()
             mobile = data['mobile']     # request.POST.get('mobile') #mobile = request.POST['mobile']
             user.mobile = mobile
             # send otp
@@ -84,7 +83,7 @@ class verifyView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST, data = serializer.errors)
 
         mobile = data['mobile']
-        user = MyUser.objects.get(mobile=mobile)
+        user = User.objects.get(mobile=mobile)
         otp = data['otp']
 
         # check otp expiration
@@ -118,7 +117,7 @@ class verifyView(APIView):
 class Users(GenericAPIView):
     permission_classes = [AllowAny]
     serializer_class = UsersSerializer
-    queryset = MyUser.objects.all()
+    queryset = User.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['is_legal', 'is_active', 'is_superuser', 'is_staff']
     search_fields = ['first_name', 'last_name', 'email', 'mobile', 'company', 'address']
@@ -126,7 +125,7 @@ class Users(GenericAPIView):
 
     def get(self, request, format=None):
         queryset = MyUser.objects.all()
-        query = self.filter_queryset(MyUser.objects.all())
+        query = self.filter_queryset(User.objects.all())
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -145,6 +144,8 @@ class Users(GenericAPIView):
 
 
 
+
+
 # ------------------------------------------------------- Profile ------------
 
 class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
@@ -152,12 +153,12 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        profile = get_object_or_404(MyUser, id=self.request.user.id)
+        profile = get_object_or_404(User, id=self.request.user.id)
         serializer = UsersSerializer(profile)
         return Response(serializer.data)
 
     def put(self, request, *args, **kwargs):
-        profile = get_object_or_404(MyUser, id=self.request.user.id)
+        profile = get_object_or_404(User, id=self.request.user.id)
         serializer = UsersSerializer(profile, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -165,9 +166,13 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
         return Response(serializer.data)
 
     def delete(self, request, *args, **kwargs):
-        profile = get_object_or_404(MyUser, id=self.request.user.id)
+        profile = get_object_or_404(User, id=self.request.user.id)
         profile.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
 
 
 

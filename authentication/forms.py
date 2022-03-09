@@ -4,5 +4,5 @@ from . import models
 
 class RegisterForm(forms.ModelForm):
     class Meta:
-        model = models.MyUser
+        model = models.User
         fields = ['mobile', ]

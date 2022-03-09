@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.dispatch import receiver
 from django.template.defaultfilters import truncatechars
 from django_jalali.db import models as jmodels
-from authentication.models import MyUser
+from authentication.models import User
 from mptt.models import MPTTModel, TreeForeignKey
 from django.utils.html import format_html
 
@@ -52,7 +52,7 @@ class Category(MPTTModel):
 
 #------------------------------------------------------------------------------
 class Shop(models.Model):
-  user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='profile', verbose_name = "کاربر")
+  user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profile', verbose_name = "کاربر")
   name = models.CharField(max_length=70, verbose_name = "نام فروشگاه")
   logo = models.ImageField(default='logos/default.png', upload_to='logos', verbose_name = "لوگو فروشگاه")
   phone = models.CharField(max_length=50, null=True, blank=True, verbose_name = "شماره تماس")

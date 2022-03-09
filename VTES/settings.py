@@ -169,7 +169,7 @@ MEDIA_URL = '/media/' # Public URL at the browser
 
 
 
-AUTH_USER_MODEL = 'authentication.MyUser'
+AUTH_USER_MODEL = 'authentication.User'
 
 Kavenegar_API = '*****************************************************'
 
