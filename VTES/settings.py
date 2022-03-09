@@ -16,9 +16,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '2d0qjb7q3gzq+(ad0hh#elqcvvxa-x4j@inomsl)&0()!icp0h'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [*]
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -111,10 +111,23 @@ REST_FRAMEWORK = {
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+'''
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'dajnu0bhcafslr',
+        'USER': 'vwamxhxpcfviok',
+        'PASSWORD': 'd960af0b9e24c5347edd36b1ea36bb914c4d8813f3442b58c74cf3e6a2869c39',
+        'HOST': 'ec2-50-19-32-96.compute-1.amazonaws.com',
+        'PORT': '5432',
     }
 }
 
