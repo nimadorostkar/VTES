@@ -1,13 +1,12 @@
 from django.shortcuts import render, get_object_or_404
-from .serializers import ShopSerializer, ProductSerializer, CategorySerializer, Product_AttrSerializer, AttributesSerializer
+from .serializers import ShopSerializer, ProductSerializer, CategorySerializer, AttributesSerializer
 from rest_framework import viewsets, filters, status, pagination, mixins
-from .models import Shop, Product, Product_Attr, Category , Attributes
+from .models import Shop, Product, Category , Attributes
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from rest_framework.generics import GenericAPIView
 
 
@@ -19,15 +18,6 @@ class CategoryView(viewsets.ModelViewSet):
     queryset = Category.objects.all()
 
 
-
-
-
-class Product_AttrView(viewsets.ModelViewSet):
-    serializer_class = Product_AttrSerializer
-    queryset = Product_Attr.objects.all()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['product', 'attribute']
-    search_fields = ['attribute', 'product']
 
 
 

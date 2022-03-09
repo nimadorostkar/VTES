@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Shop, Product, Product_Attr, Category , Attributes
+from .models import Shop, Product, Category, Attributes
 
 
 
@@ -11,14 +11,6 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ('id', 'name', 'parent')
 
-
-
-
-#------------------------------------------------------------------------------
-class Product_AttrSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product_Attr
-        fields = ('id', 'product','product_name', 'attribute', 'attribute_name')
 
 
 
@@ -45,20 +37,12 @@ class ShopSerializer(serializers.ModelSerializer):
 
 
 
-'''
 #------------------------------------------------------------------------------
 class ProductSerializer(serializers.ModelSerializer):
+    attributes = AttributesSerializer(read_only=True, many=True)
     class Meta:
         model = Product
-        fields = ('name', 'id', 'code', 'approved', 'available', 'provider_shop', 'provider_shop_name', 'image', 'price', 'qty', 'brand', 'link', 'category', 'category_name', 'description', 'datasheet', 'date_created')
-'''
-
-#------------------------------------------------------------------------------
-class ProductSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Product
-        fields = ('id', 'name', 'code', 'approved', 'available', 'provider_shop', 'provider_shop_name', 'image', 'price', 'qty', 'brand', 'link', 'category', 'category_name', 'description', 'datasheet', 'date_created')
+        fields = ('id', 'name', 'code', 'approved', 'available', 'provider_shop', 'provider_shop_name', 'image', 'price', 'qty', 'brand', 'link', 'category', 'category_name', 'attributes', 'description', 'datasheet', 'date_created')
 
 
 

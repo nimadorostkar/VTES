@@ -105,6 +105,7 @@ class Product(models.Model):
     brand = models.CharField(max_length=50, verbose_name = "برند محصول")
     link = models.URLField(max_length=200, null=True, blank=True, verbose_name = "لینک محصول")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='product_category', verbose_name = "دسته بند")
+    attributes = models.ManyToManyField(Attributes, verbose_name = "ویژگی محول")
     description = models.TextField(max_length=1000,null=True, blank=True, verbose_name = "توضیحات")
     datasheet = models.FileField(upload_to='datasheet', null=True, blank=True, max_length=254, verbose_name = "فایل و Datasheet")
     date_created = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
@@ -128,24 +129,6 @@ class Product(models.Model):
         verbose_name = "محصول"
         verbose_name_plural = "محصولات"
 
-
-
-
-
-#------------------------------------------------------------------------------
-class Product_Attr(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_attr',  verbose_name = "محصول مربوطه")
-    attribute = models.ForeignKey(Attributes, on_delete=models.CASCADE, verbose_name='ویژگی')
-
-    def product_name(self):
-        return str(self.product.name)
-
-    def attribute_name(self):
-        return str(self.attribute.name)
-
-    class Meta:
-        verbose_name = "ویژگی محول"
-        verbose_name_plural = "ویژگی محصولات"
 
 
 
