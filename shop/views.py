@@ -4,9 +4,7 @@ from rest_framework import viewsets, filters, status, pagination, mixins
 from .models import Shop, Product, Category , Attributes
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
 
 
@@ -15,22 +13,62 @@ from rest_framework.generics import GenericAPIView
 
 
 
+# ------------------------------------------------------- Attributes ------------
 
-class AttributesView(viewsets.ModelViewSet):
+class Attrs(GenericAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = AttributesSerializer
     queryset = Attributes.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name',]
+    ordering_fields = ['id',]
+
+    def get(self, request, format=None):
+        queryset = Attributes.objects.all()
+        query = self.filter_queryset(Attributes.objects.all())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = AttributesSerializer(query, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = AttributesSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class AttrsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
+    serializer_class = AttributesSerializer
+
+    def get(self, request, *args, **kwargs):
+        attribute = get_object_or_404(Attributes, id=self.kwargs["id"])
+        serializer = AttributesSerializer(attribute)
+        return Response(serializer.data)
+
+    def put(self, request, *args, **kwargs):
+        attribute = get_object_or_404(Attributes, id=self.kwargs["id"])
+        serializer = AttributesSerializer(attribute, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data)
+
+    def delete(self, request, *args, **kwargs):
+        attribute = get_object_or_404(Attributes, id=self.kwargs["id"])
+        attribute.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-
-class CategoryView(viewsets.ModelViewSet):
-    serializer_class = CategorySerializer
-    queryset = Category.objects.all()
 
 
 
 # ------------------------------------------------------- Category ------------
 
 class Categories(GenericAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -87,6 +125,7 @@ class CategoryItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPI
 # ------------------------------------------------------- Shops ------------
 
 class Shops(GenericAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = ShopSerializer
     queryset = Shop.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -145,6 +184,7 @@ class ShopItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView
 # ------------------------------------------------------- Products ------------
 
 class Products(GenericAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
