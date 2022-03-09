@@ -50,48 +50,11 @@ class ShopView(viewsets.ModelViewSet):
 
 
 
-'''
-class ProductView(viewsets.ModelViewSet):
-    serializer_class = ProductSerializer
-    permission_classes = (IsAuthenticated,)
-    queryset = Product.objects.all()
-
-
-@api_view(['GET', 'POST'])
-def Product_list(request):
-    if request.method == 'GET':
-        queryset = Product.objects.all()
-        serializer = ProductSerializer(queryset, many=True)
-        return Response(serializer.data)
-    elif request.method == 'POST':
-        serializer = ProductSerializer(data=request.data)
-        if serializer.is_valid():
-            # create product
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class Products(APIView):
-    def get(self, request):
-        products = Product.objects.all()
-        serializer = ProductSerializer(products, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = ProductSerializer(data=request.data)
-        if serializer.is_valid():
-            #serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-'''
-
-
-
+# ------------------------------------------------------- Products ------------
 
 class Products(GenericAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
-
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['provider_shop', 'category', 'approved', 'available', 'brand']
     search_fields = ['name', 'code', 'description']
@@ -114,8 +77,6 @@ class Products(GenericAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-
 class ProductItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
     serializer_class = ProductSerializer
 
@@ -136,6 +97,17 @@ class ProductItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIV
         product = get_object_or_404(Product, id=self.kwargs["id"])
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
