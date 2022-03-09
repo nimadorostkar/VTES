@@ -128,7 +128,7 @@ class Users(GenericAPIView):
     ordering_fields = ['date_joined', 'otp_create_time', 'last_login', 'id']
 
     def get(self, request, format=None):
-        queryset = MyUser.objects.all()
+        queryset = User.objects.all()
         query = self.filter_queryset(User.objects.all())
         page = self.paginate_queryset(queryset)
         if page is not None:

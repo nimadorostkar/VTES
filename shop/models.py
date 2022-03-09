@@ -59,7 +59,7 @@ class Shop(models.Model):
   email = models.EmailField(max_length=50, null=True, blank=True, verbose_name = "ایمیل")
   address = models.CharField(max_length=200, null=True, blank=True, verbose_name = "آدرس")
   description = models.TextField(max_length=1000,null=True, blank=True, verbose_name = "توضیحات")
-  category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.CASCADE, related_name='shop_category', verbose_name = "دسته بند")
+  category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='shop_category', verbose_name = "دسته بند")
   date_created = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
 
   def __str__(self):
