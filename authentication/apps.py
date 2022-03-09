@@ -10,5 +10,5 @@ class AuthenticationConfig(AppConfig):
         from . import signals
         from . import models
         request_finished.connect(signals.my_callback)
-        post_save.connect(signals.create_new_user, sender=models.MyUser)
-        post_save.connect(signals.update_user, sender=models.MyUser)
+        post_save.connect(signals.create_new_user, sender=models.User)
+        post_save.connect(signals.update_user, sender=models.User)

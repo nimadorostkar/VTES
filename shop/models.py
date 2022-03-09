@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.dispatch import receiver
 from django.template.defaultfilters import truncatechars
 from django_jalali.db import models as jmodels
-from authentication.models import MyUser
+from authentication.models import User
 from mptt.models import MPTTModel, TreeForeignKey
 from django.utils.html import format_html
 
@@ -52,7 +52,7 @@ class Category(MPTTModel):
 
 #------------------------------------------------------------------------------
 class Shop(models.Model):
-  user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='profile', verbose_name = "کاربر")
+  user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profile', verbose_name = "کاربر")
   name = models.CharField(max_length=70, verbose_name = "نام فروشگاه")
   logo = models.ImageField(default='logos/default.png', upload_to='logos', verbose_name = "لوگو فروشگاه")
   phone = models.CharField(max_length=50, null=True, blank=True, verbose_name = "شماره تماس")
@@ -97,14 +97,15 @@ class Product(models.Model):
     approved = models.BooleanField(default=False, verbose_name = "تایید شده")
     available = models.BooleanField(default=True, verbose_name = "موجود")
     provider_shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='shop', verbose_name = "فروشگاه ارائه دهنده")
-    code = models.CharField(max_length=50, verbose_name = "کد محصول")
+    code = models.CharField(max_length=50, null=True, blank=True, verbose_name = "کد محصول")
     name = models.CharField(max_length=80, verbose_name = "نام محصول")
     image = models.ImageField(default='products/default.png', upload_to='products', verbose_name = "تصویر")
     price = models.IntegerField(verbose_name = "قیمت")
     qty = models.IntegerField(verbose_name = "تعداد")
-    brand = models.CharField(max_length=50, verbose_name = "برند محصول")
+    brand = models.CharField(max_length=50, null=True, blank=True, verbose_name = "برند محصول")
     link = models.URLField(max_length=200, null=True, blank=True, verbose_name = "لینک محصول")
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='product_category', verbose_name = "دسته بند")
+    category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.CASCADE, related_name='product_category', verbose_name = "دسته بند")
+    attributes = models.ManyToManyField(Attributes, verbose_name = "ویژگی محول")
     description = models.TextField(max_length=1000,null=True, blank=True, verbose_name = "توضیحات")
     datasheet = models.FileField(upload_to='datasheet', null=True, blank=True, max_length=254, verbose_name = "فایل و Datasheet")
     date_created = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
@@ -128,24 +129,6 @@ class Product(models.Model):
         verbose_name = "محصول"
         verbose_name_plural = "محصولات"
 
-
-
-
-
-#------------------------------------------------------------------------------
-class Product_Attr(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_attr',  verbose_name = "محصول مربوطه")
-    attribute = models.ForeignKey(Attributes, on_delete=models.CASCADE, verbose_name='ویژگی')
-
-    def product_name(self):
-        return str(self.product.name)
-
-    def attribute_name(self):
-        return str(self.attribute.name)
-
-    class Meta:
-        verbose_name = "ویژگی محول"
-        verbose_name_plural = "ویژگی محصولات"
 
 
 

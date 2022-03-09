@@ -1,20 +1,13 @@
 from rest_framework import serializers
-from .models import MyUser
+from .models import User
 
-
-
-
-
-#------------------------------------------------------------------------------
-class MyUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MyUser
-        fields = ('mobile',)
 
 
 
 class RequestOTPSerializer(serializers.Serializer):
     mobile = serializers.CharField(max_length=64, allow_null=False)
+
+
 
 
 class verifyOTPSerializer(serializers.Serializer):
@@ -23,8 +16,8 @@ class verifyOTPSerializer(serializers.Serializer):
 
 
 
-#------------------------------------------------------------------------------
+
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
-        model = MyUser
+        model = User
         fields = '__all__'

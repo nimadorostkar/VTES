@@ -1,9 +1,10 @@
 from django.urls import path
-from . import views
-from .views import MyUserView, verifyView
+from .views import Login, Verify, Users, Profile
 
 
 urlpatterns = [
-    path('', MyUserView.as_view(), name='MyUserView'),    # API
-    path('verify', verifyView.as_view(), name='verifyView'), # API
+    path('login', Login.as_view(), name='login'),
+    path('verify', Verify.as_view(), name='verify'),
+    path('users', Users.as_view(), name='users'),
+    path('profile', Profile.as_view(), name='profile'),
 ]
