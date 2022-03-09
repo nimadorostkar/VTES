@@ -27,7 +27,7 @@ class AttributesView(viewsets.ModelViewSet):
 
 
 
-
+'''
 class ShopView(viewsets.ModelViewSet):
     serializer_class = ShopSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,) #https://testdriven.io/blog/built-in-permission-classes-drf/
@@ -36,6 +36,64 @@ class ShopView(viewsets.ModelViewSet):
     filterset_fields = ['category', 'user']
     search_fields = ['name', 'phone', 'description']
     ordering_fields = ['name', 'email', 'date_created']
+'''
+
+
+
+# ------------------------------------------------------- Shops ------------
+
+class Shops(GenericAPIView):
+    serializer_class = ShopSerializer
+    queryset = Shop.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['user', 'category']
+    search_fields = ['name', 'phone','email','address', 'description']
+    ordering_fields = ['id', 'date_created']
+
+    def get(self, request, format=None):
+        queryset = Shop.objects.all()
+        query = self.filter_queryset(Shop.objects.all())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = ShopSerializer(query, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = ShopSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ShopItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
+    serializer_class = ShopSerializer
+
+    def get(self, request, *args, **kwargs):
+        shop = get_object_or_404(Shop, id=self.kwargs["id"])
+        serializer = ShopSerializer(shop)
+        return Response(serializer.data)
+
+    def put(self, request, *args, **kwargs):
+        shop = get_object_or_404(Shop, id=self.kwargs["id"])
+        serializer = ShopSerializer(shop, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data)
+
+    def delete(self, request, *args, **kwargs):
+        shop = get_object_or_404(Shop, id=self.kwargs["id"])
+        shop.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
+
+
+
 
 
 
