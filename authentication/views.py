@@ -3,12 +3,11 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import render, get_object_or_404
 from .models import MyUser
-# from . import models
 from . import forms
 from . import helper
 from django.contrib import messages
 from .serializers import MyUserSerializer, RequestOTPSerializer, verifyOTPSerializer, UsersSerializer
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, status, pagination, mixins
 from django_filters.rest_framework import DjangoFilterBackend
 from django.views import generic
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
@@ -17,6 +16,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from . import serializers
+
+from rest_framework.generics import GenericAPIView
+
+
 
 
 
@@ -101,29 +104,70 @@ class verifyView(APIView):
 
 
 
-class usersView(viewsets.ModelViewSet):
+
+
+
+
+
+
+
+
+
+# ------------------------------------------------------- Users ------------
+
+class Users(GenericAPIView):
+    permission_classes = [AllowAny]
     serializer_class = UsersSerializer
-    permission_classes = (AllowAny,) #https://testdriven.io/blog/built-in-permission-classes-drf/
     queryset = MyUser.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['is_legal', 'is_active', 'is_superuser', 'is_staff']
     search_fields = ['first_name', 'last_name', 'email', 'mobile', 'company', 'address']
     ordering_fields = ['date_joined', 'otp_create_time', 'last_login', 'id']
 
+    def get(self, request, format=None):
+        queryset = MyUser.objects.all()
+        query = self.filter_queryset(MyUser.objects.all())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = UsersSerializer(query, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = UsersSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
 
 
-class ProfileAPI(viewsets.ModelViewSet):
+# ------------------------------------------------------- Profile ------------
+
+class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
     serializer_class = UsersSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        return MyUser.objects.filter(id=self.request.user.id)
+    def get(self, request, *args, **kwargs):
+        profile = get_object_or_404(MyUser, id=self.request.user.id)
+        serializer = UsersSerializer(profile)
+        return Response(serializer.data)
 
+    def put(self, request, *args, **kwargs):
+        profile = get_object_or_404(MyUser, id=self.request.user.id)
+        serializer = UsersSerializer(profile, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data)
 
-
+    def delete(self, request, *args, **kwargs):
+        profile = get_object_or_404(MyUser, id=self.request.user.id)
+        profile.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 
