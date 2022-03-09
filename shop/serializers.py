@@ -25,6 +25,7 @@ class AttributesSerializer(serializers.ModelSerializer):
 
 
 
+
 #------------------------------------------------------------------------------
 class ShopSerializer(serializers.ModelSerializer):
     class Meta:

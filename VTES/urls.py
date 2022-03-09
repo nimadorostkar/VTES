@@ -9,7 +9,6 @@ from authentication import views as auth_views
 
 
 router = routers.DefaultRouter()
-#router.register(r'shop', views.ShopView, 'shop')
 router.register(r'category', views.CategoryView, 'category')
 router.register(r'attributes', views.AttributesView, 'attributes')
 router.register(r'users', auth_views.usersView, 'users')

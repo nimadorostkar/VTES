@@ -13,11 +13,6 @@ from rest_framework.generics import GenericAPIView
 
 
 
-class CategoryView(viewsets.ModelViewSet):
-    serializer_class = CategorySerializer
-    queryset = Category.objects.all()
-
-
 
 
 
@@ -27,16 +22,65 @@ class AttributesView(viewsets.ModelViewSet):
 
 
 
-'''
-class ShopView(viewsets.ModelViewSet):
-    serializer_class = ShopSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,) #https://testdriven.io/blog/built-in-permission-classes-drf/
-    queryset = Shop.objects.all()
+class CategoryView(viewsets.ModelViewSet):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+
+
+
+# ------------------------------------------------------- Category ------------
+
+class Categories(GenericAPIView):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['category', 'user']
-    search_fields = ['name', 'phone', 'description']
-    ordering_fields = ['name', 'email', 'date_created']
-'''
+    filterset_fields = ['parent',]
+    search_fields = ['name', 'parent']
+    ordering_fields = ['id',]
+
+    def get(self, request, format=None):
+        queryset = Category.objects.all()
+        query = self.filter_queryset(Category.objects.all())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = CategorySerializer(query, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = CategorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CategoryItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
+    serializer_class = CategorySerializer
+
+    def get(self, request, *args, **kwargs):
+        category = get_object_or_404(Category, id=self.kwargs["id"])
+        serializer = CategorySerializer(category)
+        return Response(serializer.data)
+
+    def put(self, request, *args, **kwargs):
+        category = get_object_or_404(Category, id=self.kwargs["id"])
+        serializer = CategorySerializer(category, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data)
+
+    def delete(self, request, *args, **kwargs):
+        category = get_object_or_404(Category, id=self.kwargs["id"])
+        category.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
+
+
 
 
 
