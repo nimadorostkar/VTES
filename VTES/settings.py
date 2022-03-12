@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'background_task',
     'corsheaders',
     'rest_framework',
+    'rest_framework.authtoken',
     'django_filters',
     'shop',
     'mptt',
@@ -95,13 +96,15 @@ REST_FRAMEWORK = {
        'django_filters.rest_framework.DjangoFilterBackend'
        ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        #'rest_framework.authentication.BasicAuthentication',
+        #'rest_framework.authentication.SessionAuthentication',
        ],
-       #'DEFAULT_PERMISSION_CLASSES': [
+       'DEFAULT_PERMISSION_CLASSES': [
+       'rest_framework.permissions.AllowAny',
         #'rest_framework.permissions.IsAuthenticatedOrReadOnly',
         #'rest_framework.permissions.IsAuthenticated',
-       #]
+       ]
 }
 
 

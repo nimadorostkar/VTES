@@ -17,8 +17,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from . import serializers
 from rest_framework.generics import GenericAPIView
-from django.views.decorators.csrf import csrf_exempt
 
+from rest_framework.authtoken.models import Token
 
 
 
@@ -79,6 +79,8 @@ class Login(APIView):
 # ------------------------------------------------------- verifyView ---------------
 
 class Verify(APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request, **kwargs):
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -102,6 +104,11 @@ class Verify(APIView):
 
         user.is_active = True
         user.save()
+
+        token, created = Token.objects.get_or_create(user=user)
+        print('API Auth Token: ', token.key)
+        print('Created New Token:', created)
+
         login(request, user)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -122,7 +129,7 @@ class Verify(APIView):
 # ------------------------------------------------------- Users ---------------
 
 class Users(GenericAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminUser]
     serializer_class = UsersSerializer
     queryset = User.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
