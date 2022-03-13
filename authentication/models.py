@@ -11,6 +11,7 @@ class User(AbstractUser):
     is_legal = models.BooleanField(default=False, verbose_name = "شخصیت حقوقی")
     company = models.CharField(max_length=80, null=True, blank=True, verbose_name = "نام شرکت")
     address = models.CharField(max_length=200, null=True, blank=True, verbose_name = "آدرس")
+    email_verification = models.BooleanField(default=False, verbose_name = "تایید ایمیل")
 
     objects = UserManager()
 

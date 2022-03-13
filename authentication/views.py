@@ -110,8 +110,6 @@ class Verify(APIView):
         print('Created New Token:', created)
 
         user_data = {"data": serializer.data, "token": token.key}
-        #return Response(Res)
-
         login(request, user)
         return Response(user_data, status=status.HTTP_200_OK)
 
@@ -202,6 +200,75 @@ def Logout(request):
     request.user.auth_token.delete()
     logout(request)
     return Response('User Logged out successfully', status=status.HTTP_401_UNAUTHORIZED)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ------------------------------------------------------- Register ------------
+
+class Register(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, **kwargs):
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def post(self, request):
+        serializer = serializers.UsersSerializer(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data = serializer.errors)
+
+        try:
+            mobile = data['mobile']
+            user = User.objects.get(mobile=mobile)
+            return Response('This phone number is already registered', status=status.HTTP_400_BAD_REQUEST)
+
+        except User.DoesNotExist:
+            user=User()
+            user.mobile = data['mobile']
+            user.is_legal = data['is_legal']
+            user.first_name = data['first_name']
+            user.last_name = data['last_name']
+            user.company = data['company']
+            user.email = data['email']
+            user.address = data['address']
+            # send otp
+            otp = helper.get_random_otp()
+            #helper.send_otp(mobile, otp)
+            helper.send_otp_soap(mobile, otp)
+            # save otp
+            print(otp)
+            user.otp = otp
+            user.is_active = False
+            user.save()
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
