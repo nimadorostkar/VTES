@@ -21,3 +21,14 @@ class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+
+
+
+
+
+
+
+class registerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('mobile' ,'is_legal', 'first_name','last_name', 'company', 'email', 'address')

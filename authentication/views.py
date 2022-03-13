@@ -6,7 +6,7 @@ from .models import User
 from . import forms
 from . import helper
 from django.contrib import messages
-from .serializers import RequestOTPSerializer, verifyOTPSerializer, UsersSerializer
+from .serializers import RequestOTPSerializer, verifyOTPSerializer, UsersSerializer, registerSerializer
 from rest_framework import viewsets, filters, status, pagination, mixins
 from django_filters.rest_framework import DjangoFilterBackend
 from django.views import generic
@@ -109,7 +109,8 @@ class Verify(APIView):
         print('API Auth Token: ', token.key)
         print('Created New Token:', created)
 
-        user_data = {"data": serializer.data, "token": token.key}
+        user_data={"id":user.id, "mobile":user.mobile, "is_legal":user.is_legal, "token": token.key}
+
         login(request, user)
         return Response(user_data, status=status.HTTP_200_OK)
 
@@ -225,7 +226,7 @@ class Register(APIView):
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
-        serializer = serializers.UsersSerializer(data=request.data)
+        serializer = serializers.registerSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
         else:
@@ -238,13 +239,18 @@ class Register(APIView):
 
         except User.DoesNotExist:
             user=User()
-            user.mobile = data['mobile']
             user.is_legal = data['is_legal']
-            user.first_name = data['first_name']
-            user.last_name = data['last_name']
-            user.company = data['company']
-            user.email = data['email']
-            user.address = data['address']
+
+            if user.is_legal:
+                user.mobile = data['mobile']
+                user.company = data['company']
+                user.email = data['email']
+                user.address = data['address']
+            else:
+                user.mobile = data['mobile']
+                user.first_name = data['first_name']
+                user.last_name = data['last_name']
+
             # send otp
             otp = helper.get_random_otp()
             #helper.send_otp(mobile, otp)
@@ -254,10 +260,8 @@ class Register(APIView):
             user.otp = otp
             user.is_active = False
             user.save()
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-
-
+            return Response('کد تایید به شماره {} ارسال شد'.format(user.mobile) , status=status.HTTP_200_OK)
 
 
 
