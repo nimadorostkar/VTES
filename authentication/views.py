@@ -1,4 +1,4 @@
-from django.contrib.auth import login, authenticate, get_user_model
+from django.contrib.auth import login, authenticate, get_user_model, logout
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import render, get_object_or_404
@@ -17,8 +17,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from . import serializers
 from rest_framework.generics import GenericAPIView
-
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view, permission_classes
 
 
 
@@ -109,8 +109,11 @@ class Verify(APIView):
         print('API Auth Token: ', token.key)
         print('Created New Token:', created)
 
+        user_data = {"data": serializer.data, "token": token.key}
+        #return Response(Res)
+
         login(request, user)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+        return Response(user_data, status=status.HTTP_200_OK)
 
 
 
@@ -186,6 +189,19 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
 
 
 
+
+
+
+
+
+# ------------------------------------------------------- logout ------------
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def Logout(request):
+    request.user.auth_token.delete()
+    logout(request)
+    return Response('User Logged out successfully', status=status.HTTP_401_UNAUTHORIZED)
 
 
 
