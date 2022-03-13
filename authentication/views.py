@@ -42,8 +42,8 @@ class Login(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST, data = serializer.errors)
 
         try:
-            mobile = data['mobile']      # request.POST.get('mobile') # mobile = request.POST['mobile']
-            user = User.objects.get(mobile=mobile)  #user = get_object_or_404(MyUser, mobile=mobile)
+            mobile = data['mobile']
+            user = User.objects.get(mobile=mobile)
             # send otp
             otp = helper.get_random_otp()
             print(otp)
@@ -52,26 +52,10 @@ class Login(APIView):
             # save otp
             user.otp = otp
             user.save()
-            #request.session['user_mobile'] = user.mobile
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
+            return Response('کد تایید به شماره {} ارسال شد'.format(data['mobile']) , status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
-            user=User()
-            mobile = data['mobile']     # request.POST.get('mobile') #mobile = request.POST['mobile']
-            user.mobile = mobile
-            # send otp
-            otp = helper.get_random_otp()
-            #helper.send_otp(mobile, otp)
-            helper.send_otp_soap(mobile, otp)
-            # save otp
-            print(otp)
-            user.otp = otp
-            user.is_active = False
-            user.save()
-            #request.session['user_mobile'] = user.mobile
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-
+            return Response('کاربری با شماره {} یافت نشد، لطفا ثبت نام کنید'.format(data['mobile']) , status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -193,7 +177,7 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
 
 
 
-# ------------------------------------------------------- logout ------------
+# --------------------------------------------------------- logout ------------
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -201,7 +185,6 @@ def Logout(request):
     request.user.auth_token.delete()
     logout(request)
     return Response('User Logged out successfully', status=status.HTTP_401_UNAUTHORIZED)
-
 
 
 
