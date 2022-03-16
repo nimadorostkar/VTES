@@ -26,6 +26,7 @@ AUTHENTICATION_BACKENDS = [
     'authentication.mybackend.ModelBackend',
 ]
 
+
 # Application definition
 
 INSTALLED_APPS = [
