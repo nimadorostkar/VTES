@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
-from .serializers import ShopSerializer, ProductSerializer, CategorySerializer, AttributesSerializer
+from .serializers import ShopSerializer, ProductSerializer, CategorySerializer, ProductAttrSerializer
 from rest_framework import viewsets, filters, status, pagination, mixins
-from .models import Shop, Product, Category , Attributes
+from .models import Shop, Product, Category , ProductAttr
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
@@ -17,47 +17,47 @@ from rest_framework.generics import GenericAPIView
 
 class Attrs(GenericAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
-    serializer_class = AttributesSerializer
-    queryset = Attributes.objects.all()
+    serializer_class = ProductAttrSerializer
+    queryset = ProductAttr.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['name',]
+    search_fields = ['value','attribute']
     ordering_fields = ['id',]
 
     def get(self, request, format=None):
-        queryset = Attributes.objects.all()
-        query = self.filter_queryset(Attributes.objects.all())
+        queryset = ProductAttr.objects.all()
+        query = self.filter_queryset(ProductAttr.objects.all())
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
-        serializer = AttributesSerializer(query, many=True)
+        serializer = ProductAttrSerializer(query, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        serializer = AttributesSerializer(data=request.data)
+        serializer = ProductAttrSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class AttrsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
-    serializer_class = AttributesSerializer
+    serializer_class = ProductAttrSerializer
 
     def get(self, request, *args, **kwargs):
-        attribute = get_object_or_404(Attributes, id=self.kwargs["id"])
-        serializer = AttributesSerializer(attribute)
+        attribute = get_object_or_404(ProductAttr, id=self.kwargs["id"])
+        serializer = ProductAttrSerializer(attribute)
         return Response(serializer.data)
 
     def put(self, request, *args, **kwargs):
-        attribute = get_object_or_404(Attributes, id=self.kwargs["id"])
-        serializer = AttributesSerializer(attribute, data=request.data)
+        attribute = get_object_or_404(ProductAttr, id=self.kwargs["id"])
+        serializer = ProductAttrSerializer(attribute, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.data)
 
     def delete(self, request, *args, **kwargs):
-        attribute = get_object_or_404(Attributes, id=self.kwargs["id"])
+        attribute = get_object_or_404(ProductAttr, id=self.kwargs["id"])
         attribute.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

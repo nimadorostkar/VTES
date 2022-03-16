@@ -13,18 +13,6 @@ from django.utils.html import format_html
 
 
 
-#------------------------------------------------------------------------------
-class Attributes(models.Model):
-    name = models.CharField(max_length=60, verbose_name='ویژگی')
-
-    def __str__(self):
-        return str(self.name)
-
-    class Meta:
-        verbose_name = "ویژگی"
-        verbose_name_plural = "ویژگی ها"
-
-
 
 
 
@@ -100,12 +88,13 @@ class Product(models.Model):
     code = models.CharField(max_length=50, null=True, blank=True, verbose_name = "کد محصول")
     name = models.CharField(max_length=80, verbose_name = "نام محصول")
     image = models.ImageField(default='products/default.png', upload_to='products', verbose_name = "تصویر")
-    price = models.IntegerField(verbose_name = "قیمت")
+    single_price = models.IntegerField(verbose_name = "قیمت تکی")
+    overall_price = models.IntegerField(verbose_name = "قیمت کلی")
     qty = models.IntegerField(verbose_name = "تعداد")
     brand = models.CharField(max_length=50, null=True, blank=True, verbose_name = "برند محصول")
     link = models.URLField(max_length=200, null=True, blank=True, verbose_name = "لینک محصول")
     category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.CASCADE, related_name='product_category', verbose_name = "دسته بند")
-    attributes = models.ManyToManyField(Attributes, verbose_name = "ویژگی محول")
+    #attributes = models.ManyToManyField(Attributes, verbose_name = "ویژگی محول")
     description = models.TextField(max_length=1000,null=True, blank=True, verbose_name = "توضیحات")
     datasheet = models.FileField(upload_to='datasheet', null=True, blank=True, max_length=254, verbose_name = "فایل و Datasheet")
     date_created = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
@@ -135,6 +124,58 @@ class Product(models.Model):
 
 
 
+
+
+
+#------------------------------------------------------------------------------
+class Attributes(models.Model):
+    name = models.CharField(max_length=60, verbose_name='ویژگی')
+
+    def __str__(self):
+        return str(self.name)
+
+    class Meta:
+        verbose_name = "ویژگی"
+        verbose_name_plural = "ویژگی ها"
+
+
+
+
+'''
+#------------------------------------------------------------------------------
+class AttrValue(models.Model):
+    attributes = models.ForeignKey(Attributes, on_delete=models.CASCADE, related_name='attributes',  verbose_name = "ویژگی")
+    name = models.CharField(max_length=60, verbose_name='مقدار')
+
+    def __str__(self):
+        return str(self.name)
+
+    class Meta:
+        verbose_name = "مقدار ویژگی"
+        verbose_name_plural = "مقدار ویژگی ها"
+
+'''
+
+
+
+#------------------------------------------------------------------------------
+class ProductAttr(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_attr',  verbose_name = "محصول مربوطه")
+    attribute = models.ForeignKey(Attributes, on_delete=models.CASCADE, verbose_name='ویژگی')
+    value = models.CharField(max_length=60, verbose_name='مقدار')
+
+    def __str__(self):
+        return str(self.attribute.name)
+
+    def attribute_name(self):
+        return str(self.attribute.name)
+
+    def product_name(self):
+        return str(self.product.name)
+
+    class Meta:
+        verbose_name = "ویژگی محول"
+        verbose_name_plural = "ویژگی محصولات"
 
 
 

@@ -2,7 +2,7 @@ from django.contrib import admin
 from mptt.admin import MPTTModelAdmin, DraggableMPTTAdmin, TreeRelatedFieldListFilter
 from django.contrib.admin.models import LogEntry
 from . import models
-from .models import Category, Shop, Product, Attributes
+from .models import Category, Shop, Product, Attributes, ProductAttr#,AttrValue
 
 
 
@@ -45,11 +45,18 @@ admin.site.register(models.Category, DraggableMPTTAdmin,
 
 
 
-
+'''
 #------------------------------------------------------------------------------
+class AttrValueInline(admin.TabularInline):
+    model = AttrValue
+    #list_display = ('name',)
+    extra = 1
+'''
+
 class AttributesAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ['name',]
+    #inlines = [ AttrValueInline, ]
 admin.site.register(models.Attributes, AttributesAdmin)
 
 
@@ -59,11 +66,34 @@ admin.site.register(models.Attributes, AttributesAdmin)
 
 
 #------------------------------------------------------------------------------
+class ProductAttrInline(admin.TabularInline):
+    model = ProductAttr
+    extra = 1
+
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('img_tag', 'name', 'provider_shop', 'price', 'category', 'date_created', 'available','approved')
+    list_display = ('img_tag', 'name', 'provider_shop', 'single_price', 'category', 'date_created', 'available','approved')
     list_filter = ("category", "date_created", "available", "approved", "provider_shop")
     search_fields = ['name', 'code']
+    inlines = [ ProductAttrInline, ]
+
 admin.site.register(models.Product, ProductAdmin)
+
+
+
+
+
+
+
+'''
+
+class ProductAttrAdmin(admin.ModelAdmin):
+    list_display = ('product', 'attribute')
+    list_filter = ("product", "attribute")
+admin.site.register(models.ProductAttr, ProductAttrAdmin)
+
+'''
+
+
 
 
 
