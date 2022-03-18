@@ -87,3 +87,21 @@ def check_otp_expiration(mobile):
 
     except models.User.DoesNotExist:
         return False
+
+
+
+
+def check_send_otp(mobile):
+    try:
+        user = models.User.objects.get(mobile=mobile)
+        now = datetime.datetime.now()
+        otp_time = user.otp_create_time
+        diff_time = now - otp_time
+        print('OTP TIME: ', diff_time)
+
+        if diff_time.seconds > 120:
+            return False
+        return True
+
+    except models.User.DoesNotExist:
+        return False

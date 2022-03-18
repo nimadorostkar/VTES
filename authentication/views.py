@@ -264,5 +264,4 @@ class Register(APIView):
 
 
 
-
 #End
