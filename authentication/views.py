@@ -44,15 +44,19 @@ class Login(APIView):
         try:
             mobile = data['mobile']
             user = User.objects.get(mobile=mobile)
-            # send otp
-            otp = helper.get_random_otp()
-            print(otp)
-            #helper.send_otp(mobile, otp)
-            helper.send_otp_soap(mobile, otp)
-            # save otp
-            user.otp = otp
-            user.save()
-            return Response('کد تایید به شماره {} ارسال شد'.format(data['mobile']) , status=status.HTTP_200_OK)
+
+            if helper.check_send_otp(user.mobile):
+                # send otp
+                otp = helper.get_random_otp()
+                print(otp)
+                #helper.send_otp(mobile, otp)
+                helper.send_otp_soap(mobile, otp)
+                # save otp
+                user.otp = otp
+                user.save()
+                return Response('کد تایید به شماره {} ارسال شد'.format(data['mobile']) , status=status.HTTP_200_OK)
+            else:
+                return Response('کد ارسال شده، لطفا ۲ دقیقه دیگر اقدام نمایید' , status=status.HTTP_400_BAD_REQUEST)
 
         except User.DoesNotExist:
             return Response('کاربری با شماره {} یافت نشد، لطفا ثبت نام کنید'.format(data['mobile']) , status=status.HTTP_400_BAD_REQUEST)
