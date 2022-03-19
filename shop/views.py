@@ -247,6 +247,38 @@ class ProductItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIV
 
 
 
+# ------------------------------------------------------- Search ------------
+
+class Search(GenericAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = ProductSerializer
+    queryset = Product.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['provider_shop', 'category', 'approved', 'available', 'brand']
+    search_fields = ['name', 'code', 'description']
+    ordering_fields = ['id', 'price', 'qty', 'date_created']
+
+    def get(self, request, **kwargs):
+        return Response( 'please use POST method, and send query for search' , status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def post(self, request, format=None):
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# https://github.com/nimadorostkar/Didikala/blob/master/eshop_product/views.py
+
+
+
+
+
+
+
+
+
+
 
 
 
