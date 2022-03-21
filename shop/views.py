@@ -15,7 +15,6 @@ from rest_framework.generics import GenericAPIView
 
 
 
-
 # ------------------------------------------------------- Attributes ------------
 
 class Attrs(GenericAPIView):
@@ -238,6 +237,7 @@ class ProductItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIV
         product = get_object_or_404(Product, id=self.kwargs["id"])
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 
 
