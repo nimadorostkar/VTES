@@ -246,7 +246,6 @@ class ProductItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIV
 
 
 
-
 # ------------------------------------------------------- Search ------------
 
 class Search(GenericAPIView):
@@ -269,6 +268,7 @@ class Search(GenericAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # https://github.com/nimadorostkar/Didikala/blob/master/eshop_product/views.py
+
 
 
 
