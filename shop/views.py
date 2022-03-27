@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .serializers import ShopSerializer, ProductSerializer, CategorySerializer, ProductAttrSerializer
+from .serializers import ShopSerializer, ProductSerializer, CategorySerializer, ProductAttrSerializer, SearchSerializer
 from rest_framework import viewsets, filters, status, pagination, mixins
 from .models import Shop, Product, Category , ProductAttr
 from django_filters.rest_framework import DjangoFilterBackend
@@ -7,9 +7,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticate
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
-
-
-
+from . import serializers
+from . import models
+from django.db.models import Q
 
 
 
@@ -255,13 +255,23 @@ class Search(APIView):
         return Response( 'please use POST method, and send query for search' , status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request, format=None):
-        search = request.POST['q']
+        serializer = serializers.SearchSerializer(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data
+        else:
+            return Response('There is a problem with the submitted information, please resend query',status=status.HTTP_400_BAD_REQUEST)
+        search = data['q']
         if search:
             product = models.Product.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(brand__icontains=search) | Q(code__icontains=search) )
             shop = models.Shop.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(phone__icontains=search) | Q(email__icontains=search) | Q(address__icontains=search) )
-            category = models.Category.objects.filter( Q(name__icontains=search) | Q(parent__icontains=search) )
-            data={ "products":{product}, "shops":{shop}, "categories":{category} }
-            return Response(data, status=status.HTTP_200_OK)
+            category = models.Category.objects.filter( Q(name__icontains=search) )
+
+            product_serializer = ProductSerializer(product, many=True)
+            shop_serializer = ShopSerializer(shop, many=True)
+            category_serializer = CategorySerializer(category, many=True)
+
+            search_data={ "product":product_serializer.data , "shops":shop_serializer.data, "categories":category_serializer.data }
+            return Response(search_data, status=status.HTTP_200_OK)
         else:
             return Response('please send query for search', status=status.HTTP_400_BAD_REQUEST)
 

@@ -59,6 +59,10 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 
+class SearchSerializer(serializers.Serializer):
+    q = serializers.CharField(max_length=64, allow_null=False)
+
+
 
 
 
