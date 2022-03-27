@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
-
+from rest_framework.views import APIView
 
 
 
@@ -248,7 +248,7 @@ class ProductItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIV
 
 # ------------------------------------------------------- Search ------------
 
-class Search(GenericAPIView):
+class Search(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, **kwargs):
