@@ -257,13 +257,13 @@ class Search(GenericAPIView):
     def post(self, request, format=None):
         search = request.POST['q']
         if search:
-            product = models.Product.objects.filter(Q(Name__icontains=search))
-            
-
-
+            product = models.Product.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(brand__icontains=search) | Q(code__icontains=search) )
+            shop = models.Shop.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(phone__icontains=search) | Q(email__icontains=search) | Q(address__icontains=search) )
+            category = models.Category.objects.filter( Q(name__icontains=search) | Q(parent__icontains=search) )
+            data={ "products":{product}, "shops":{shop}, "categories":{category} }
+            return Response(data, status=status.HTTP_200_OK)
         else:
             return Response('please send query for search', status=status.HTTP_400_BAD_REQUEST)
-
 
 
 
