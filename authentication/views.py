@@ -47,14 +47,15 @@ class Login(APIView):
 
             if helper.check_send_otp(user.mobile):
                 # send otp
-                otp = helper.get_random_otp()
+                #otp = helper.get_random_otp()
+                otp = 12345
                 print(otp)
                 #helper.send_otp(mobile, otp)
                 helper.send_otp_soap(mobile, otp)
                 # save otp
                 user.otp = otp
                 user.save()
-                return Response('کد تایید به شماره {} ارسال شد'.format(data['mobile']) , status=status.HTTP_200_OK)
+                return Response('کد تایید {1} به شماره {0} ارسال شد'.format(data['mobile'],otp) , status=status.HTTP_200_OK)
             else:
                 return Response('کد ارسال شده، لطفا ۲ دقیقه دیگر اقدام نمایید' , status=status.HTTP_400_BAD_REQUEST)
 

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import Products, ProductItem, Shops, ShopItem, Categories, CategoryItem, Attrs, AttrsItem
+from .views import Products, ProductItem, Shops, ShopItem, Categories, CategoryItem, Attrs, AttrsItem, Search
 
 
 urlpatterns = [
@@ -11,4 +11,5 @@ urlpatterns = [
   path('category/<int:id>', CategoryItem.as_view(), name='category_item'),
   path('attributes', Attrs.as_view(), name='attributes'),
   path('attribute/<int:id>', AttrsItem.as_view(), name='attribute_item'),
+  path('search', Search.as_view(), name='search'),
 ]
