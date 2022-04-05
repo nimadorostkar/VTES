@@ -2,7 +2,7 @@ from django.contrib import admin
 from mptt.admin import MPTTModelAdmin, DraggableMPTTAdmin, TreeRelatedFieldListFilter
 from django.contrib.admin.models import LogEntry
 from . import models
-from .models import Category, Shop, Product, Attributes, ProductAttr#,AttrValue
+from .models import Category, Shop, Product, Attributes, ProductAttr, ProductImgs #,AttrValue
 
 
 
@@ -70,11 +70,15 @@ class ProductAttrInline(admin.TabularInline):
     model = ProductAttr
     extra = 1
 
+class ProductImgsInline(admin.TabularInline):
+    model = ProductImgs
+    extra = 1
+
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('img_tag', 'name', 'provider_shop', 'single_price', 'category', 'date_created', 'available','approved')
     list_filter = ("category", "date_created", "available", "approved", "provider_shop")
     search_fields = ['name', 'code']
-    inlines = [ ProductAttrInline, ]
+    inlines = [ ProductAttrInline, ProductImgsInline ]
 
 admin.site.register(models.Product, ProductAdmin)
 

@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
-from .serializers import ShopSerializer, ProductSerializer, CategorySerializer, ProductAttrSerializer, SearchSerializer
+from .serializers import ShopSerializer, ProductSerializer, CategorySerializer, ProductAttrSerializer, SearchSerializer, ProductImgsSerializer
 from rest_framework import viewsets, filters, status, pagination, mixins
-from .models import Shop, Product, Category , ProductAttr
+from .models import Shop, Product, Category , ProductAttr, ProductImgs
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
@@ -280,6 +280,41 @@ class Search(APIView):
 
 
 
+
+
+
+
+
+
+
+
+# ------------------------------------------------------- Attributes ------------
+
+class ProductImg(GenericAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = ProductImgsSerializer
+    queryset = ProductImgs.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['product',]
+    search_fields = ['product',]
+    ordering_fields = ['id',]
+
+    def get(self, request, format=None):
+        queryset = ProductImgs.objects.all()
+        query = self.filter_queryset(ProductImgs.objects.all())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = ProductImgsSerializer(query, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = ProductImgsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 

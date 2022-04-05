@@ -96,7 +96,7 @@ class Product(models.Model):
     provider_shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='shop', verbose_name = "فروشگاه ارائه دهنده")
     code = models.CharField(max_length=50, null=True, blank=True, verbose_name = "کد محصول")
     name = models.CharField(max_length=80, verbose_name = "نام محصول")
-    image = models.ImageField(default='products/default.png', upload_to='products', verbose_name = "تصویر")
+    banner = models.ImageField(default='products/default.png', upload_to='products', verbose_name = "تصویر")
     single_price = models.IntegerField(verbose_name = "قیمت تکی")
     overall_price = models.IntegerField(verbose_name = "قیمت کلی")
     qty = models.IntegerField(verbose_name = "تعداد")
@@ -118,7 +118,7 @@ class Product(models.Model):
         return str(self.category.name)
 
     def img_tag(self):
-        return format_html("<img width=40 src='{}'>".format(self.image.url))
+        return format_html("<img width=40 src='{}'>".format(self.banner.url))
 
     def get_absolute_url(self):
         return reverse('product_detail',args=[self.id])
@@ -126,6 +126,26 @@ class Product(models.Model):
     class Meta:
         verbose_name = "محصول"
         verbose_name_plural = "محصولات"
+
+
+
+
+
+#------------------------------------------------------------------------------
+class ProductImgs(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='productImg',  verbose_name = "محصول")
+    img = models.ImageField(upload_to='products', verbose_name = "تصویر")
+
+    def __str__(self):
+        return str(self.product.name)
+
+    def product_name(self):
+        return str(self.product.name)
+
+    class Meta:
+        verbose_name = "تصاویر محصول"
+        verbose_name_plural = "تصاویر محصولات"
+
 
 
 
