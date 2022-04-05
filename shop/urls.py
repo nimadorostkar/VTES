@@ -12,5 +12,5 @@ urlpatterns = [
   path('attributes', Attrs.as_view(), name='attributes'),
   path('attribute/<int:id>', AttrsItem.as_view(), name='attribute_item'),
   path('search', Search.as_view(), name='search'),
-  path('product_img', ProductImg.as_view(), name='product_img'),
+  path('productimg', ProductImg.as_view(), name='product_img'),
 ]
