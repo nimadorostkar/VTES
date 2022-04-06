@@ -3,6 +3,9 @@ from django.contrib.auth.models import AbstractUser
 from authentication.myusermanager import UserManager
 
 
+
+
+
 class User(AbstractUser):
     username = None
     mobile = models.CharField(max_length=11, unique=True, verbose_name = "شماره موبایل")
