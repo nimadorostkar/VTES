@@ -95,10 +95,14 @@ class Product(models.Model):
     available = models.BooleanField(default=True, verbose_name = "موجود")
     provider_shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='shop', verbose_name = "فروشگاه ارائه دهنده")
     code = models.CharField(max_length=50, null=True, blank=True, verbose_name = "کد محصول")
+    internal_code = models.CharField(max_length=50, null=True, blank=True, verbose_name = "کد داخلی")
     name = models.CharField(max_length=80, verbose_name = "نام محصول")
     banner = models.ImageField(default='products/default.png', upload_to='products', verbose_name = "تصویر")
-    single_price = models.IntegerField(verbose_name = "قیمت تکی")
-    overall_price = models.IntegerField(verbose_name = "قیمت کلی")
+
+    retail_price = models.IntegerField(verbose_name = "قیمت خرده فروشی")
+    wholesale_price = models.IntegerField(verbose_name = "قیمت عمده فروشی")
+    min_wholesale_num = models.IntegerField(verbose_name = "حداقل تعداد عمده فروشی")
+
     qty = models.IntegerField(verbose_name = "تعداد")
     brand = models.CharField(max_length=50, null=True, blank=True, verbose_name = "برند محصول")
     link = models.URLField(max_length=200, null=True, blank=True, verbose_name = "لینک محصول")

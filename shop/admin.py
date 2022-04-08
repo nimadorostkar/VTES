@@ -75,7 +75,7 @@ class ProductImgsInline(admin.TabularInline):
     extra = 1
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('img_tag', 'name', 'provider_shop', 'single_price', 'category', 'date_created', 'available','approved')
+    list_display = ('img_tag', 'name', 'provider_shop', 'retail_price', 'category', 'date_created', 'available','approved')
     list_filter = ("category", "date_created", "available", "approved", "provider_shop")
     search_fields = ['name', 'code']
     inlines = [ ProductAttrInline, ProductImgsInline ]
