@@ -7,9 +7,6 @@ from authentication.models import User
 from mptt.models import MPTTModel, TreeForeignKey
 from django.utils.html import format_html
 
-from django.contrib.postgres.fields import ArrayField
-
-
 
 
 
@@ -165,7 +162,7 @@ class ProductImgs(models.Model):
 #------------------------------------------------------------------------------
 class Attributes(models.Model):
     name = models.CharField(max_length=60, verbose_name='ویژگی')
-    arr = ArrayField(ArrayField(models.CharField(max_length=50, blank=True),size=20,),size=20,)
+
 
     def __str__(self):
         return str(self.name)
