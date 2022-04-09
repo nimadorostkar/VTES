@@ -6,7 +6,7 @@ from django_jalali.db import models as jmodels
 from authentication.models import User
 from mptt.models import MPTTModel, TreeForeignKey
 from django.utils.html import format_html
-
+from colorfield.fields import ColorField
 
 
 
@@ -174,23 +174,6 @@ class Attributes(models.Model):
 
 
 
-'''
-#------------------------------------------------------------------------------
-class AttrValue(models.Model):
-    attributes = models.ForeignKey(Attributes, on_delete=models.CASCADE, related_name='attributes',  verbose_name = "ویژگی")
-    name = models.CharField(max_length=60, verbose_name='مقدار')
-
-    def __str__(self):
-        return str(self.name)
-
-    class Meta:
-        verbose_name = "مقدار ویژگی"
-        verbose_name_plural = "مقدار ویژگی ها"
-
-'''
-
-
-
 #------------------------------------------------------------------------------
 class ProductAttr(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_attr',  verbose_name = "محصول مربوطه")
@@ -207,12 +190,52 @@ class ProductAttr(models.Model):
         return str(self.product.name)
 
     class Meta:
-        verbose_name = "ویژگی محول"
+        verbose_name = "ویژگی محصول"
         verbose_name_plural = "ویژگی محصولات"
 
 
 
 
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class Color(models.Model):
+    color = ColorField(default='#FF0000', verbose_name='رنگ')
+
+    def __str__(self):
+        return str(self.color)
+
+    class Meta:
+        verbose_name = "رنگ"
+        verbose_name_plural = "رنگ ها"
+
+
+
+
+
+#------------------------------------------------------------------------------
+class ProductColor(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_color',  verbose_name = "محصول مربوطه")
+    color = models.ForeignKey(Color, on_delete=models.CASCADE, verbose_name='رنگ')
+
+    def __str__(self):
+        return str(self.color.color)
+
+    def color_name(self):
+        return str(self.color.color)
+
+    def product_name(self):
+        return str(self.product.name)
+
+    class Meta:
+        verbose_name = "رنگ محصول"
+        verbose_name_plural = "رنگ محصولات"
 
 
 

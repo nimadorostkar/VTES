@@ -2,8 +2,20 @@ from django.contrib import admin
 from mptt.admin import MPTTModelAdmin, DraggableMPTTAdmin, TreeRelatedFieldListFilter
 from django.contrib.admin.models import LogEntry
 from . import models
-from .models import Category, Shop, Product, Attributes, ProductAttr, ProductImgs #,AttrValue
+from .models import Category, Shop, Product, Attributes, ProductAttr, ProductImgs, ProductColor, Color
 
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class ColorAdmin(admin.ModelAdmin):
+    list_display = ('color',)
+    search_fields = ['color',]
+admin.site.register(models.Color, ColorAdmin)
 
 
 
@@ -45,14 +57,6 @@ admin.site.register(models.Category, DraggableMPTTAdmin,
 
 
 
-'''
-#------------------------------------------------------------------------------
-class AttrValueInline(admin.TabularInline):
-    model = AttrValue
-    #list_display = ('name',)
-    extra = 1
-'''
-
 class AttributesAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ['name',]
@@ -74,11 +78,16 @@ class ProductImgsInline(admin.TabularInline):
     model = ProductImgs
     extra = 1
 
+#------------------------------------------------------------------------------
+class ProductColorInline(admin.TabularInline):
+    model = ProductColor
+    extra = 1
+
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('img_tag', 'name', 'provider_shop', 'retail_price', 'category', 'date_created', 'available','approved')
     list_filter = ("category", "date_created", "available", "approved", "provider_shop")
     search_fields = ['name', 'code']
-    inlines = [ ProductAttrInline, ProductImgsInline ]
+    inlines = [ ProductAttrInline, ProductImgsInline, ProductColorInline ]
 
 admin.site.register(models.Product, ProductAdmin)
 
@@ -88,14 +97,6 @@ admin.site.register(models.Product, ProductAdmin)
 
 
 
-'''
-
-class ProductAttrAdmin(admin.ModelAdmin):
-    list_display = ('product', 'attribute')
-    list_filter = ("product", "attribute")
-admin.site.register(models.ProductAttr, ProductAttrAdmin)
-
-'''
 
 
 

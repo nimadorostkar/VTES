@@ -9,3 +9,4 @@ django-background-tasks
 zeep
 kavenegar
 gunicorn
+django-colorfield
