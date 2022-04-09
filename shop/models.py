@@ -7,7 +7,7 @@ from authentication.models import User
 from mptt.models import MPTTModel, TreeForeignKey
 from django.utils.html import format_html
 
-
+from django.contrib.postgres.fields import ArrayField
 
 
 
@@ -100,6 +100,8 @@ class Product(models.Model):
     banner = models.ImageField(default='products/default.png', upload_to='products', verbose_name = "تصویر")
 
     retail_price = models.IntegerField(verbose_name = "قیمت خرده فروشی")
+    medium_volume_price = models.IntegerField(verbose_name = "قیمت فروش با حجم متوسط")
+    min_medium_num = models.IntegerField(verbose_name = "حداقل تعداد فروش با حجم متوسط")
     wholesale_price = models.IntegerField(verbose_name = "قیمت عمده فروشی")
     min_wholesale_num = models.IntegerField(verbose_name = "حداقل تعداد عمده فروشی")
 
@@ -107,7 +109,7 @@ class Product(models.Model):
     brand = models.CharField(max_length=50, null=True, blank=True, verbose_name = "برند محصول")
     link = models.URLField(max_length=200, null=True, blank=True, verbose_name = "لینک محصول")
     category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.CASCADE, related_name='product_category', verbose_name = "دسته بند")
-    #attributes = models.ManyToManyField(Attributes, verbose_name = "ویژگی محول")
+
     description = models.TextField(max_length=1000,null=True, blank=True, verbose_name = "توضیحات")
     datasheet = models.FileField(upload_to='datasheet', null=True, blank=True, max_length=254, verbose_name = "فایل و Datasheet")
     date_created = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
@@ -163,6 +165,7 @@ class ProductImgs(models.Model):
 #------------------------------------------------------------------------------
 class Attributes(models.Model):
     name = models.CharField(max_length=60, verbose_name='ویژگی')
+    arr = ArrayField(ArrayField(models.CharField(max_length=50, blank=True),size=20,),size=20,)
 
     def __str__(self):
         return str(self.name)
