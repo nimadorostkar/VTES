@@ -44,12 +44,15 @@ class Shop(models.Model):
   phone = models.CharField(max_length=50, null=True, blank=True, verbose_name = "شماره تماس")
   email = models.EmailField(max_length=50, null=True, blank=True, verbose_name = "ایمیل")
   description = models.TextField(max_length=1000,null=True, blank=True, verbose_name = "توضیحات")
-  category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='shop_category', verbose_name = "دسته بند")
+  category = models.ManyToManyField(Category, related_name='shop_category', verbose_name = "دسته بند")
   country = models.CharField(max_length=20, null=True, blank=True, verbose_name = "کشور")
   city = models.CharField(max_length=20, null=True, blank=True, verbose_name = "شهر")
   address = models.CharField(max_length=200, null=True, blank=True, verbose_name = "آدرس")
   postal_code = models.CharField(max_length=20, null=True, blank=True, verbose_name = "کد پستی")
   lat_long = models.CharField(max_length=20, null=True, blank=True, verbose_name = "lat & long")
+  shaba_number = models.CharField(max_length=120, null=True, blank=True, verbose_name = "شماره شبا")
+  card_number = models.CharField(max_length=120, null=True, blank=True, verbose_name = "شماره کارت")
+  bank_account_number = models.CharField(max_length=120, null=True, blank=True, verbose_name = "شماره حساب")
   instagram = models.CharField(max_length=120, null=True, blank=True)
   linkedin = models.CharField(max_length=120, null=True, blank=True)
   whatsapp = models.CharField(max_length=120, null=True, blank=True)
@@ -95,18 +98,15 @@ class Product(models.Model):
     internal_code = models.CharField(max_length=50, null=True, blank=True, verbose_name = "کد داخلی")
     name = models.CharField(max_length=80, verbose_name = "نام محصول")
     banner = models.ImageField(default='products/default.png', upload_to='products', verbose_name = "تصویر")
-
     retail_price = models.IntegerField(verbose_name = "قیمت خرده فروشی")
     medium_volume_price = models.IntegerField(verbose_name = "قیمت فروش با حجم متوسط")
     min_medium_num = models.IntegerField(verbose_name = "حداقل تعداد فروش با حجم متوسط")
     wholesale_price = models.IntegerField(verbose_name = "قیمت عمده فروشی")
     min_wholesale_num = models.IntegerField(verbose_name = "حداقل تعداد عمده فروشی")
-
     qty = models.IntegerField(verbose_name = "تعداد")
     brand = models.CharField(max_length=50, null=True, blank=True, verbose_name = "برند محصول")
     link = models.URLField(max_length=200, null=True, blank=True, verbose_name = "لینک محصول")
     category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.CASCADE, related_name='product_category', verbose_name = "دسته بند")
-
     description = models.TextField(max_length=1000,null=True, blank=True, verbose_name = "توضیحات")
     datasheet = models.FileField(upload_to='datasheet', null=True, blank=True, max_length=254, verbose_name = "فایل و Datasheet")
     date_created = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
@@ -129,6 +129,9 @@ class Product(models.Model):
     class Meta:
         verbose_name = "محصول"
         verbose_name_plural = "محصولات"
+
+
+
 
 
 
@@ -163,13 +166,15 @@ class ProductImgs(models.Model):
 class Attributes(models.Model):
     name = models.CharField(max_length=60, verbose_name='ویژگی')
 
-
     def __str__(self):
         return str(self.name)
 
     class Meta:
         verbose_name = "ویژگی"
         verbose_name_plural = "ویژگی ها"
+
+
+
 
 
 
@@ -192,11 +197,6 @@ class ProductAttr(models.Model):
     class Meta:
         verbose_name = "ویژگی محصول"
         verbose_name_plural = "ویژگی محصولات"
-
-
-
-
-
 
 
 

@@ -15,7 +15,7 @@ from .models import Category, Shop, Product, Attributes, ProductAttr, ProductImg
 
 #------------------------------------------------------------------------------
 class ShopAdmin(admin.ModelAdmin):
-    list_display = ('name','short_description', 'category', 'date_created','logo_tag')
+    list_display = ('name','short_description', 'date_created','logo_tag')
     list_filter = ("category","date_created")
     search_fields = ['name',]
     raw_id_fields = ('category'),
