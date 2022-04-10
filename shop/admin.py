@@ -2,20 +2,9 @@ from django.contrib import admin
 from mptt.admin import MPTTModelAdmin, DraggableMPTTAdmin, TreeRelatedFieldListFilter
 from django.contrib.admin.models import LogEntry
 from . import models
-from .models import Category, Shop, Product, Attributes, ProductAttr, ProductImgs, ProductColor, Color
+from .models import Category, Shop, Product, Attributes, ProductAttr, ProductImgs, ProductColor
 
 
-
-
-
-
-
-
-#------------------------------------------------------------------------------
-class ColorAdmin(admin.ModelAdmin):
-    list_display = ('color',)
-    search_fields = ['color',]
-admin.site.register(models.Color, ColorAdmin)
 
 
 

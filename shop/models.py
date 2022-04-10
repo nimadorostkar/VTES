@@ -204,25 +204,12 @@ class ProductAttr(models.Model):
 
 
 
-#------------------------------------------------------------------------------
-class Color(models.Model):
-    color = ColorField(default='#FF0000', verbose_name='رنگ')
-
-    def __str__(self):
-        return str(self.color)
-
-    class Meta:
-        verbose_name = "رنگ"
-        verbose_name_plural = "رنگ ها"
-
-
-
 
 
 #------------------------------------------------------------------------------
 class ProductColor(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_color',  verbose_name = "محصول مربوطه")
-    color = models.ForeignKey(Color, on_delete=models.CASCADE, verbose_name='رنگ')
+    color = ColorField(default='#BFBFBF', verbose_name='رنگ')
 
     def __str__(self):
         return str(self.color.color)
@@ -232,6 +219,9 @@ class ProductColor(models.Model):
 
     def product_name(self):
         return str(self.product.name)
+
+    def plate(self):
+        return format_html("<div style='height:20px; width:20px; background-color:{};'> </div>".format(self.color))
 
     class Meta:
         verbose_name = "رنگ محصول"
