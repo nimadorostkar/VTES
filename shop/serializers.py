@@ -57,7 +57,7 @@ class ProductSerializer(serializers.ModelSerializer):
     #attributes = AttributesSerializer(read_only=True, many=True)
     class Meta:
         model = Product
-        fields = ('id', 'name', 'code', 'approved', 'available', 'provider_shop', 'provider_shop_name', 'image', 'single_price', 'overall_price', 'qty', 'brand', 'link', 'category', 'category_name', 'description', 'datasheet', 'date_created')
+        fields = ('id', 'name', 'code', 'internal_code', 'approved', 'available', 'provider_shop', 'provider_shop_name', 'banner', 'retail_price', 'medium_volume_price',  'min_medium_num', 'wholesale_price', 'min_wholesale_num', 'qty', 'brand', 'link', 'category', 'category_name', 'description', 'datasheet', 'date_created')
 
 
 

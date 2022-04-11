@@ -92,7 +92,7 @@ class Product(models.Model):
     available = models.BooleanField(default=True, verbose_name = "موجود")
     provider_shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='shop', verbose_name = "فروشگاه ارائه دهنده")
     code = models.CharField(max_length=50, null=True, blank=True, verbose_name = "کد محصول")
-    internal_code = models.CharField(max_length=50, null=True, blank=True, verbose_name = "کد داخلی")
+    internal_code = models.CharField(max_length=50, null=True, blank=True, verbose_name = "کد داخلی محصول")
     name = models.CharField(max_length=80, verbose_name = "نام محصول")
     banner = models.ImageField(default='products/default.png', upload_to='products', verbose_name = "تصویر")
     retail_price = models.IntegerField(verbose_name = "قیمت خرده فروشی")
@@ -209,10 +209,8 @@ class ProductColor(models.Model):
     color = ColorField(default='#BFBFBF', verbose_name='رنگ')
 
     def __str__(self):
-        return str(self.color.color)
+        return str(self.color)
 
-    def color_name(self):
-        return str(self.color.color)
 
     def product_name(self):
         return str(self.product.name)
