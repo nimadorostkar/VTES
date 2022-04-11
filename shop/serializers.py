@@ -13,14 +13,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 
-'''
-#------------------------------------------------------------------------------
-class AttributesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Attributes
-        fields = ('id', 'name')
-'''
-
 
 
 
@@ -49,9 +41,10 @@ class ProductImgsSerializer(serializers.ModelSerializer):
 
 #------------------------------------------------------------------------------
 class ShopSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(read_only=True, many=True)
     class Meta:
         model = Shop
-        fields = ('id' ,'name', 'user','user_mobile', 'phone', 'email', 'address', 'description', 'category', 'category_name', 'logo', 'date_created')
+        fields = ('id' ,'name', 'user','user_mobile', 'phone', 'email', 'country', 'city', 'address', 'postal_code', 'lat_long', 'description','category', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram', 'date_created')
 
 
 

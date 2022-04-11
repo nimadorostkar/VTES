@@ -136,7 +136,7 @@ class Shops(GenericAPIView):
     serializer_class = ShopSerializer
     queryset = Shop.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['user', 'category']
+    filterset_fields = ['user', 'category', 'country', 'city']
     search_fields = ['name', 'phone','email','address', 'description']
     ordering_fields = ['id', 'date_created']
 

@@ -68,9 +68,6 @@ class Shop(models.Model):
   def user_mobile(self):
       return str(self.user.mobile)
 
-  def category_name(self):
-      return str(self.category.name)
-
   @property
   def short_description(self):
       return truncatechars(self.description, 50)
