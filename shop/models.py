@@ -57,6 +57,7 @@ class Shop(models.Model):
   whatsapp = models.CharField(max_length=120, null=True, blank=True)
   telegram = models.CharField(max_length=120, null=True, blank=True)
   date_created = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
+  aaa = models.CharField(max_length=20, null=True, blank=True, default='aaa')
 
   def __str__(self):
       return str(self.name)

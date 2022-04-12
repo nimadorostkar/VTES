@@ -98,6 +98,4 @@ admin.site.register(models.Product, ProductAdmin)
 
 
 
-
-
 #End
