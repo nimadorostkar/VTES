@@ -12,7 +12,6 @@ from colorfield.fields import ColorField
 
 
 
-
 #------------------------------------------------------------------------------
 class Category(MPTTModel):
     name = models.CharField(max_length=50, unique=True, verbose_name = "نام")
