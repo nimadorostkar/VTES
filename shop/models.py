@@ -12,6 +12,8 @@ from colorfield.fields import ColorField
 
 
 
+
+
 #------------------------------------------------------------------------------
 class Category(MPTTModel):
     name = models.CharField(max_length=50, unique=True, verbose_name = "نام")
@@ -27,6 +29,25 @@ class Category(MPTTModel):
 
     def __str__(self):
         return str(self.name)
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class Attributes(models.Model):
+    name = models.CharField(max_length=60, verbose_name='ویژگی')
+
+    def __str__(self):
+        return str(self.name)
+
+    class Meta:
+        verbose_name = "ویژگی"
+        verbose_name_plural = "ویژگی ها"
+
 
 
 
@@ -85,6 +106,7 @@ class Shop(models.Model):
 
 
 
+
 #------------------------------------------------------------------------------
 class Product(models.Model):
     approved = models.BooleanField(default=False, verbose_name = "تایید شده")
@@ -119,9 +141,6 @@ class Product(models.Model):
         verbose_name_plural = "محصولات"
 
 
-
-
-
 #------------------------------------------------------------------------------
 class ProductImgs(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='productImg',  verbose_name = "محصول")
@@ -150,12 +169,12 @@ class ShopProducts(models.Model):
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='Shop',  verbose_name = "فروشگاه")
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product',  verbose_name = "محصول")
     internal_code = models.CharField(max_length=50, null=True, blank=True, verbose_name = "کد داخلی محصول")
-    qty = models.IntegerField(verbose_name = "تعداد")
-    retail_price = models.IntegerField(verbose_name = "قیمت خرده فروشی")
-    medium_volume_price = models.IntegerField(verbose_name = "قیمت فروش با حجم متوسط")
-    min_medium_num = models.IntegerField(verbose_name = "حداقل تعداد فروش با حجم متوسط")
-    wholesale_price = models.IntegerField(verbose_name = "قیمت عمده فروشی")
-    min_wholesale_num = models.IntegerField(verbose_name = "حداقل تعداد عمده فروشی")
+    qty = models.IntegerField(default=0, verbose_name = "تعداد")
+    retail_price = models.IntegerField(default=0, verbose_name = "قیمت خرده فروشی")
+    medium_volume_price = models.IntegerField(default=0, verbose_name = "قیمت فروش با حجم متوسط")
+    min_medium_num = models.IntegerField(default=0, verbose_name = "حداقل تعداد فروش با حجم متوسط")
+    wholesale_price = models.IntegerField(default=0, verbose_name = "قیمت عمده فروشی")
+    min_wholesale_num = models.IntegerField(default=0, verbose_name = "حداقل تعداد عمده فروشی")
 
     def __str__(self):
         return str(self.shop.name)
@@ -168,26 +187,6 @@ class ShopProducts(models.Model):
 
 
 
-
-
-
-
-
-
-
-
-
-
-#------------------------------------------------------------------------------
-class Attributes(models.Model):
-    name = models.CharField(max_length=60, verbose_name='ویژگی')
-
-    def __str__(self):
-        return str(self.name)
-
-    class Meta:
-        verbose_name = "ویژگی"
-        verbose_name_plural = "ویژگی ها"
 
 
 
@@ -240,6 +239,13 @@ class ProductColor(models.Model):
     class Meta:
         verbose_name = "رنگ محصول"
         verbose_name_plural = "رنگ محصولات"
+
+
+
+
+
+
+
 
 
 

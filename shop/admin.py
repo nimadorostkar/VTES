@@ -49,7 +49,6 @@ admin.site.register(models.Category, DraggableMPTTAdmin,
 class AttributesAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ['name',]
-    #inlines = [ AttrValueInline, ]
 admin.site.register(models.Attributes, AttributesAdmin)
 
 
@@ -91,9 +90,9 @@ class ProductColorInline(admin.TabularInline):
     extra = 1
 
 class ShopProductsAdmin(admin.ModelAdmin):
-    list_display = ('shop', 'product', 'available')
+    list_display = ('shop', 'qty', 'internal_code', 'product', 'available')
     list_filter = ("available", "shop")
-    search_fields = ['shop__name', 'product__name']
+    search_fields = ['shop__name', 'product__name', 'internal_code']
     inlines = [ProductAttrInline, ProductColorInline]
 
 admin.site.register(models.ShopProducts, ShopProductsAdmin)
