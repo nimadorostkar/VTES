@@ -2,7 +2,7 @@ from django.contrib import admin
 from mptt.admin import MPTTModelAdmin, DraggableMPTTAdmin, TreeRelatedFieldListFilter
 from django.contrib.admin.models import LogEntry
 from . import models
-from .models import Category, Shop, Product, Attributes, ProductAttr, ProductImgs, ProductColor
+from .models import Category, Shop, Product, ShopProducts, Attributes, ProductAttr, ProductImgs, ProductColor
 
 
 
@@ -58,29 +58,45 @@ admin.site.register(models.Attributes, AttributesAdmin)
 
 
 
+class ProductImgsInline(admin.TabularInline):
+    model = ProductImgs
+    extra = 1
+
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ('img_tag', 'name', 'category', 'date_created','approved')
+    list_filter = ("category", "date_created", "approved")
+    search_fields = ['name', 'code']
+    inlines = [ProductImgsInline]
+
+admin.site.register(models.Product, ProductAdmin)
+
+
+
+
+
+
+
+
+
+
+
+
 #------------------------------------------------------------------------------
 class ProductAttrInline(admin.TabularInline):
     model = ProductAttr
     extra = 1
 
-class ProductImgsInline(admin.TabularInline):
-    model = ProductImgs
-    extra = 1
-
-#------------------------------------------------------------------------------
 class ProductColorInline(admin.TabularInline):
     model = ProductColor
     extra = 1
 
-class ProductAdmin(admin.ModelAdmin):
-    list_display = ('img_tag', 'name', 'provider_shop', 'retail_price', 'category', 'date_created', 'available','approved')
-    list_filter = ("category", "date_created", "available", "approved", "provider_shop")
-    search_fields = ['name', 'code']
-    inlines = [ ProductAttrInline, ProductImgsInline, ProductColorInline ]
+class ShopProductsAdmin(admin.ModelAdmin):
+    list_display = ('shop', 'product', 'available')
+    list_filter = ("available", "shop")
+    search_fields = ['shop__name', 'product__name']
+    inlines = [ProductAttrInline, ProductColorInline]
 
-admin.site.register(models.Product, ProductAdmin)
-
-
+admin.site.register(models.ShopProducts, ShopProductsAdmin)
 
 
 

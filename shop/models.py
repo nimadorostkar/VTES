@@ -88,18 +88,10 @@ class Shop(models.Model):
 #------------------------------------------------------------------------------
 class Product(models.Model):
     approved = models.BooleanField(default=False, verbose_name = "تایید شده")
-    available = models.BooleanField(default=True, verbose_name = "موجود")
-    provider_shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='shop', verbose_name = "فروشگاه ارائه دهنده")
     code = models.CharField(max_length=50, null=True, blank=True, verbose_name = "کد محصول")
-    internal_code = models.CharField(max_length=50, null=True, blank=True, verbose_name = "کد داخلی محصول")
+    irancode = models.CharField(max_length=50, null=True, blank=True, verbose_name = "ایران کد")
     name = models.CharField(max_length=80, verbose_name = "نام محصول")
     banner = models.ImageField(default='products/default.png', upload_to='products', verbose_name = "تصویر")
-    retail_price = models.IntegerField(verbose_name = "قیمت خرده فروشی")
-    medium_volume_price = models.IntegerField(verbose_name = "قیمت فروش با حجم متوسط")
-    min_medium_num = models.IntegerField(verbose_name = "حداقل تعداد فروش با حجم متوسط")
-    wholesale_price = models.IntegerField(verbose_name = "قیمت عمده فروشی")
-    min_wholesale_num = models.IntegerField(verbose_name = "حداقل تعداد عمده فروشی")
-    qty = models.IntegerField(verbose_name = "تعداد")
     brand = models.CharField(max_length=50, null=True, blank=True, verbose_name = "برند محصول")
     link = models.URLField(max_length=200, null=True, blank=True, verbose_name = "لینک محصول")
     category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.CASCADE, related_name='product_category', verbose_name = "دسته بند")
@@ -130,9 +122,6 @@ class Product(models.Model):
 
 
 
-
-
-
 #------------------------------------------------------------------------------
 class ProductImgs(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='productImg',  verbose_name = "محصول")
@@ -147,6 +136,37 @@ class ProductImgs(models.Model):
     class Meta:
         verbose_name = "تصاویر محصول"
         verbose_name_plural = "تصاویر محصولات"
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class ShopProducts(models.Model):
+    available = models.BooleanField(default=True, verbose_name = "موجود")
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='Shop',  verbose_name = "فروشگاه")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product',  verbose_name = "محصول")
+    internal_code = models.CharField(max_length=50, null=True, blank=True, verbose_name = "کد داخلی محصول")
+    qty = models.IntegerField(verbose_name = "تعداد")
+    retail_price = models.IntegerField(verbose_name = "قیمت خرده فروشی")
+    medium_volume_price = models.IntegerField(verbose_name = "قیمت فروش با حجم متوسط")
+    min_medium_num = models.IntegerField(verbose_name = "حداقل تعداد فروش با حجم متوسط")
+    wholesale_price = models.IntegerField(verbose_name = "قیمت عمده فروشی")
+    min_wholesale_num = models.IntegerField(verbose_name = "حداقل تعداد عمده فروشی")
+
+    def __str__(self):
+        return str(self.shop.name)
+
+    class Meta:
+        verbose_name = "محصول فروشگاه"
+        verbose_name_plural = "محصولات فروشگاه"
+
+
+
+
 
 
 
@@ -177,7 +197,7 @@ class Attributes(models.Model):
 
 #------------------------------------------------------------------------------
 class ProductAttr(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_attr',  verbose_name = "محصول مربوطه")
+    product = models.ForeignKey(ShopProducts, on_delete=models.CASCADE, related_name='product_attr',  verbose_name = "محصول مربوطه")
     attribute = models.ForeignKey(Attributes, on_delete=models.CASCADE, verbose_name='ویژگی')
     value = models.CharField(max_length=60, verbose_name='مقدار')
 
@@ -204,7 +224,7 @@ class ProductAttr(models.Model):
 
 #------------------------------------------------------------------------------
 class ProductColor(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_color',  verbose_name = "محصول مربوطه")
+    product = models.ForeignKey(ShopProducts, on_delete=models.CASCADE, related_name='product_color',  verbose_name = "محصول مربوطه")
     color = ColorField(default='#BFBFBF', verbose_name='رنگ')
 
     def __str__(self):
