@@ -46,6 +46,7 @@ admin.site.register(models.Category, DraggableMPTTAdmin,
 
 
 
+#------------------------------------------------------------------------------
 class AttributesAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ['name',]
@@ -57,6 +58,7 @@ admin.site.register(models.Attributes, AttributesAdmin)
 
 
 
+#------------------------------------------------------------------------------
 class ProductImgsInline(admin.TabularInline):
     model = ProductImgs
     extra = 1

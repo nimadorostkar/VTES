@@ -106,7 +106,6 @@ class Shop(models.Model):
 
 
 
-
 #------------------------------------------------------------------------------
 class Product(models.Model):
     approved = models.BooleanField(default=False, verbose_name = "تایید شده")
@@ -123,9 +122,6 @@ class Product(models.Model):
 
     def __str__(self):
         return str(self.name)
-
-    def provider_shop_name(self):
-        return str(self.provider_shop.name)
 
     def category_name(self):
         return str(self.category.name)
