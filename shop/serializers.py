@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Shop, Product, Category, Attributes, ProductAttr, ProductImgs
+from .models import Shop, Product, Category, Attributes, ProductAttr, ProductImgs, ShopProducts
 
 
 
@@ -66,6 +66,29 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class SearchSerializer(serializers.Serializer):
     q = serializers.CharField(max_length=64, allow_null=False)
+
+
+
+
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class ShopProductsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShopProducts
+        fields = ('id' ,'available', 'shop','product', 'internal_code', 'qty', 'retail_price', 'medium_volume_price', 'min_medium_num', 'wholesale_price', 'min_wholesale_num')
+
+
+
+
+
+
 
 
 
