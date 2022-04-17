@@ -340,8 +340,8 @@ class ShopProducts(GenericAPIView):
     ordering_fields = ['id']
 
     def get(self, request, format=None):
-        queryset = ShopProducts.objects.all()
-        query = self.filter_queryset(ShopProducts.objects.all())
+        queryset = models.ShopProducts.objects.all()
+        query = self.filter_queryset(models.ShopProducts.objects.all())
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -360,12 +360,12 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
     serializer_class = ShopProductsSerializer
 
     def get(self, request, *args, **kwargs):
-        shop_product = get_object_or_404(ShopProducts, id=self.kwargs["id"])
+        shop_product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
         serializer = ShopProductsSerializer(shop_product)
         return Response(serializer.data)
 
     def put(self, request, *args, **kwargs):
-        shop_product = get_object_or_404(ShopProducts, id=self.kwargs["id"])
+        shop_product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
         serializer = ShopProductsSerializer(shop_product, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -373,7 +373,7 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
         return Response(serializer.data)
 
     def delete(self, request, *args, **kwargs):
-        shop_product = get_object_or_404(ShopProducts, id=self.kwargs["id"])
+        shop_product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
         shop_product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
