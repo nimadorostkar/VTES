@@ -196,9 +196,9 @@ class Products(GenericAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['provider_shop', 'category', 'approved', 'available', 'brand']
+    filterset_fields = ['category', 'approved', 'brand']
     search_fields = ['name', 'code', 'description']
-    ordering_fields = ['id', 'price', 'qty', 'date_created']
+    ordering_fields = ['id', 'date_created']
 
     def get(self, request, format=None):
         queryset = Product.objects.all()
