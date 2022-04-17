@@ -65,6 +65,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ('img_tag', 'name', 'category', 'date_created','approved')
     list_filter = ("category", "date_created", "approved")
     search_fields = ['name', 'code']
+    raw_id_fields = ('category'),
     inlines = [ProductImgsInline]
 
 admin.site.register(models.Product, ProductAdmin)
@@ -93,6 +94,7 @@ class ShopProductsAdmin(admin.ModelAdmin):
     list_display = ('shop', 'qty', 'internal_code', 'product', 'available')
     list_filter = ("available", "shop")
     search_fields = ['shop__name', 'product__name', 'internal_code']
+    raw_id_fields = ('shop','product')
     inlines = [ProductAttrInline, ProductColorInline]
 
 admin.site.register(models.ShopProducts, ShopProductsAdmin)
