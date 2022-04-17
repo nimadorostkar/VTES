@@ -356,25 +356,25 @@ class ShopProducts(GenericAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class ProductItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
-    serializer_class = ProductSerializer
+class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
+    serializer_class = ShopProductsSerializer
 
     def get(self, request, *args, **kwargs):
-        product = get_object_or_404(Product, id=self.kwargs["id"])
-        serializer = ProductSerializer(product)
+        shop_product = get_object_or_404(ShopProducts, id=self.kwargs["id"])
+        serializer = ShopProductsSerializer(shop_product)
         return Response(serializer.data)
 
     def put(self, request, *args, **kwargs):
-        product = get_object_or_404(Product, id=self.kwargs["id"])
-        serializer = ProductSerializer(product, data=request.data)
+        shop_product = get_object_or_404(ShopProducts, id=self.kwargs["id"])
+        serializer = ShopProductsSerializer(shop_product, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.data)
 
     def delete(self, request, *args, **kwargs):
-        product = get_object_or_404(Product, id=self.kwargs["id"])
-        product.delete()
+        shop_product = get_object_or_404(ShopProducts, id=self.kwargs["id"])
+        shop_product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
