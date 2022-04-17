@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
-from .serializers import ShopSerializer, ProductSerializer, CategorySerializer, ProductAttrSerializer, SearchSerializer, ProductImgsSerializer
+from .serializers import ShopSerializer, ProductSerializer, CategorySerializer, ProductAttrSerializer, SearchSerializer, ProductImgsSerializer, ShopProductsSerializer
 from rest_framework import viewsets, filters, status, pagination, mixins
-from .models import Shop, Product, Category , ProductAttr, ProductImgs
+from .models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
@@ -196,9 +196,9 @@ class Products(GenericAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['provider_shop', 'category', 'approved', 'available', 'brand']
+    filterset_fields = ['category', 'approved', 'brand']
     search_fields = ['name', 'code', 'description']
-    ordering_fields = ['id', 'price', 'qty', 'date_created']
+    ordering_fields = ['id', 'date_created']
 
     def get(self, request, format=None):
         queryset = Product.objects.all()
@@ -318,6 +318,64 @@ class ProductImg(GenericAPIView):
 
 
 
+
+
+
+
+
+
+
+
+
+
+# ------------------------------------------------------- Products ------------
+
+class ShopProducts(GenericAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = ShopProductsSerializer
+    queryset = ShopProducts.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['shop', 'product', 'available']
+    search_fields = ['shop__name', 'product__name', 'internal_code']
+    ordering_fields = ['id']
+
+    def get(self, request, format=None):
+        queryset = models.ShopProducts.objects.all()
+        query = self.filter_queryset(models.ShopProducts.objects.all())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = ShopProductsSerializer(query, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = ShopProductsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
+    serializer_class = ShopProductsSerializer
+
+    def get(self, request, *args, **kwargs):
+        shop_product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
+        serializer = ShopProductsSerializer(shop_product)
+        return Response(serializer.data)
+
+    def put(self, request, *args, **kwargs):
+        shop_product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
+        serializer = ShopProductsSerializer(shop_product, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data)
+
+    def delete(self, request, *args, **kwargs):
+        shop_product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
+        shop_product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 
