@@ -66,6 +66,7 @@ class Login(APIView):
 
 
 
+
 # ------------------------------------------------------- verifyView ---------------
 
 class Verify(APIView):
@@ -184,16 +185,12 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
 
 
 # --------------------------------------------------------- logout ------------
-
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def Logout(request):
     request.user.auth_token.delete()
     logout(request)
     return Response('User Logged out successfully', status=status.HTTP_401_UNAUTHORIZED)
-
-
-
 
 
 
