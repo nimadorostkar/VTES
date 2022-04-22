@@ -15,7 +15,7 @@ from colorfield.fields import ColorField
 
 
 #------------------------------------------------------------------------------
-class Category(MPTTModel):
+class Category(MPTTModel): #nimaaaaaaa
     name = models.CharField(max_length=50, unique=True, verbose_name = "نام")
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='والد', verbose_name = "والد")
 
