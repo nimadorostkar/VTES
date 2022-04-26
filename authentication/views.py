@@ -34,7 +34,7 @@ class Login(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, **kwargs):
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response('لطفا اطلاعات ورود را وارد کنید', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
         serializer = serializers.RequestOTPSerializer(data=request.data)
