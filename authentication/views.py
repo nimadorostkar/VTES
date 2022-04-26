@@ -234,10 +234,12 @@ class Register(APIView):
                 user.company = data['company']
                 user.email = data['email']
                 user.address = data['address']
+                user.referral_code = data['referral_code']
             else:
                 user.mobile = data['mobile']
                 user.first_name = data['first_name']
                 user.last_name = data['last_name']
+                user.referral_code = data['referral_code']
 
             # send otp
             otp = helper.get_random_otp()
