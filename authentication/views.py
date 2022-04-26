@@ -41,7 +41,7 @@ class Login(APIView):
         if serializer.is_valid():
             data = serializer.validated_data
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data = serializer.errors)
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data = serializer.errors)
 
         try:
             mobile = data['mobile']
@@ -50,7 +50,7 @@ class Login(APIView):
             if helper.check_send_otp(user.mobile):
                 # send otp
                 #otp = helper.get_random_otp()
-                otp = 1234
+                otp = 12345
                 print(otp)
                 #helper.send_otp(mobile, otp)
                 helper.send_otp_soap(mobile, otp)
@@ -59,7 +59,7 @@ class Login(APIView):
                 user.save()
                 return Response('کد تایید {1} به شماره {0} ارسال شد'.format(data['mobile'],otp) , status=status.HTTP_200_OK)
             else:
-                return Response('کد ارسال شده، لطفا ۲ دقیقه دیگر اقدام نمایید' , status=status.HTTP_400_BAD_REQUEST)
+                return Response('کد ارسال شده، لطفا ۲ دقیقه دیگر اقدام نمایید' , status=status.HTTP_408_REQUEST_TIMEOUT)
 
         except User.DoesNotExist:
             return Response('کاربری با شماره {} یافت نشد، لطفا ثبت نام کنید'.format(data['mobile']) , status=status.HTTP_400_BAD_REQUEST)
@@ -81,7 +81,7 @@ class Verify(APIView):
         if serializer.is_valid():
             data = serializer.validated_data
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data = serializer.errors)
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data = serializer.errors)
 
         mobile = data['mobile']
         user = User.objects.get(mobile=mobile)
@@ -89,7 +89,7 @@ class Verify(APIView):
 
         # check otp expiration
         if not helper.check_otp_expiration(user.mobile):
-            return Response(data="OTP is expired, please try again.", status=status.HTTP_401_UNAUTHORIZED)
+            return Response(data="OTP is expired, please try again.", status=status.HTTP_408_REQUEST_TIMEOUT)
 
         if user.otp != int(otp):
             return Response(data="OTP is incorrect.", status=status.HTTP_401_UNAUTHORIZED)
@@ -217,7 +217,8 @@ class Register(APIView):
         if serializer.is_valid():
             data = serializer.validated_data
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data = serializer.errors)
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data = serializer.errors)
+
 
         try:
             mobile = data['mobile']
