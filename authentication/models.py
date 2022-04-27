@@ -16,7 +16,10 @@ class User(AbstractUser):
     address = models.CharField(max_length=200, null=True, blank=True, verbose_name = "آدرس")
     email_verification = models.BooleanField(default=False, verbose_name = "تایید ایمیل")
     referral_code = models.CharField(max_length=20, null=True, blank=True, verbose_name = "کد معرف")
-    #img
+    image = models.ImageField(default='userimg/default.png', upload_to='userimg', verbose_name = "تصویر")
+
+    def img(self):
+        return format_html("<img width=30 src='{}'>".format(self.image.url))
 
     objects = UserManager()
 
