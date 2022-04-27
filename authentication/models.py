@@ -16,6 +16,7 @@ class User(AbstractUser):
     address = models.CharField(max_length=200, null=True, blank=True, verbose_name = "آدرس")
     email_verification = models.BooleanField(default=False, verbose_name = "تایید ایمیل")
     referral_code = models.CharField(max_length=20, null=True, blank=True, verbose_name = "کد معرف")
+    #img
 
     objects = UserManager()
 
