@@ -3,6 +3,7 @@ from .views import Login, Verify, Users, Profile, Logout, Register
 
 
 
+
 urlpatterns = [
     path('login', Login.as_view(), name='login'),
     path('verify', Verify.as_view(), name='verify'),
