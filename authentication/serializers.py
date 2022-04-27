@@ -25,6 +25,12 @@ class UsersSerializer(serializers.ModelSerializer):
 
 
 
+class ProfileImgSerializer(serializers.Serializer):
+    image = serializers.ImageField(max_length=None,use_url=True)
+
+
+
+
 
 
 

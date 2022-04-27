@@ -6,7 +6,7 @@ from .models import User
 from . import forms
 from . import helper
 from django.contrib import messages
-from .serializers import RequestOTPSerializer, verifyOTPSerializer, UsersSerializer, registerSerializer
+from .serializers import RequestOTPSerializer, verifyOTPSerializer, UsersSerializer, registerSerializer, ProfileImgSerializer
 from rest_framework import viewsets, filters, status, pagination, mixins
 from django_filters.rest_framework import DjangoFilterBackend
 from django.views import generic
@@ -177,6 +177,21 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
         profile = get_object_or_404(User, id=self.request.user.id)
         profile.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+    def post(self, request, *args, **kwargs):
+        try:
+            file = request.data['file']
+        except KeyError:
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+        profile = get_object_or_404(User, id=self.request.user.id)
+        profile.image = file
+        profile.save()
+        return Response(status=status.HTTP_200_OK)
+
+
+
+
 
 
 
