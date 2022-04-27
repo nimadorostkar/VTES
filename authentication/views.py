@@ -34,7 +34,7 @@ class Login(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, **kwargs):
-        return Response('لطفا اطلاعات ورود را وارد کنید', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def post(self, request):
         serializer = serializers.RequestOTPSerializer(data=request.data)
@@ -74,7 +74,7 @@ class Verify(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, **kwargs):
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def post(self, request):
         serializer = serializers.verifyOTPSerializer(data=request.data)
@@ -89,10 +89,10 @@ class Verify(APIView):
 
         # check otp expiration
         if not helper.check_otp_expiration(user.mobile):
-            return Response(data="OTP is expired, please try again.", status=status.HTTP_408_REQUEST_TIMEOUT)
+            return Response(data="کد منقضی شده است، لطفا دوباره امتحان کنید", status=status.HTTP_408_REQUEST_TIMEOUT)
 
         if user.otp != int(otp):
-            return Response(data="OTP is incorrect.", status=status.HTTP_401_UNAUTHORIZED)
+            return Response(data="کد اشتباه است", status=status.HTTP_417_EXPECTATION_FAILED)
 
         user.is_active = True
         user.save()
@@ -163,7 +163,7 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
     def get(self, request, *args, **kwargs):
         profile = get_object_or_404(User, id=self.request.user.id)
         serializer = UsersSerializer(profile)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
         profile = get_object_or_404(User, id=self.request.user.id)
@@ -210,7 +210,7 @@ class Register(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, **kwargs):
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def post(self, request):
         serializer = serializers.registerSerializer(data=request.data)
@@ -223,7 +223,7 @@ class Register(APIView):
         try:
             mobile = data['mobile']
             user = User.objects.get(mobile=mobile)
-            return Response('This phone number is already registered', status=status.HTTP_400_BAD_REQUEST)
+            return Response('این شماره تلفن قبلا ثبت شده است', status=status.HTTP_400_BAD_REQUEST)
 
         except User.DoesNotExist:
             user=User()
