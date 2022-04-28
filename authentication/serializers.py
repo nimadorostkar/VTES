@@ -12,7 +12,7 @@ class RequestOTPSerializer(serializers.Serializer):
 
 class verifyOTPSerializer(serializers.Serializer):
     mobile = serializers.CharField(max_length=64, allow_null=False)
-    otp = serializers.CharField(max_length=4, allow_null=False)
+    otp = serializers.CharField(max_length=5, allow_null=False)
 
 
 
