@@ -19,6 +19,7 @@ from . import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
+
 from shop.models import Shop
 
 
@@ -98,11 +99,13 @@ class Verify(APIView):
         print('API Auth Token: ', token.key)
         print('Created New Token:', created)
 
+        user_shops = Shop.objects.filter(user=user)
+        if user_shops.exists():
+            has_a_shop = True
+        else:
+            has_a_shop = False
 
-        print('----------------------------')
-        print( Shop.objects.filter(user=user) )
-
-        user_data={"id":user.id, "first_name":user.first_name, "last_name":user.last_name, "image":user.image, "mobile":user.mobile, "is_legal":user.is_legal, "company":user.company, "token": token.key}
+        user_data={"id":user.id, "first_name":user.first_name, "last_name":user.last_name, "image":user.image.url, "mobile":user.mobile, "is_legal":user.is_legal, "has_a_shop":has_a_shop, "company":user.company, "token": token.key}
 
         login(request, user)
         return Response(user_data, status=status.HTTP_200_OK)
