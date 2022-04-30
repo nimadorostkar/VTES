@@ -19,7 +19,6 @@ from . import serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
-
 from shop.models import Shop
 
 
