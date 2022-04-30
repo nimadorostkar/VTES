@@ -48,8 +48,9 @@ class Login(APIView):
                 # send otp
                 otp = helper.get_random_otp()
                 print(otp)
-                #helper.send_otp(mobile, otp)
-                helper.send_otp_soap(mobile, otp)
+                helper.send_otp(mobile, otp)
+                #helper.send_otp_soap(mobile, otp)
+
                 # save otp
                 user.otp = otp
                 user.save()
@@ -81,7 +82,7 @@ class Verify(APIView):
 
         mobile = data['mobile']
         user = User.objects.get(mobile=mobile)
-        otp = data['otp'] 
+        otp = data['otp']
 
         # check otp expiration
         if not helper.check_otp_expiration(user.mobile):

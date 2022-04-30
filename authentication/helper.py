@@ -17,7 +17,7 @@ def send_otp(mobile, otp):
     try:
         api = KavenegarAPI(Kavenegar_API)
         params = {
-            'sender': '1000596446',  # optional
+            #'sender': '1000596446',  # optional
             'receptor': mobile,  # multiple mobile number, split by comma
             'message': 'Your OTP is {}'.format(otp),
         }
@@ -32,10 +32,15 @@ def send_otp(mobile, otp):
 
 
 
+
+
+
+
+
 @background(schedule=10)
 def send_otp_soap(mobile, otp):
 
-    time.sleep(10)
+    #time.sleep(10)
     client = Client('http://api.kavenegar.com/soap/v1.asmx?WSDL')
     receptor = [mobile, ]
 
@@ -47,14 +52,14 @@ def send_otp_soap(mobile, otp):
     api_key = Kavenegar_API
     message = 'Your OTP is {}'.format(otp)
     sender = '1000596446'
-    status = 0
+    status = 1
     status_message = ''
 
     result = client.service.SendSimpleByApikey(api_key,
                                                sender,
                                                message,
                                                receptors,
-                                               0,
+                                               1,
                                                1,
                                                status,
                                                status_message)
