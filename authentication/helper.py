@@ -63,7 +63,7 @@ def send_otp_soap(mobile, otp):
 
 
 def get_random_otp():
-    return  randint(1000, 9999)
+    return  randint(10000, 99999)
 
 '''
 def generate_otp():
