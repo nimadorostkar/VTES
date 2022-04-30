@@ -81,7 +81,7 @@ class Verify(APIView):
 
         mobile = data['mobile']
         user = User.objects.get(mobile=mobile)
-        otp = data['otp']
+        otp = data['otp'] 
 
         # check otp expiration
         if not helper.check_otp_expiration(user.mobile):
