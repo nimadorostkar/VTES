@@ -121,7 +121,7 @@ class Verify(APIView):
 
 
 
- 
+
 
 
 # ------------------------------------------------------- Users ---------------
@@ -143,14 +143,14 @@ class Users(GenericAPIView):
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
         serializer = UsersSerializer(query, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request, format=None):
+    '''def post(self, request, format=None):
         serializer = UsersSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)'''
 
 
 
