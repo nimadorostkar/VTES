@@ -208,7 +208,7 @@ MEDIA_URL = '/media/' # Public URL at the browser
 
 AUTH_USER_MODEL = 'authentication.User'
 
-Kavenegar_API = '*****************************************************'
+Kavenegar_API = '4C51383174462B314F3257367578414D6B6B772F4D4953632F654F4D646862597A476A636E7265333334383D'
 
 
 
