@@ -127,7 +127,7 @@ class Verify(APIView):
 # ------------------------------------------------------- Users ---------------
 
 class Users(GenericAPIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser] 
     serializer_class = UsersSerializer
     queryset = User.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
