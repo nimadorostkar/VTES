@@ -12,12 +12,14 @@ import string
 
 
 
+
+
 def send_otp(mobile, otp):
     mobile = [mobile, ]
     try:
         api = KavenegarAPI(Kavenegar_API)
         params = {
-            #'sender': '1000596446',  # optional
+            'sender': '1000596446',  # optional
             'receptor': mobile,  # multiple mobile number, split by comma
             'message': 'Your OTP is {}'.format(otp),
         }
@@ -103,6 +105,6 @@ def check_send_otp(mobile):
     otp_time = user.otp_create_time
     diff_time = now - otp_time
 
-    if diff_time.seconds > 120:
+    if diff_time.seconds > 2:   #120
         return True
     return False
