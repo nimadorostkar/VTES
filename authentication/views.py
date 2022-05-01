@@ -46,9 +46,10 @@ class Login(APIView):
 
             if helper.check_send_otp(user.mobile):
                 # send otp
-                otp = helper.get_random_otp()
+                #otp = helper.get_random_otp()
+                otp = '12345'
                 print(otp)
-                helper.send_otp(mobile, otp)
+                #helper.send_otp(mobile, otp)
                 #helper.send_otp_soap(mobile, otp)
 
                 # save otp
