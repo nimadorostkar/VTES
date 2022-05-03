@@ -71,6 +71,26 @@ class AttrsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIVie
 
 
 
+
+# ---------------------------------------------------- Main Category ----------
+
+class MainCat(GenericAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name']
+    ordering_fields = ['id',]
+
+    def get(self, request, format=None):
+        query = self.filter_queryset(Category.objects.filter(mptt_level=0))
+        serializer = CategorySerializer(query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+
 # ------------------------------------------------------- Category ------------
 
 class Categories(GenericAPIView):
@@ -83,14 +103,10 @@ class Categories(GenericAPIView):
     ordering_fields = ['id',]
 
     def get(self, request, format=None):
-        queryset = Category.objects.all()
         query = self.filter_queryset(Category.objects.all())
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
         serializer = CategorySerializer(query, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
     def post(self, request, format=None):
         serializer = CategorySerializer(data=request.data)
