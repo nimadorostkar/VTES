@@ -105,6 +105,6 @@ def check_send_otp(mobile):
     otp_time = user.otp_create_time
     diff_time = now - otp_time
 
-    if diff_time.seconds > 120:
+    if diff_time.seconds > 2:  #120
         return True
     return False
