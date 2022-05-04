@@ -239,7 +239,11 @@ class ProductItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIV
     def get(self, request, *args, **kwargs):
         product = get_object_or_404(Product, id=self.kwargs["id"])
         serializer = ProductSerializer(product)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        product_img = ProductImgs.objects.filter(product=product)
+        print('---------------')
+        print(imgs.img.url)
+        data={ "product":serializer.data, "images":imgs.data }
+        return Response(data, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
         product = get_object_or_404(Product, id=self.kwargs["id"])
