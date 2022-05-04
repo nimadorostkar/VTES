@@ -195,7 +195,7 @@ class ShopProducts(models.Model):
 
 #------------------------------------------------------------------------------
 class ProductAttr(models.Model):
-    product = models.ForeignKey(ShopProducts, on_delete=models.CASCADE, related_name='product_attr',  verbose_name = "محصول مربوطه")
+    product = models.ForeignKey(ShopProducts, on_delete=models.CASCADE, related_name='product_attr',  verbose_name = "محصول فروشگاه")
     attribute = models.ForeignKey(Attributes, on_delete=models.CASCADE, verbose_name='ویژگی')
     value = models.CharField(max_length=60, verbose_name='مقدار')
 

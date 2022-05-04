@@ -387,7 +387,13 @@ class ShopProducts(GenericAPIView):
     def get(self, request, format=None):
         query = self.filter_queryset(models.ShopProducts.objects.all())
         serializer = ShopProductsSerializer(query, many=True)
-        return Response(serializer.data)
+        data = serializer.data
+
+        #attr = models.ProductAttr.objects.filter(product=query.product)
+        #for A in attr:
+            #data.append(A)
+
+        return Response(data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
         serializer = ShopProductsSerializer(data=request.data)
