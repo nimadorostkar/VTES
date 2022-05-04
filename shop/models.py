@@ -39,7 +39,7 @@ class Category(MPTTModel):
 
 #------------------------------------------------------------------------------
 class Attributes(models.Model):
-    name = models.CharField(max_length=60, verbose_name='ویژگی')
+    name = models.CharField(max_length=60, unique=True, verbose_name='ویژگی')
 
     def __str__(self):
         return str(self.name)

@@ -29,7 +29,7 @@ class Attributes(GenericAPIView):
     ordering_fields = ['id']
 
     def get(self, request, format=None):
-        query = self.filter_queryset(Attributes.objects.all())
+        query = self.filter_queryset(models.Attributes.objects.all())
         serializer = AttributesSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
