@@ -385,12 +385,7 @@ class ShopProducts(GenericAPIView):
     ordering_fields = ['id']
 
     def get(self, request, format=None):
-        queryset = models.ShopProducts.objects.all()
         query = self.filter_queryset(models.ShopProducts.objects.all())
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
         serializer = ShopProductsSerializer(query, many=True)
         return Response(serializer.data)
 
