@@ -376,7 +376,7 @@ class ProductImg(GenericAPIView):
 # ------------------------------------------------------- Products ------------
 
 class ShopProducts(GenericAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = ShopProductsSerializer
     queryset = ShopProducts.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]

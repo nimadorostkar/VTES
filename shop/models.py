@@ -169,11 +169,11 @@ class ShopProducts(models.Model):
     qty = models.IntegerField(default=0, verbose_name = "تعداد")
     CHOICES = ( ('1','1'), ('2','2'), ('3','3') )
     price_model = models.CharField(max_length=254, choices=CHOICES, verbose_name = "مدل قیمتی")
-    retail_price = models.IntegerField(default=0, verbose_name = "قیمت خرده فروشی")
-    medium_volume_price = models.IntegerField(default=0, verbose_name = "قیمت فروش با حجم متوسط")
-    min_medium_num = models.IntegerField(default=0, verbose_name = "حداقل تعداد فروش با حجم متوسط")
-    wholesale_price = models.IntegerField(default=0, verbose_name = "قیمت عمده فروشی")
-    min_wholesale_num = models.IntegerField(default=0, verbose_name = "حداقل تعداد عمده فروشی")
+    one_price = models.IntegerField(default=0, verbose_name = "قیمت تکی")
+    two_price = models.IntegerField(default=0, verbose_name = "قیمت دو قیمتی")
+    min_two_qty = models.IntegerField(default=0, verbose_name = "حداقل دو قیمتی")
+    three_price = models.IntegerField(default=0, verbose_name = "قیمت سه قیمتی")
+    min_three_qty = models.IntegerField(default=0, verbose_name = "حداقل سه قیمتی")
 
     def __str__(self):
         return str(self.shop.name)
