@@ -268,7 +268,7 @@ class Search(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, **kwargs):
-        return Response( 'please use POST method, and send query for search' , status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response( 'please use POST method, and send query for search' , status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def post(self, request, format=None):
         serializer = serializers.SearchSerializer(data=request.data)
