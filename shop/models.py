@@ -147,6 +147,7 @@ class ProductImgs(models.Model):
 
     def product_name(self):
         return str(self.product.name)
+        
 
     class Meta:
         verbose_name = "تصاویر محصول"
