@@ -147,7 +147,7 @@ class ProductImgs(models.Model):
 
     def product_name(self):
         return str(self.product.name)
-        
+
 
     class Meta:
         verbose_name = "تصاویر محصول"
@@ -204,7 +204,7 @@ class ProductAttr(models.Model):
         return str(self.attribute.name)
 
     def product_name(self):
-        return str(self.product.name)
+        return str(self.product.product.name)
 
     class Meta:
         verbose_name = "ویژگی محصول"

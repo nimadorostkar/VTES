@@ -1,7 +1,9 @@
 from django.shortcuts import render, get_object_or_404
-from .serializers import ShopSerializer, ProductSerializer, CategorySerializer, ProductAttrSerializer, SearchSerializer, ProductImgsSerializer, ShopProductsSerializer
+from .serializers import ( ShopSerializer, ProductSerializer, CategorySerializer,
+                           ProductAttrSerializer, SearchSerializer, ProductImgsSerializer,
+                           ShopProductsSerializer, AttributesSerializer )
 from rest_framework import viewsets, filters, status, pagination, mixins
-from .models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts
+from .models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts, Attributes
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
@@ -15,25 +17,47 @@ from django.db.models import Q
 
 
 
-# ------------------------------------------------------- Attributes ------------
 
+
+# ------------------------------------------------------- Attributes ------------
+class Attributes(GenericAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = AttributesSerializer
+    queryset = Attributes.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name']
+    ordering_fields = ['id']
+
+    def get(self, request, format=None):
+        query = self.filter_queryset(Attributes.objects.all())
+        serializer = AttributesSerializer(query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, format=None):
+        serializer = AttributesSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+# ------------------------------------------------------- Attributes ------------
 class Attrs(GenericAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = ProductAttrSerializer
     queryset = ProductAttr.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['value','attribute']
-    ordering_fields = ['id',]
+    ordering_fields = ['id']
 
     def get(self, request, format=None):
-        queryset = ProductAttr.objects.all()
         query = self.filter_queryset(ProductAttr.objects.all())
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
         serializer = ProductAttrSerializer(query, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
         serializer = ProductAttrSerializer(data=request.data)

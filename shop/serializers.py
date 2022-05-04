@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from .models import Shop, Product, Category, Attributes, ProductAttr, ProductImgs, ShopProducts
+from .models import ( Shop, Product, Category, Attributes,
+                      ProductAttr, ProductImgs, ShopProducts,
+                      Attributes )
 
 
 
@@ -86,6 +88,15 @@ class ShopProductsSerializer(serializers.ModelSerializer):
 
 
 
+
+
+
+
+#------------------------------------------------------------------------------
+class AttributesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attributes
+        fields = ('id', 'name')
 
 
 
