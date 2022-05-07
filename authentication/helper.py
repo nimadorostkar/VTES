@@ -8,7 +8,7 @@ import time
 from background_task import background
 import random
 import string
-
+import json
 
 
 
@@ -33,7 +33,21 @@ def send_otp(mobile, otp):
 
 
 
-
+def otpsend():
+    try:
+        api = KavenegarAPI(Kavenegar_API)
+        params = {
+          'receptor': '09031875073',
+          'template': '',
+          'token': 'hello',
+          'type': 'sms'
+          }
+        response = api.verify_lookup(params)
+        print(response)
+    except APIException as e:
+        print(e)
+    except HTTPException as e:
+        print(e)
 
 
 

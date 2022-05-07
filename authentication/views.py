@@ -50,6 +50,7 @@ class Login(APIView):
                 otp = '12345'
                 print(otp)
                 #helper.send_otp(mobile, otp)
+                helper.otpsend()
                 #helper.send_otp_soap(mobile, otp)
 
                 # save otp
