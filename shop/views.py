@@ -385,29 +385,21 @@ class ShopProducts(GenericAPIView):
 
     def get(self, request, format=None):
         query = self.filter_queryset(models.ShopProducts.objects.all())
-        serializer = ShopProductsSerializer(query, many=True)
-        data = serializer.data
-        #print("-------------------------")
-        #print(data)
 
-        #attr = models.ProductAttr.objects.all()
-        a=[]
-        for Product in data:
-            Attr = models.ProductAttr.objects.filter(product=Product)
-            #b=[]
-            #b.append()
-            a.append(Product)
+        shopProduct=[]
+        for Product in query:
+            attr = models.ProductAttr.objects.filter(product=Product)
+            attr_serializer = ProductAttrSerializer(attr, many=True)
 
-            #if Product.product == attr
-            #data.append(Attr)
-            print("-------------------------")
-            print(Product)
-        print("------------ --------- ----------- ---------")
-        print(a)
+            product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
+                  "shop":Product.shop.name,  "shopID":Product.shop.id,
+                  "available":Product.available, "internal_code":Product.internal_code, "qty":Product.qty,
+                  "price_model":Product.price_model, "one_price":Product.one_price, "two_price":Product.two_price,
+                  "min_two_qty":Product.min_two_qty, "three_price":Product.three_price, "min_three_qty":Product.min_three_qty,
+                  "attr": attr_serializer.data }
+            shopProduct.append(product)
 
-        #product={ "id":data.id, "name":data.name }
-
-        return Response(a, status=status.HTTP_200_OK)
+        return Response(shopProduct, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
         serializer = ShopProductsSerializer(data=request.data)
