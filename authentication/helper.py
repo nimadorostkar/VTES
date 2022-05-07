@@ -33,14 +33,15 @@ def send_otp(mobile, otp):
 
 
 
-def otpsend():
+def otpsend(mobile, otp):
+    mobile = [mobile, ]
     try:
-        api = KavenegarAPI(Kavenegar_API)
+        api = KavenegarAPI('4C51383174462B314F3257367578414D6B6B772F4D4953632F654F4D646862597A476A636E7265333334383D')
         params = {
-          'receptor': '09031875073',
+          'receptor': mobile,
           'template': '',
-          'token': 'hello',
-          'type': 'sms'
+          'token': otp,
+          'type': 'sms',
           }
         response = api.verify_lookup(params)
         print(response)
