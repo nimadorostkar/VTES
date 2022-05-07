@@ -14,32 +14,14 @@ import json
 
 
 
-def send_otp(mobile, otp):
-    mobile = [mobile, ]
-    try:
-        api = KavenegarAPI(Kavenegar_API)
-        params = {
-            'sender': '1000596446',  # optional
-            'receptor': mobile,  # multiple mobile number, split by comma
-            'message': 'Your OTP is {}'.format(otp),
-        }
-        response = api.sms_send(params)
-        print('OTP: ', otp)
-        print(response)
-    except APIException as e:
-        print(e)
-    except HTTPException as e:
-        print(e)
-
 
 
 def otpsend(mobile, otp):
-    mobile = [mobile, ]
     try:
-        api = KavenegarAPI('4C51383174462B314F3257367578414D6B6B772F4D4953632F654F4D646862597A476A636E7265333334383D')
+        api = KavenegarAPI(Kavenegar_API)
         params = {
           'receptor': mobile,
-          'template': '',
+          'template': 'Verify',
           'token': otp,
           'type': 'sms',
           }
@@ -49,6 +31,8 @@ def otpsend(mobile, otp):
         print(e)
     except HTTPException as e:
         print(e)
+
+
 
 
 
@@ -72,27 +56,30 @@ def send_otp_soap(mobile, otp):
     status = 1
     status_message = ''
 
-    result = client.service.SendSimpleByApikey(api_key,
-                                               sender,
-                                               message,
-                                               receptors,
-                                               1,
-                                               1,
-                                               status,
-                                               status_message)
+    result = client.service.SendSimpleByApikey(api_key, sender, message, receptors, 1, 1, status, status_message)
     print(result)
     print('OTP: ', otp)
 
 
+
+
+
+
+
+
+
 def get_random_otp():
     return  randint(10000, 99999)
-
 '''
 def generate_otp():
     rand = random.SystemRandom()
     digits = rand.choices(string.digits, k=4)
     return  ''.join(digits)
 '''
+
+
+
+
 
 
 def check_otp_expiration(mobile):
@@ -120,6 +107,6 @@ def check_send_otp(mobile):
     otp_time = user.otp_create_time
     diff_time = now - otp_time
 
-    if diff_time.seconds > 2:  #120
+    if diff_time.seconds > 120:
         return True
     return False

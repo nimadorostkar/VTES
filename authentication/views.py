@@ -46,14 +46,11 @@ class Login(APIView):
 
             if helper.check_send_otp(user.mobile):
                 # send otp
-                #otp = helper.get_random_otp()
-                otp = '12345'
+                otp = helper.get_random_otp()
                 print(otp)
-                #helper.send_otp(mobile, otp)
                 helper.otpsend(mobile, otp)
                 #helper.send_otp_soap(mobile, otp)
 
-                # save otp
                 user.otp = otp
                 user.save()
                 return Response('کد تایید {1} به شماره {0} ارسال شد'.format(data['mobile'],otp) , status=status.HTTP_200_OK)
@@ -261,18 +258,20 @@ class Register(APIView):
                 user.last_name = data['last_name']
                 user.referral_code = data['referral_code']
 
-            # send otp
-            #otp = helper.get_random_otp()
-            otp = '12345'
-            #helper.send_otp(mobile, otp)
-            helper.send_otp_soap(mobile, otp)
-            # save otp
-            print(otp)
-            user.otp = otp
-            user.is_active = False
-            user.save()
+            if helper.check_send_otp(user.mobile):
+                # send otp
+                otp = helper.get_random_otp()
+                helper.otpsend(mobile, otp)
+                helper.send_otp_soap(mobile, otp)
+                # save otp
+                print(otp)
+                user.otp = otp
+                user.is_active = False
+                user.save()
+                return Response('کد تایید به شماره {} ارسال شد'.format(user.mobile) , status=status.HTTP_200_OK)
+            else:
+                return Response('کد ارسال شده، لطفا ۲ دقیقه دیگر اقدام نمایید' , status=status.HTTP_408_REQUEST_TIMEOUT)
 
-            return Response('کد تایید به شماره {} ارسال شد'.format(user.mobile) , status=status.HTTP_200_OK)
 
 
 
