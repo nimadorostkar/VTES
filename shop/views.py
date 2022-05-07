@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .serializers import ( ShopSerializer, ProductSerializer, CategorySerializer,
                            ProductAttrSerializer, SearchSerializer, ProductImgsSerializer,
-                           ShopProductsSerializer, AttributesSerializer )
+                           ShopProductsSerializer, AttributesSerializer, ProductColorSerializer )
 from rest_framework import viewsets, filters, status, pagination, mixins
 from .models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts, Attributes
 from django_filters.rest_framework import DjangoFilterBackend
@@ -389,13 +389,14 @@ class ShopProducts(GenericAPIView):
         for Product in query:
             attr = models.ProductAttr.objects.filter(product=Product)
             attr_serializer = ProductAttrSerializer(attr, many=True)
-
+            color = models.ProductColor.objects.filter(product=Product)
+            color_serializer = ProductColorSerializer(color, many=True)
             product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
                   "shop":Product.shop.name,  "shopID":Product.shop.id,
                   "available":Product.available, "internal_code":Product.internal_code, "qty":Product.qty,
                   "price_model":Product.price_model, "one_price":Product.one_price, "two_price":Product.two_price,
                   "min_two_qty":Product.min_two_qty, "three_price":Product.three_price, "min_three_qty":Product.min_three_qty,
-                  "attr": attr_serializer.data }
+                  "attr": attr_serializer.data, "color": color_serializer.data }
             shopProduct.append(product)
         return Response(shopProduct, status=status.HTTP_200_OK)
 
@@ -416,12 +417,14 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
         serializer = ShopProductsSerializer(Product)
         attr = models.ProductAttr.objects.filter(product=Product)
         attr_serializer = ProductAttrSerializer(attr, many=True)
+        color = models.ProductColor.objects.filter(product=Product)
+        color_serializer = ProductColorSerializer(color, many=True)
         product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
               "shop":Product.shop.name,  "shopID":Product.shop.id,
               "available":Product.available, "internal_code":Product.internal_code, "qty":Product.qty,
               "price_model":Product.price_model, "one_price":Product.one_price, "two_price":Product.two_price,
               "min_two_qty":Product.min_two_qty, "three_price":Product.three_price, "min_three_qty":Product.min_three_qty,
-              "attr": attr_serializer.data }
+              "attr": attr_serializer.data, "color": color_serializer.data }
         return Response(product, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):

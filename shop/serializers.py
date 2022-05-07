@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import ( Shop, Product, Category, Attributes,
                       ProductAttr, ProductImgs, ShopProducts,
-                      Attributes )
+                      Attributes, ProductColor )
 
 
 
@@ -99,6 +99,13 @@ class AttributesSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
+
+
+#------------------------------------------------------------------------------
+class ProductColorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductColor
+        fields = ('id', 'product', 'color')
 
 
 
