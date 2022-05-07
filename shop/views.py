@@ -385,7 +385,6 @@ class ShopProducts(GenericAPIView):
 
     def get(self, request, format=None):
         query = self.filter_queryset(models.ShopProducts.objects.all())
-
         shopProduct=[]
         for Product in query:
             attr = models.ProductAttr.objects.filter(product=Product)
@@ -398,7 +397,6 @@ class ShopProducts(GenericAPIView):
                   "min_two_qty":Product.min_two_qty, "three_price":Product.three_price, "min_three_qty":Product.min_three_qty,
                   "attr": attr_serializer.data }
             shopProduct.append(product)
-
         return Response(shopProduct, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
