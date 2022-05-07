@@ -37,4 +37,4 @@ class ProfileImgSerializer(serializers.Serializer):
 class registerSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('mobile' ,'is_legal', 'first_name','last_name', 'company', 'email', 'address')
+        fields = ('mobile' ,'is_legal', 'first_name','last_name', 'company', 'email', 'address', 'referral_code')
