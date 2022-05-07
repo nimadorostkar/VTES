@@ -406,13 +406,23 @@ class ShopProducts(GenericAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = ShopProductsSerializer
 
     def get(self, request, *args, **kwargs):
-        shop_product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
-        serializer = ShopProductsSerializer(shop_product)
-        return Response(serializer.data)
+        Product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
+        serializer = ShopProductsSerializer(Product)
+        attr = models.ProductAttr.objects.filter(product=Product)
+        attr_serializer = ProductAttrSerializer(attr, many=True)
+        product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
+              "shop":Product.shop.name,  "shopID":Product.shop.id,
+              "available":Product.available, "internal_code":Product.internal_code, "qty":Product.qty,
+              "price_model":Product.price_model, "one_price":Product.one_price, "two_price":Product.two_price,
+              "min_two_qty":Product.min_two_qty, "three_price":Product.three_price, "min_three_qty":Product.min_three_qty,
+              "attr": attr_serializer.data }
+        return Response(product, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
         shop_product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
