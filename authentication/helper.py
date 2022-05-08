@@ -21,7 +21,7 @@ def otpsend(mobile, otp):
         api = KavenegarAPI(Kavenegar_API)
         params = {
           'receptor': mobile,
-          'template': 'OTPVerify',
+          'template': 'vtesotp',  #OTPVerify
           'token': otp,
           'type': 'sms',
           }
