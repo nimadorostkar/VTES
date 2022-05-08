@@ -53,7 +53,7 @@ class Login(APIView):
 
                 user.otp = otp
                 user.save()
-                return Response('کد تایید {1} به شماره {0} ارسال شد'.format(data['mobile'],otp) , status=status.HTTP_200_OK)
+                return Response('کد تایید به شماره {} ارسال شد'.format(data['mobile']) , status=status.HTTP_200_OK)
             else:
                 return Response('کد ارسال شده، لطفا ۲ دقیقه دیگر اقدام نمایید' , status=status.HTTP_408_REQUEST_TIMEOUT)
 
@@ -164,8 +164,15 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
 
     def get(self, request, *args, **kwargs):
         profile = get_object_or_404(User, id=self.request.user.id)
-        serializer = UsersSerializer(profile)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        #serializer = UsersSerializer(profile)
+        user_shops = Shop.objects.filter(user=profile)
+        if user_shops.exists():
+            has_a_shop = True
+        else:
+            has_a_shop = False
+
+        user_data={"id":profile.id, "first_name":profile.first_name, "last_name":profile.last_name, "email":profile.email, "image":profile.image.url, "mobile":profile.mobile, "is_legal":profile.is_legal, "has_a_shop":has_a_shop, "company":profile.company}
+        return Response(user_data, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
         profile = get_object_or_404(User, id=self.request.user.id)
