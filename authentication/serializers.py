@@ -20,7 +20,8 @@ class verifyOTPSerializer(serializers.Serializer):
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'mobile', 'otp', 'is_legal', 'company', 'email_verification', 'address', 'referral_code', 'image', )
+        #fields = '__all__'
 
 
 

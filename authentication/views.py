@@ -178,10 +178,9 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
     def put(self, request, *args, **kwargs):
         profile = get_object_or_404(User, id=self.request.user.id)
         serializer = UsersSerializer(profile, data=request.data)
-        #serializer.data.append(profile.password)
         if serializer.is_valid():
             serializer.save()
-            return Response(data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
 
     def delete(self, request, *args, **kwargs):
