@@ -6,12 +6,14 @@ from .models import ( Shop, Product, Category, Attributes,
 
 
 
-
+'''
 #------------------------------------------------------------------------------
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ('id', 'name', 'parent')
+'''
+
 
 
 #------------------------------------------------------------------------------
@@ -22,12 +24,11 @@ class MainCatSerializer(serializers.ModelSerializer):
 
 
 
-
 class RecursiveField(serializers.Serializer):
     def to_representation(self, value):
         serializer = self.parent.parent.__class__(value, context=self.context)
         return serializer.data
-class CSerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     children = RecursiveField(many=True)
     class Meta:
         model = Category
@@ -70,10 +71,7 @@ class ShopSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True, many=True)
     class Meta:
         model = Shop
-        fields = ('id' ,'name', 'user','user_mobile', 'phone', 'email', 'country', 'city', 'address', 'postal_code', 'lat_long', 'description','category', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram', 'date_created')
-
-
-
+        fields = ('id' ,'name', 'user','user_mobile', 'phone', 'email', 'city', 'address', 'postal_code', 'lat_long', 'description','category', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram', 'date_created')
 
 
 
@@ -83,9 +81,10 @@ class ShopSerializer(serializers.ModelSerializer):
 
 #------------------------------------------------------------------------------
 class CreateShopSerializer(serializers.ModelSerializer):
+    #category = CategorySerializer(read_only=True, many=True)
     class Meta:
         model = Shop
-        fields = ('name', 'user', 'phone', 'email', 'country', 'city', 'address', 'postal_code', 'lat_long', 'description', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram')
+        fields = ('id', 'name', 'user', 'phone', 'email', 'city', 'address', 'postal_code', 'lat_long', 'description', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram', 'category')
 
 
 

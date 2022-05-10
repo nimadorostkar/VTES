@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .serializers import ( ShopSerializer, ProductSerializer, CategorySerializer, CreateShopSerializer,
                            ProductAttrSerializer, SearchSerializer, ProductImgsSerializer, MainCatSerializer,
-                           ShopProductsSerializer, AttributesSerializer, ProductColorSerializer, CSerializer )
+                           ShopProductsSerializer, AttributesSerializer, ProductColorSerializer )
 from rest_framework import viewsets, filters, status, pagination, mixins
 from .models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts, Attributes
 from django_filters.rest_framework import DjangoFilterBackend
@@ -128,7 +128,7 @@ class Categories(GenericAPIView):
 
     def get(self, request, format=None):
         query = self.filter_queryset(Category.objects.all())
-        serializer = CSerializer(query, many=True)
+        serializer = CategorySerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

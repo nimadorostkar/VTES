@@ -65,7 +65,7 @@ class Shop(models.Model):
   email = models.EmailField(max_length=50, null=True, blank=True, verbose_name = "ایمیل")
   description = models.TextField(max_length=1000,null=True, blank=True, verbose_name = "توضیحات")
   category = models.ManyToManyField(Category, related_name='shop_category', verbose_name = "دسته بند")
-  country = models.CharField(max_length=20, null=True, blank=True, verbose_name = "کشور")
+  #country = models.CharField(max_length=20, null=True, blank=True, verbose_name = "کشور")
   city = models.CharField(max_length=20, null=True, blank=True, verbose_name = "شهر")
   address = models.CharField(max_length=200, null=True, blank=True, verbose_name = "آدرس")
   postal_code = models.CharField(max_length=20, null=True, blank=True, verbose_name = "کد پستی")
