@@ -210,11 +210,13 @@ class ShopItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView
 
     def put(self, request, *args, **kwargs):
         shop = get_object_or_404(Shop, id=self.kwargs["id"])
-        serializer = ShopSerializer(shop, data=request.data)
+        req = request.data
+        req['user'] = request.user.id
+        serializer = ShopSerializer(shop, data=req)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
         shop = get_object_or_404(Shop, id=self.kwargs["id"])
@@ -397,7 +399,8 @@ class ShopProducts(GenericAPIView):
             color_serializer = ProductColorSerializer(color, many=True)
             product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
                   "shop":Product.shop.name,  "shopID":Product.shop.id,
-                  "available":Product.available, "internal_code":Product.internal_code, "qty":Product.qty,
+                  "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand,
+                  "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
                   "price_model":Product.price_model, "one_price":Product.one_price, "two_price":Product.two_price,
                   "min_two_qty":Product.min_two_qty, "three_price":Product.three_price, "min_three_qty":Product.min_three_qty,
                   "attr": attr_serializer.data, "color": color_serializer.data }
