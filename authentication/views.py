@@ -197,7 +197,8 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
         profile = get_object_or_404(User, id=self.request.user.id)
         profile.image = file
         profile.save()
-        return Response(status=status.HTTP_200_OK)
+        data = {"image":profile.image.url}
+        return Response(data, status=status.HTTP_200_OK)
 
 
 
