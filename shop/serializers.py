@@ -14,6 +14,30 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'parent')
 
 
+#------------------------------------------------------------------------------
+class MainCatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ('id', 'name')
+
+
+
+
+class RecursiveField(serializers.Serializer):
+    def to_representation(self, value):
+        serializer = self.parent.parent.__class__(value, context=self.context)
+        return serializer.data
+class CSerializer(serializers.ModelSerializer):
+    children = RecursiveField(many=True)
+    class Meta:
+        model = Category
+        fields=('id', 'name', 'children',)
+
+
+
+
+
+
 
 
 
@@ -47,6 +71,23 @@ class ShopSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shop
         fields = ('id' ,'name', 'user','user_mobile', 'phone', 'email', 'country', 'city', 'address', 'postal_code', 'lat_long', 'description','category', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram', 'date_created')
+
+
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class CreateShopSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Shop
+        fields = ('name', 'user', 'phone', 'email', 'country', 'city', 'address', 'postal_code', 'lat_long', 'description', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram')
+
+
 
 
 

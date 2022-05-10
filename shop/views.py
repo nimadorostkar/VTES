@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
-from .serializers import ( ShopSerializer, ProductSerializer, CategorySerializer,
-                           ProductAttrSerializer, SearchSerializer, ProductImgsSerializer,
-                           ShopProductsSerializer, AttributesSerializer, ProductColorSerializer )
+from .serializers import ( ShopSerializer, ProductSerializer, CategorySerializer, CreateShopSerializer,
+                           ProductAttrSerializer, SearchSerializer, ProductImgsSerializer, MainCatSerializer,
+                           ShopProductsSerializer, AttributesSerializer, ProductColorSerializer, CSerializer )
 from rest_framework import viewsets, filters, status, pagination, mixins
 from .models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts, Attributes
 from django_filters.rest_framework import DjangoFilterBackend
@@ -107,7 +107,8 @@ class MainCat(GenericAPIView):
 
     def get(self, request, format=None):
         query = self.filter_queryset(Category.objects.filter(mptt_level=0))
-        serializer = CategorySerializer(query, many=True)
+        serializer = MainCatSerializer(query, many=True)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -127,7 +128,7 @@ class Categories(GenericAPIView):
 
     def get(self, request, format=None):
         query = self.filter_queryset(Category.objects.all())
-        serializer = CategorySerializer(query, many=True)
+        serializer = CSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -190,11 +191,14 @@ class Shops(GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
-        serializer = ShopSerializer(data=request.data)
+        shop = request.data
+        shop['user'] = request.user.id
+        serializer = CreateShopSerializer(data = shop)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ShopItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
     serializer_class = ShopSerializer
