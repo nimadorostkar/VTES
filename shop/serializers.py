@@ -124,7 +124,7 @@ class SearchSerializer(serializers.Serializer):
 class ShopProductsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShopProducts
-        fields = ('id' ,'available', 'shop','product', 'internal_code', 'qty', 'price_model', 'one_price', 'two_price', 'min_two_qty', 'three_price', 'min_three_qty')
+        fields = ('id' ,'available', 'shop','product', 'internal_code', 'qty', 'price_model', 'one_price', 'medium_volume_price', 'medium_volume_qty', 'wholesale_volume_price', 'wholesale_volume_qty')
 
 
 

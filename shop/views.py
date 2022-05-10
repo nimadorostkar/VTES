@@ -401,8 +401,8 @@ class ShopProducts(GenericAPIView):
                   "shop":Product.shop.name,  "shopID":Product.shop.id,
                   "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand,
                   "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
-                  "price_model":Product.price_model, "one_price":Product.one_price, "two_price":Product.two_price,
-                  "min_two_qty":Product.min_two_qty, "three_price":Product.three_price, "min_three_qty":Product.min_three_qty,
+                  "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
+                  "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
                   "attr": attr_serializer.data, "color": color_serializer.data }
             shopProduct.append(product)
         return Response(shopProduct, status=status.HTTP_200_OK)
