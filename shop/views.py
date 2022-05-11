@@ -3,7 +3,7 @@ from .serializers import ( ShopSerializer, ProductSerializer, CategorySerializer
                            ProductAttrSerializer, SearchSerializer, ProductImgsSerializer, MainCatSerializer,
                            ShopProductsSerializer, AttributesSerializer, ProductColorSerializer )
 from rest_framework import viewsets, filters, status, pagination, mixins
-from .models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts, Attributes
+from .models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts, Attributes, ProductColor
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
@@ -440,7 +440,7 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
         shop_product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])

@@ -121,18 +121,6 @@ class SearchSerializer(serializers.Serializer):
 
 
 #------------------------------------------------------------------------------
-class ShopProductsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ShopProducts
-        fields = ('id' ,'available', 'shop','product', 'internal_code', 'qty', 'price_model', 'one_price', 'medium_volume_price', 'medium_volume_qty', 'wholesale_volume_price', 'wholesale_volume_qty')
-
-
-
-
-
-
-
-#------------------------------------------------------------------------------
 class AttributesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attributes
@@ -146,6 +134,23 @@ class ProductColorSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductColor
         fields = ('id', 'product', 'color')
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class ShopProductsSerializer(serializers.ModelSerializer):
+    #attr = ProductAttrSerializer(many=True)
+    #color = ProductColorSerializer(many=True)
+    class Meta:
+        model = ShopProducts
+        fields = ('id' ,'available', 'shop','product', 'internal_code', 'qty', 'price_model', 'one_price', 'medium_volume_price', 'medium_volume_qty', 'wholesale_volume_price', 'wholesale_volume_qty') #, 'attr', 'color'
+
+
+
 
 
 
