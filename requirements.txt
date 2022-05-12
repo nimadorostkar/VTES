@@ -10,3 +10,4 @@ zeep
 kavenegar
 gunicorn
 django-colorfield
+django-import-export

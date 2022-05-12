@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'django_filters',
     'shop',
     'mptt',
-    'colorfield'
+    'colorfield',
+    'import_export'
 ]
 
 

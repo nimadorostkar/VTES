@@ -3,7 +3,7 @@ from mptt.admin import MPTTModelAdmin, DraggableMPTTAdmin, TreeRelatedFieldListF
 from django.contrib.admin.models import LogEntry
 from . import models
 from .models import Category, Shop, Product, ShopProducts, Attributes, ProductAttr, ProductImgs, ProductColor
-
+from import_export.admin import ImportExportModelAdmin, ImportExportMixin
 
 
 
@@ -63,7 +63,7 @@ class ProductImgsInline(admin.TabularInline):
     model = ProductImgs
     extra = 1
 
-class ProductAdmin(admin.ModelAdmin):
+class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('img_tag', 'name', 'category', 'date_created','approved')
     list_filter = ("category", "date_created", "approved")
     search_fields = ['name', 'code']
