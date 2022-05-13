@@ -451,6 +451,31 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
 
 
 
+# ------------------------------------------------ ShopProductsDelete ---------
+
+class ShopProductsDelete(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        data = request.data['products']
+        products_id = [int(x) for x in data.split(',')]
+
+        try:
+            for Q in products_id:
+                shop_product = models.ShopProducts.objects.get(id=Q)
+                if shop_product.shop.user == request.user:
+                    shop_product.delete()
+            return Response(status=status.HTTP_200_OK)
+
+        except:
+            return Response('Something went wrong please try again and check shop_products IDs', status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
 
 
 
