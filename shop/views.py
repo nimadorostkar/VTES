@@ -192,7 +192,9 @@ class Shops(GenericAPIView):
 
     def post(self, request, format=None):
         shop = request.data
+        catlist = [int(x) for x in shop['category'].split(',')]
         shop['user'] = request.user.id
+        shop['category'] = catlist
         serializer = CreateShopSerializer(data = shop)
         if serializer.is_valid():
             serializer.save()

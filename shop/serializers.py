@@ -84,7 +84,7 @@ class CreateShopSerializer(serializers.ModelSerializer):
     #category = CategorySerializer(read_only=True, many=True)
     class Meta:
         model = Shop
-        fields = ('id', 'name', 'user', 'phone', 'email', 'city', 'address', 'postal_code', 'lat_long', 'description', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram', 'category')
+        fields = ('name', 'user', 'phone', 'email', 'city', 'address', 'postal_code', 'lat_long', 'description', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram', 'category')
 
 
 
