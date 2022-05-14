@@ -34,7 +34,7 @@ class CategoryMPTTModelAdmin(MPTTModelAdmin, TreeRelatedFieldListFilter):
     mptt_indent_field = "name"
     search_fields=['name__name']
 admin.site.register(models.Category, DraggableMPTTAdmin,
-    list_display=('tree_actions', 'indented_title'),
+    list_display=('tree_actions', 'indented_title', 'id'),
     list_filter = ('parent',),
     raw_id_fields = ('parent',),
     search_fields=['name__name'],

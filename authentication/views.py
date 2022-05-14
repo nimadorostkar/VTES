@@ -218,7 +218,7 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
 def Logout(request):
     request.user.auth_token.delete()
     logout(request)
-    return Response('User Logged out successfully', status=status.HTTP_401_UNAUTHORIZED)
+    return Response('User Logged out successfully', status=status.HTTP_200_OK)
 
 
 

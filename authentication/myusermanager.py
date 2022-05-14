@@ -6,8 +6,8 @@ class UserManager(BaseUserManager):
         if not mobile:
             raise ValueError("mobile is required...!")
         user = self.model(mobile=mobile, **other_fields)
-        #user.set_password(password)
-        user.set_unusable_password()
+        user.set_password(password)
+        #user.set_unusable_password()
         user.save()
         return user
 
