@@ -192,14 +192,43 @@ class Shops(GenericAPIView):
 
     def post(self, request, format=None):
         shop = request.data
-        catlist = [int(x) for x in shop['category'].split(',')]
+        ss=Shop.objects.get(id=2)
+        print(ss)
+        #catlist = [int(x) for x in shop['category'].split(',')]
+        #cat = Category.objects.filter(id__in=catlist)
+        #print("------------")
+        #print(shop['category'])
         shop['user'] = request.user.id
-        shop['category'] = catlist
+        shop['category'] = (1,3)
         serializer = CreateShopSerializer(data = shop)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+'''
+        shop = Shop()
+        shop.name = req_data['name']
+        shop.phone = req_data['phone']
+        shop.email = req_data['email']
+        shop.city = req_data['city']
+        shop.address = req_data['address']
+        shop.postal_code = req_data['postal_code']
+        shop.lat_long = req_data['lat_long']
+        shop.logo = req_data['logo']
+        shop.cover = req_data['cover']
+        shop.description = req_data['description']
+        shop.shaba_number = req_data['shaba_number']
+        shop.card_number = req_data['card_number']
+        shop.bank_account_number = req_data['bank_account_number']
+        shop.linkedin = req_data['linkedin']
+        shop.instagram = req_data['instagram']
+        shop.whatsapp = req_data['whatsapp']
+        shop.telegram = req_data['telegram']
+        shop.category = cat
+        shop.save()
+'''
+
+
 
 
 class ShopItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
