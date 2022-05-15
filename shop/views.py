@@ -196,6 +196,15 @@ class Shops(GenericAPIView):
     def post(self, request, format=None):
         req = request.data
         req['user'] = request.user.id
+
+        print("----------------")
+        if req['logo']:
+            pass
+        else:
+            print("oooeeooo")
+
+        #print(req['logo'])
+
         serializer = ShopSerializer(data=req)
         if serializer.is_valid():
             serializer.validated_data['category'] = [int(x) for x in req['category'].split(',')]

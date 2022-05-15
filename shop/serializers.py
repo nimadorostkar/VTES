@@ -65,23 +65,12 @@ class ProductImgsSerializer(serializers.ModelSerializer):
 #------------------------------------------------------------------------------
 class ShopSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True, many=True)
+    #logo = serializers.ImageField(required = False, allow_null=True)
+    #cover = serializers.ImageField(required = False, allow_null=True)
     class Meta:
         model = Shop
         fields = ('id' ,'name', 'user','user_mobile', 'phone', 'email', 'city', 'address', 'postal_code', 'lat_long', 'description','category', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram', 'date_created')
 
-
-
-
-
-
-'''
-#------------------------------------------------------------------------------
-class CreateShopSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True, many=True)
-    class Meta:
-        model = Shop
-        fields = ('id', 'name', 'user', 'phone', 'email', 'city', 'address', 'postal_code', 'lat_long', 'description', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram', 'category')
-'''
 
 
 
