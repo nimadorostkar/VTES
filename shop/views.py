@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .serializers import ( ShopSerializer, ProductSerializer, CategorySerializer, CreateShopSerializer,
+from .serializers import ( ShopSerializer, ProductSerializer, CategorySerializer,
                            ProductAttrSerializer, SearchSerializer, ProductImgsSerializer, MainCatSerializer,
                            ShopProductsSerializer, AttributesSerializer, ProductColorSerializer )
 from rest_framework import viewsets, filters, status, pagination, mixins
@@ -14,7 +14,6 @@ from . import models
 from django.db.models import Q
 
 
-from django.core import serializers
 
 
 
@@ -191,23 +190,30 @@ class Shops(GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
-        shop = request.data
-        shop['user'] = request.user.id
-        serializer = CreateShopSerializer(data = shop)
-        if serializer.is_valid():
-            serializer.save()
-            S = Shop.objects.get(id=serializer.data['id'])
-            for Q in [int(x) for x in shop['category'].split(',')]:
-                S.category.add(Category.objects.get(id=Q))
-            S.save()
+        try:
+            shop = request.data
+            shop['user'] = request.user.id
+            serializer = ShopSerializer(data = shop)
+            if serializer.is_valid():
+                serializer.save()
+                S = Shop.objects.get(id=serializer.data['id'])
+                for Q in [int(x) for x in shop['category'].split(',')]:
+                    S.category.add(Category.objects.get(id=Q))
+                S.save()
 
-            data = {'id':S.id, 'name':S.name, 'phone':S.phone, 'email':S.email, 'city':S.city,
-                    'address':S.address, 'postal_code':S.postal_code, 'lat_long':S.lat_long,
-                    'logo':S.logo.url, 'cover':S.cover.url, 'description':S.description, 'shaba_number':S.shaba_number,
-                    'card_number':S.card_number, 'bank_account_number':S.bank_account_number, 'linkedin':S.linkedin,
-                    'instagram':S.instagram, 'whatsapp':S.whatsapp, 'telegram':S.telegram }
-            return Response(data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                data = {'id':S.id, 'name':S.name, 'phone':S.phone, 'email':S.email, 'city':S.city,
+                        'address':S.address, 'postal_code':S.postal_code, 'lat_long':S.lat_long,
+                        'logo':S.logo.url, 'cover':S.cover.url, 'description':S.description, 'shaba_number':S.shaba_number,
+                        'card_number':S.card_number, 'bank_account_number':S.bank_account_number, 'linkedin':S.linkedin,
+                        'instagram':S.instagram, 'whatsapp':S.whatsapp, 'telegram':S.telegram }
+                return Response(data, status=status.HTTP_201_CREATED)
+
+        except:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 
 
 
@@ -488,6 +494,70 @@ class ShopProductsDelete(APIView):
 
 
 
+
+
+
+
+
+
+
+
+'''
+    def post(self, request, format=None):
+        try:
+            shop = Shop()
+            shop.user = request.user
+            shop.name = request.data['name']
+            shop.phone = request.data['phone']
+            shop.email = request.data['email']
+            shop.city = request.data['city']
+            shop.address = request.data['address']
+            shop.postal_code = request.data['postal_code']
+            shop.lat_long = request.data['lat_long']
+            shop.description = request.data['description']
+            shop.logo = request.data['logo']
+            shop.cover = request.data['cover']
+            shop.shaba_number = request.data['shaba_number']
+            shop.card_number = request.data['card_number']
+            shop.bank_account_number = request.data['bank_account_number']
+            shop.instagram = request.data['instagram']
+            shop.linkedin = request.data['linkedin']
+            shop.whatsapp = request.data['whatsapp']
+            shop.telegram = request.data['telegram']
+            shop.save()
+            for Q in [int(x) for x in request.data['category'].split(',')]:
+                shop.category.add(Category.objects.get(id=Q))
+                shop.save()
+
+            data = { 'id':shop.id, 'user':shop.user, 'name':shop.name, 'phone':shop.phone, 'email':shop.email, 'city':shop.city,
+                     'address':shop.address, 'postal_code':shop.postal_code, 'lat_long':shop.lat_long,
+                     'logo':shop.logo.url, 'cover':shop.cover.url, 'description':shop.description, 'shaba_number':shop.shaba_number,
+                     'card_number':shop.card_number, 'bank_account_number':shop.bank_account_number, 'linkedin':shop.linkedin,
+                     'instagram':shop.instagram, 'whatsapp':shop.whatsapp, 'telegram':shop.telegram }
+
+
+            return Response(shop.id, status=status.HTTP_201_CREATED)
+
+        except:
+            return Response('There is a problem, please try again. Make sure all fields are submitted',status=status.HTTP_400_BAD_REQUEST)
+
+        #print(shop['category'])
+        #cat = Category.objects.filter(id__in=[int(x) for x in shop['category'].split(',')])
+        #print(cat)
+        #cat_serializer = CatSerializer(cat, many=True)
+        #print(cat_serializer)
+
+        #for Q in [int(x) for x in shop['category'].split(',')]:
+            #S.category.add(Category.objects.get(id=Q))
+
+
+        #cat = Category.objects.filter(id__in=[int(x) for x in shop['category'].split(',')])
+        #cat_serializer = ShopSerializer(data = cat)
+        #shop['category'] = cat_serializer
+        #serializer = ShopSerializer(data = shop)
+        #if serializer.is_valid():
+            #serializer.save()
+'''
 
 
 

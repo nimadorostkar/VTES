@@ -1,18 +1,7 @@
 from rest_framework import serializers
-from .models import ( Shop, Product, Category, Attributes,
-                      ProductAttr, ProductImgs, ShopProducts,
-                      Attributes, ProductColor )
+from .models import Shop, Product, Category, Attributes, ProductAttr, ProductImgs, ShopProducts, Attributes, ProductColor
 
 
-
-
-'''
-#------------------------------------------------------------------------------
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = ('id', 'name', 'parent')
-'''
 
 
 
@@ -43,6 +32,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 
+
 #------------------------------------------------------------------------------
 class ProductAttrSerializer(serializers.ModelSerializer):
     class Meta:
@@ -54,11 +44,17 @@ class ProductAttrSerializer(serializers.ModelSerializer):
 
 
 
+
+
+
 #------------------------------------------------------------------------------
 class ProductImgsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImgs
         fields = ('id', 'product', 'product_name', 'img')
+
+
+
 
 
 
@@ -78,13 +74,16 @@ class ShopSerializer(serializers.ModelSerializer):
 
 
 
-
+'''
 #------------------------------------------------------------------------------
 class CreateShopSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True, many=True)
     class Meta:
         model = Shop
         fields = ('id', 'name', 'user', 'phone', 'email', 'city', 'address', 'postal_code', 'lat_long', 'description', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram', 'category')
+'''
+
+
 
 
 
@@ -148,7 +147,6 @@ class ShopProductsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShopProducts
         fields = ('id' ,'available', 'shop','product', 'internal_code', 'qty', 'price_model', 'one_price', 'medium_volume_price', 'medium_volume_qty', 'wholesale_volume_price', 'wholesale_volume_qty') #, 'attr', 'color'
-
 
 
 
