@@ -197,15 +197,18 @@ class Shops(GenericAPIView):
             if serializer.is_valid():
                 serializer.save()
                 S = Shop.objects.get(id=serializer.data['id'])
-                for Q in [int(x) for x in shop['category'].split(',')]:
-                    S.category.add(Category.objects.get(id=Q))
-                S.save()
+                cat=[]
+                if shop['category']:
+                    for Q in [int(x) for x in shop['category'].split(',')]:
+                        S.category.add(Category.objects.get(id=Q))
+                        cat.append(Q)
+                    S.save()
 
                 data = {'id':S.id, 'name':S.name, 'phone':S.phone, 'email':S.email, 'city':S.city,
                         'address':S.address, 'postal_code':S.postal_code, 'lat_long':S.lat_long,
                         'logo':S.logo.url, 'cover':S.cover.url, 'description':S.description, 'shaba_number':S.shaba_number,
                         'card_number':S.card_number, 'bank_account_number':S.bank_account_number, 'linkedin':S.linkedin,
-                        'instagram':S.instagram, 'whatsapp':S.whatsapp, 'telegram':S.telegram }
+                        'instagram':S.instagram, 'whatsapp':S.whatsapp, 'telegram':S.telegram, 'category':cat  }
                 return Response(data, status=status.HTTP_201_CREATED)
 
         except:
