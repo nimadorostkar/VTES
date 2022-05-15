@@ -59,8 +59,8 @@ class Attributes(models.Model):
 class Shop(models.Model):
   user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profile', verbose_name = "کاربر")
   name = models.CharField(max_length=70, verbose_name = "نام فروشگاه")
-  logo = models.ImageField(default='logos/default.png', upload_to='logos', verbose_name = "لوگو فروشگاه")
-  cover = models.ImageField(default='covers/default.png', upload_to='vovers', verbose_name = "کاور فروشگاه")
+  logo = models.ImageField(default='logos/default.png', upload_to='logos', null=True, blank=True , verbose_name = "لوگو فروشگاه")
+  cover = models.ImageField(default='covers/default.png', upload_to='covers', null=True, blank=True , verbose_name = "کاور فروشگاه")
   phone = models.CharField(max_length=50, null=True, blank=True, verbose_name = "شماره تماس")
   email = models.EmailField(max_length=50, null=True, blank=True, verbose_name = "ایمیل")
   description = models.TextField(max_length=1000,null=True, blank=True, verbose_name = "توضیحات")
