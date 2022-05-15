@@ -13,9 +13,7 @@ from . import serializers
 from . import models
 from django.db.models import Q
 
-
-
-
+#from django.templatetags.static import static
 
 
 
@@ -194,23 +192,21 @@ class Shops(GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
+        self.request.POST._mutable = True
         req = request.data
         req['user'] = request.user.id
-
-        print("----------------")
-        if req['logo']:
-            pass
-        else:
-            print("oooeeooo")
-
-        #print(req['logo'])
-
         serializer = ShopSerializer(data=req)
         if serializer.is_valid():
             serializer.validated_data['category'] = [int(x) for x in req['category'].split(',')]
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        #request.FILES['logo'] = static('images/default.png')
+        #reqfile = request.FILES
+        #request.data['user'] = request.user.id
+        #reqfile['logo'] = static('images/default.png')
+        #reqfile['cover'] = static('images/default.png')
+        #, file=reqfile
 
 
 
@@ -224,10 +220,11 @@ class ShopItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
+        self.request.POST._mutable = True
         shop = get_object_or_404(Shop, id=self.kwargs["id"])
         req = request.data
         req['user'] = request.user.id
-        serializer = ShopSerializer(data=req)
+        serializer = ShopSerializer(shop, data=req)
         if serializer.is_valid():
             serializer.validated_data['category'] = [int(x) for x in req['category'].split(',')]
             serializer.save()
