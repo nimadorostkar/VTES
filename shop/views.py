@@ -209,14 +209,10 @@ class Shops(GenericAPIView):
                         'logo':S.logo.url, 'cover':S.cover.url, 'description':S.description, 'shaba_number':S.shaba_number,
                         'card_number':S.card_number, 'bank_account_number':S.bank_account_number, 'linkedin':S.linkedin,
                         'instagram':S.instagram, 'whatsapp':S.whatsapp, 'telegram':S.telegram, 'category':cat  }
-                return Response(data, status=status.HTTP_201_CREATED)
+                return Response(data, status=status.HTTP_200_OK)
 
         except:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
 
 
 
@@ -226,20 +222,48 @@ class ShopItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView
     def get(self, request, *args, **kwargs):
         shop = get_object_or_404(Shop, id=self.kwargs["id"])
         serializer = ShopSerializer(shop)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
-        shop = get_object_or_404(Shop, id=self.kwargs["id"])
-        req = request.data
-        req['user'] = request.user.id
-        serializer = ShopSerializer(shop, data=req)
-        if serializer.is_valid():
-            serializer.save()
-            for Q in [int(x) for x in req['category'].split(',')]:
-                shop.category.add(Category.objects.get(id=Q))
+        try:
+            shop = get_object_or_404(Shop, id=self.kwargs["id"])
+            shop.user = request.user
+            shop.name = request.data['name']
+            shop.phone = request.data['phone']
+            shop.email = request.data['email']
+            shop.city = request.data['city']
+            shop.address = request.data['address']
+            shop.postal_code = request.data['postal_code']
+            shop.lat_long = request.data['lat_long']
+            shop.description = request.data['description']
+            shop.logo = request.data['logo']
+            shop.cover = request.data['cover']
+            shop.shaba_number = request.data['shaba_number']
+            shop.card_number = request.data['card_number']
+            shop.bank_account_number = request.data['bank_account_number']
+            shop.instagram = request.data['instagram']
+            shop.linkedin = request.data['linkedin']
+            shop.whatsapp = request.data['whatsapp']
+            shop.telegram = request.data['telegram']
             shop.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            cat=[]
+            if request.data['category']:
+                for Q in [int(x) for x in request.data['category'].split(',')]:
+                    shop.category.add(Category.objects.get(id=Q))
+                    cat.append(Q)
+                    shop.save()
+
+            data = {'id':shop.id, 'name':shop.name, 'phone':shop.phone, 'email':shop.email, 'city':shop.city,
+                    'address':shop.address, 'postal_code':shop.postal_code, 'lat_long':shop.lat_long,
+                    'logo':shop.logo.url, 'cover':shop.cover.url, 'description':shop.description, 'shaba_number':shop.shaba_number,
+                    'card_number':shop.card_number, 'bank_account_number':shop.bank_account_number, 'linkedin':shop.linkedin,
+                    'instagram':shop.instagram, 'whatsapp':shop.whatsapp, 'telegram':shop.telegram, 'category':cat  }
+            return Response(data, status=status.HTTP_200_OK)
+        except:
+            return Response('There is a problem, please try again. Make sure all fields are submitted', status=status.HTTP_400_BAD_REQUEST)
+
+
 
     def delete(self, request, *args, **kwargs):
         shop = get_object_or_404(Shop, id=self.kwargs["id"])
@@ -248,6 +272,23 @@ class ShopItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView
 
 
 
+
+
+
+
+
+
+
+'''
+        req['user'] = request.user.id
+        serializer = ShopSerializer(shop, data=req)
+        if serializer.is_valid():
+            serializer.save()
+            for Q in [int(x) for x in req['category'].split(',')]:
+                shop.category.add(Category.objects.get(id=Q))
+            shop.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+'''
 
 
 
