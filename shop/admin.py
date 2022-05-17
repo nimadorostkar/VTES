@@ -11,8 +11,6 @@ from import_export.admin import ImportExportModelAdmin, ImportExportMixin
 
 
 
-
-
 #------------------------------------------------------------------------------
 class ShopAdmin(admin.ModelAdmin):
     list_display = ('name','short_description', 'date_created')

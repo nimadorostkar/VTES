@@ -12,8 +12,17 @@ from rest_framework.views import APIView
 from . import serializers
 from . import models
 from django.db.models import Q
+from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
+from rest_framework import pagination
 
-#from django.templatetags.static import static
+
+
+
+class CustomPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
 
 
 
@@ -201,13 +210,6 @@ class Shops(GenericAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        #request.FILES['logo'] = static('images/default.png')
-        #reqfile = request.FILES
-        #request.data['user'] = request.user.id
-        #reqfile['logo'] = static('images/default.png')
-        #reqfile['cover'] = static('images/default.png')
-        #, file=reqfile
-
 
 
 
@@ -246,20 +248,6 @@ class ShopItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView
 
 
 
-'''
-        req['user'] = request.user.id
-        serializer = ShopSerializer(shop, data=req)
-        if serializer.is_valid():
-            serializer.save()
-            for Q in [int(x) for x in req['category'].split(',')]:
-                shop.category.add(Category.objects.get(id=Q))
-            shop.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-'''
-
-
-
-
 
 
 
@@ -270,6 +258,7 @@ class ShopItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView
 class Products(GenericAPIView):
     permission_classes = [AllowAny]
     serializer_class = ProductSerializer
+    pagination_class = CustomPagination
     queryset = Product.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['category', 'approved', 'brand']
@@ -277,14 +266,14 @@ class Products(GenericAPIView):
     ordering_fields = ['id', 'date_created']
 
     def get(self, request, format=None):
-        queryset = Product.objects.all()
         query = self.filter_queryset(Product.objects.all())
-        page = self.paginate_queryset(queryset)
+        page = self.paginate_queryset(query)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
         serializer = ProductSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
     def post(self, request, format=None):
         serializer = ProductSerializer(data=request.data)
@@ -414,14 +403,40 @@ class ProductImg(GenericAPIView):
 class ShopProducts(GenericAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = ShopProductsSerializer
+    pagination_class = CustomPagination
     queryset = ShopProducts.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['shop', 'product', 'available']
-    search_fields = ['shop__name', 'product__name', 'internal_code']
-    ordering_fields = ['id']
+    search_fields = ['shop__name', 'product__name', 'product__brand', 'internal_code']
+    ordering_fields = ['id', 'product__name', 'product__code']
 
     def get(self, request, format=None):
         query = self.filter_queryset(models.ShopProducts.objects.all())
+        page = self.paginate_queryset(query)
+
+
+        
+        if page is not None:
+            shopProduct=[]
+            for Product in query:
+                attr = models.ProductAttr.objects.filter(product=Product)
+                attr_serializer = ProductAttrSerializer(attr, many=True)
+                color = models.ProductColor.objects.filter(product=Product)
+                color_serializer = ProductColorSerializer(color, many=True)
+                product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
+                      "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url,
+                      "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand,
+                      "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
+                      "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
+                      "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
+                      "attr": attr_serializer.data, "color": color_serializer.data }
+                shopProduct.append(product)
+            serializer = self.get_serializer(page, many=True)
+            print("-------------")
+            print(serializer)
+            return self.get_paginated_response(serializer.data)
+
+
         shopProduct=[]
         for Product in query:
             attr = models.ProductAttr.objects.filter(product=Product)
@@ -429,7 +444,7 @@ class ShopProducts(GenericAPIView):
             color = models.ProductColor.objects.filter(product=Product)
             color_serializer = ProductColorSerializer(color, many=True)
             product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
-                  "shop":Product.shop.name,  "shopID":Product.shop.id,
+                  "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url,
                   "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand,
                   "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
                   "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
@@ -458,7 +473,7 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
         color = models.ProductColor.objects.filter(product=Product)
         color_serializer = ProductColorSerializer(color, many=True)
         product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
-              "shop":Product.shop.name,  "shopID":Product.shop.id,
+              "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url,
               "available":Product.available, "internal_code":Product.internal_code, "qty":Product.qty,
               "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
               "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
