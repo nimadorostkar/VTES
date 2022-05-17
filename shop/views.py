@@ -267,7 +267,7 @@ class Products(GenericAPIView):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['category', 'approved', 'brand']
     search_fields = ['name', 'code', 'description']
-    ordering_fields = ['id', 'date_created']
+    ordering_fields = ['id', 'date_created', 'name', 'brand', 'code', 'approved']
 
     def get(self, request, format=None):
         query = self.filter_queryset(Product.objects.all())
@@ -412,7 +412,7 @@ class ShopProducts(GenericAPIView):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['shop', 'product', 'available']
     search_fields = ['shop__name', 'product__name', 'product__brand', 'internal_code']
-    ordering_fields = ['id', 'product__name', 'product__code']
+    ordering_fields = ['id', 'available', 'product__name', 'product__code', 'product__id', 'product__date_created', 'product__brand', 'product__approved', 'shop__name']
 
     def get(self, request, format=None):
         query = self.filter_queryset(models.ShopProducts.objects.all())
