@@ -28,6 +28,10 @@ class CustomPagination(PageNumberPagination):
 
 
 
+
+
+
+
 # ------------------------------------------------------- Attributes ------------
 class Attributes(GenericAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -414,11 +418,10 @@ class ShopProducts(GenericAPIView):
         query = self.filter_queryset(models.ShopProducts.objects.all())
         page = self.paginate_queryset(query)
 
-
-        
         if page is not None:
+            serializer = self.get_serializer(page, many=True)
             shopProduct=[]
-            for Product in query:
+            for Product in page:
                 attr = models.ProductAttr.objects.filter(product=Product)
                 attr_serializer = ProductAttrSerializer(attr, many=True)
                 color = models.ProductColor.objects.filter(product=Product)
@@ -431,11 +434,7 @@ class ShopProducts(GenericAPIView):
                       "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
                       "attr": attr_serializer.data, "color": color_serializer.data }
                 shopProduct.append(product)
-            serializer = self.get_serializer(page, many=True)
-            print("-------------")
-            print(serializer)
-            return self.get_paginated_response(serializer.data)
-
+            return self.get_paginated_response(shopProduct)
 
         shopProduct=[]
         for Product in query:
