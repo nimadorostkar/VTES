@@ -521,68 +521,31 @@ class ShopProductsDelete(APIView):
 
 
 
+# ------------------------------------------------------- Products ------------
 
+class MultiShopProductsAdd(APIView):
+    permission_classes = [IsAuthenticated]
 
-
-
-
-
-'''
     def post(self, request, format=None):
-        try:
-            shop = Shop()
-            shop.user = request.user
-            shop.name = request.data['name']
-            shop.phone = request.data['phone']
-            shop.email = request.data['email']
-            shop.city = request.data['city']
-            shop.address = request.data['address']
-            shop.postal_code = request.data['postal_code']
-            shop.lat_long = request.data['lat_long']
-            shop.description = request.data['description']
-            shop.logo = request.data['logo']
-            shop.cover = request.data['cover']
-            shop.shaba_number = request.data['shaba_number']
-            shop.card_number = request.data['card_number']
-            shop.bank_account_number = request.data['bank_account_number']
-            shop.instagram = request.data['instagram']
-            shop.linkedin = request.data['linkedin']
-            shop.whatsapp = request.data['whatsapp']
-            shop.telegram = request.data['telegram']
-            shop.save()
-            for Q in [int(x) for x in request.data['category'].split(',')]:
-                shop.category.add(Category.objects.get(id=Q))
-                shop.save()
+        data = request.data
+        products_id = [int(x) for x in data['products'].split(',')]
 
-            data = { 'id':shop.id, 'user':shop.user, 'name':shop.name, 'phone':shop.phone, 'email':shop.email, 'city':shop.city,
-                     'address':shop.address, 'postal_code':shop.postal_code, 'lat_long':shop.lat_long,
-                     'logo':shop.logo.url, 'cover':shop.cover.url, 'description':shop.description, 'shaba_number':shop.shaba_number,
-                     'card_number':shop.card_number, 'bank_account_number':shop.bank_account_number, 'linkedin':shop.linkedin,
-                     'instagram':shop.instagram, 'whatsapp':shop.whatsapp, 'telegram':shop.telegram }
+        addedProducts = []
+        for Q in products_id:
+            shopproduct = ShopProducts()
+            shopproduct.shop = Shop.objects.get(id=data['shop'])
+            shopproduct.product = Product.objects.get(id=Q)
+            shopproduct.save()
+            addedProducts.append(shopproduct)
+
+        return Response(addedProducts, status=status.HTTP_200_OK)
 
 
-            return Response(shop.id, status=status.HTTP_201_CREATED)
-
-        except:
-            return Response('There is a problem, please try again. Make sure all fields are submitted',status=status.HTTP_400_BAD_REQUEST)
-
-        #print(shop['category'])
-        #cat = Category.objects.filter(id__in=[int(x) for x in shop['category'].split(',')])
-        #print(cat)
-        #cat_serializer = CatSerializer(cat, many=True)
-        #print(cat_serializer)
-
-        #for Q in [int(x) for x in shop['category'].split(',')]:
-            #S.category.add(Category.objects.get(id=Q))
 
 
-        #cat = Category.objects.filter(id__in=[int(x) for x in shop['category'].split(',')])
-        #cat_serializer = ShopSerializer(data = cat)
-        #shop['category'] = cat_serializer
-        #serializer = ShopSerializer(data = shop)
-        #if serializer.is_valid():
-            #serializer.save()
-'''
+
+
+
 
 
 

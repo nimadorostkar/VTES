@@ -169,7 +169,7 @@ class ShopProducts(models.Model):
     internal_code = models.CharField(max_length=50, null=True, blank=True, verbose_name = "کد داخلی محصول")
     qty = models.IntegerField(default=0, verbose_name = "تعداد")
     CHOICES = ( ('1','1'), ('2','2'), ('3','3') )
-    price_model = models.CharField(max_length=254, choices=CHOICES, verbose_name = "مدل قیمتی")
+    price_model = models.CharField(max_length=254, choices=CHOICES, null=True, blank=True, verbose_name = "مدل قیمتی")
     one_price = models.IntegerField(default=0, verbose_name = "قیمت تکی")
     medium_volume_price = models.IntegerField(default=0, verbose_name = "قیمت حجم متوسط")
     medium_volume_qty = models.IntegerField(default=0, verbose_name = "حداقل تعداد حجم متوسط")
