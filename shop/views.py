@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .serializers import ( ShopSerializer, ProductSerializer, CategorySerializer,
                            ProductAttrSerializer, SearchSerializer, ProductImgsSerializer, MainCatSerializer,
-                           ShopProductsSerializer, AttributesSerializer, ProductColorSerializer )
+                           ShopProductsSerializer, AttributesSerializer, ProductColorSerializer, MultiShopProductsSerializer )
 from rest_framework import viewsets, filters, status, pagination, mixins
 from .models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts, Attributes, ProductColor
 from django_filters.rest_framework import DjangoFilterBackend
@@ -527,18 +527,27 @@ class MultiShopProductsAdd(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        data = request.data
+        serializer = serializers.MultiShopProductsSerializer(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        added_products = []
         products_id = [int(x) for x in data['products'].split(',')]
-
-        addedProducts = []
         for Q in products_id:
-            shopproduct = ShopProducts()
-            shopproduct.shop = Shop.objects.get(id=data['shop'])
-            shopproduct.product = Product.objects.get(id=Q)
-            shopproduct.save()
-            addedProducts.append(shopproduct)
+            data['product'] = Q
+            shopproduct = ShopProductsSerializer(data=data)
+            if shopproduct.is_valid():
+                shopproduct.save()
+                added_products.append(shopproduct.data)
+        return Response(added_products, status=status.HTTP_200_OK)
 
-        return Response(addedProducts, status=status.HTTP_200_OK)
+
+
+
+
+
 
 
 

@@ -145,4 +145,27 @@ class ShopProductsSerializer(serializers.ModelSerializer):
 
 
 
+
+
+
+
+
+
+
+
+class MultiShopProductsSerializer(serializers.Serializer):
+    products = serializers.CharField(max_length=100, allow_null=False)
+    shop = serializers.CharField(max_length=30, allow_null=False)
+
+
+
+
+
+
+
+
+
+
+
+
 #End
