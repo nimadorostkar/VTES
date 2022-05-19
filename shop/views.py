@@ -445,7 +445,7 @@ class ShopProducts(GenericAPIView):
                 for C in color.values_list('color', flat=True):
                     colors.append(C)
                 #print(colors)
-                
+
                 product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
                       "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
                       "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand, "link":Product.product.link,
@@ -521,18 +521,69 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
         return Response(product, status=status.HTTP_200_OK)
 
 
+
+
+
     def put(self, request, *args, **kwargs):
         shop_product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
         data=request.data
         data['product'] = shop_product.product.id
         data['shop'] = shop_product.shop.id
 
-        print(data['colors'])
+        color = models.ProductColor.objects.filter(product=shop_product)
+        color.delete()
+        for C in data['colors']:
+            newcolor = ProductColor()
+            newcolor.product=shop_product
+            newcolor.color=C
+            newcolor.save()
+
+        attrs = models.ProductAttr.objects.filter(product=shop_product)
+        attrs.delete()
+        for attr in data['attr']:
+            for val in attr['value']:
+                newattr = ProductAttr()
+                newattr.product=shop_product
+                newattr.attribute = models.Attributes.objects.get(id=attr['name'])
+                newattr.value = val
+                newattr.save()
 
         serializer = ShopProductsSerializer(shop_product, data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+            Product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
+            color = models.ProductColor.objects.filter(product=Product)
+            colors =[]
+            for C in color.values_list('color', flat=True):
+                colors.append(C)
+            #print(colors)
+
+            attr = models.ProductAttr.objects.filter(product=Product)
+            attr_serializer = ProductAttrSerializer(attr, many=True)
+            just_attr = []
+            for AA in attr_serializer.data:
+                just_attr.append(AA['attribute'])
+            attr_ids = list(set(just_attr))
+
+            attrvalue = []
+            for Q in attr_ids:
+                attribute=models.Attributes.objects.get(id=Q)
+                values = []
+                for A in attr:
+                    if A.attribute.id == Q:
+                        values.append(A.value)
+                attrvalue.append({ 'attribute':attribute.id, 'attribute_name':attribute.name, 'value':values })
+            #print(attrvalue)
+            product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
+                  "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
+                  "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand, "link":Product.product.link,
+                  "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
+                  "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
+                  "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
+                  "attr": attrvalue, "color": colors }
+
+            return Response(product, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
