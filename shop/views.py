@@ -472,12 +472,53 @@ class ShopProducts(GenericAPIView):
             shopProduct.append(product)
         return Response(shopProduct, status=status.HTTP_200_OK)
 
+
+
+
+
     def post(self, request, format=None):
-        serializer = ShopProductsSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        self.request.POST._mutable = True
+        data = request.data
+
+        print('------------')
+        print(data)
+
+        data['code']
+        data['irancode']
+        data['name']
+        data['brand']
+        data['link']
+        data['category']
+        data['description']
+        data['banner']
+        data['datasheet']
+
+        product_serializer = ProductSerializer(data=request.data)
+        if product_serializer.is_valid():
+            product_serializer.save()
+
+        data['product'] = 16
+
+        shop_serializer = ShopProductsSerializer(data=request.data)
+        if shop_serializer.is_valid():
+            shop_serializer.save()
+            #return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        #serializer = ShopProductsSerializer(data=request.data)
+        #if serializer.is_valid():
+            #serializer.save()
+            #return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response('', status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
 
 
 class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
