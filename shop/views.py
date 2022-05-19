@@ -487,13 +487,31 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
         attr_serializer = ProductAttrSerializer(attr, many=True)
         color = models.ProductColor.objects.filter(product=Product)
         color_serializer = ProductColorSerializer(color, many=True)
+
+        just_attr = []
+        for AA in attr_serializer.data:
+            just_attr.append(AA['attribute'])
+        attr_ids = list(set(just_attr))
+
+        attrvalue = []
+        for Q in attr_ids:
+            attribute=models.Attributes.objects.get(id=Q)
+            values = []
+            for A in attr:
+                if A.attribute.id == Q:
+                    values.append(A.value)
+            attrvalue.append({ 'attribute':attribute.id, 'attribute_name':attribute.name, 'value':values })
+        #print(attrvalue)
         product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
-              "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url,
-              "available":Product.available, "internal_code":Product.internal_code, "qty":Product.qty,
+              "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
+              "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand, "link":Product.product.link,
+              "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
               "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
               "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
-              "attr": attr_serializer.data, "color": color_serializer.data }
+              "attr": attrvalue, "color": color_serializer.data }
+
         return Response(product, status=status.HTTP_200_OK)
+
 
     def put(self, request, *args, **kwargs):
         shop_product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
