@@ -424,15 +424,31 @@ class ShopProducts(GenericAPIView):
             for Product in page:
                 attr = models.ProductAttr.objects.filter(product=Product)
                 attr_serializer = ProductAttrSerializer(attr, many=True)
+
+                just_attr = []
+                for AA in attr_serializer.data:
+                    just_attr.append(AA['attribute'])
+                attr_ids = list(set(just_attr))
+
+                attrvalue = []
+                for Q in attr_ids:
+                    attribute=models.Attributes.objects.get(id=Q)
+                    values = []
+                    for A in attr:
+                        if A.attribute.id == Q:
+                            values.append(A.value)
+                    attrvalue.append({ 'attribute':attribute.id, 'attribute_name':attribute.name, 'value':values })
+                #print(attrvalue)
+
                 color = models.ProductColor.objects.filter(product=Product)
                 color_serializer = ProductColorSerializer(color, many=True)
                 product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
-                      "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url,
-                      "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand,
+                      "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
+                      "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand, "link":Product.product.link,
                       "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
                       "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
                       "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
-                      "attr": attr_serializer.data, "color": color_serializer.data }
+                      "attr": attrvalue, "color": color_serializer.data }
                 shopProduct.append(product)
             return self.get_paginated_response(shopProduct)
 
@@ -443,12 +459,12 @@ class ShopProducts(GenericAPIView):
             color = models.ProductColor.objects.filter(product=Product)
             color_serializer = ProductColorSerializer(color, many=True)
             product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
-                  "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url,
-                  "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand,
+                  "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
+                  "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand, "link":Product.product.link,
                   "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
                   "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
                   "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
-                  "attr": attr_serializer.data, "color": color_serializer.data }
+                  "attr": attrvalue, "color": color_serializer.data }
             shopProduct.append(product)
         return Response(shopProduct, status=status.HTTP_200_OK)
 
@@ -549,6 +565,33 @@ class MultiShopProductsAdd(APIView):
 
 
 
+
+
+
+
+
+# ------------------------------------------------------- Attributes ------------
+
+class Color(GenericAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = ProductColorSerializer
+    #queryset = ProductImgs.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['product',]
+    search_fields = ['product', 'color']
+    ordering_fields = ['id',]
+
+    def get(self, request, format=None):
+        query = self.filter_queryset(ProductColor.objects.all())
+        serializer = ProductColorSerializer(query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, format=None):
+        serializer = ProductColorSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
