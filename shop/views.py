@@ -441,14 +441,18 @@ class ShopProducts(GenericAPIView):
                 #print(attrvalue)
 
                 color = models.ProductColor.objects.filter(product=Product)
-                color_serializer = ProductColorSerializer(color, many=True)
+                colors =[]
+                for C in color.values_list('color', flat=True):
+                    colors.append(C)
+                #print(colors)
+                
                 product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
                       "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
                       "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand, "link":Product.product.link,
                       "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
                       "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
                       "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
-                      "attr": attrvalue, "color": color_serializer.data }
+                      "attr": attrvalue, "color": colors }
                 shopProduct.append(product)
             return self.get_paginated_response(shopProduct)
 
@@ -464,7 +468,7 @@ class ShopProducts(GenericAPIView):
                   "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
                   "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
                   "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
-                  "attr": attrvalue, "color": color_serializer.data }
+                  "attr": attrvalue, "color": colors }
             shopProduct.append(product)
         return Response(shopProduct, status=status.HTTP_200_OK)
 
@@ -485,8 +489,12 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
         serializer = ShopProductsSerializer(Product)
         attr = models.ProductAttr.objects.filter(product=Product)
         attr_serializer = ProductAttrSerializer(attr, many=True)
+
         color = models.ProductColor.objects.filter(product=Product)
-        color_serializer = ProductColorSerializer(color, many=True)
+        colors =[]
+        for C in color.values_list('color', flat=True):
+            colors.append(C)
+        #print(colors)
 
         just_attr = []
         for AA in attr_serializer.data:
@@ -508,14 +516,20 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
               "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
               "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
               "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
-              "attr": attrvalue, "color": color_serializer.data }
+              "attr": attrvalue, "color": colors }
 
         return Response(product, status=status.HTTP_200_OK)
 
 
     def put(self, request, *args, **kwargs):
         shop_product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
-        serializer = ShopProductsSerializer(shop_product, data=request.data)
+        data=request.data
+        data['product'] = shop_product.product.id
+        data['shop'] = shop_product.shop.id
+
+        print(data['colors'])
+
+        serializer = ShopProductsSerializer(shop_product, data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
