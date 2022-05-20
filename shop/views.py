@@ -480,9 +480,9 @@ class ShopProducts(GenericAPIView):
         self.request.POST._mutable = True
         data = request.data
 
+        '''
         print('------------')
         print(data)
-
         data['code']
         data['irancode']
         data['name']
@@ -492,16 +492,17 @@ class ShopProducts(GenericAPIView):
         data['description']
         data['banner']
         data['datasheet']
-
+        '''
         product_serializer = ProductSerializer(data=request.data)
         if product_serializer.is_valid():
             product_serializer.save()
 
-        data['product'] = 16
+        data['product'] = product_serializer.data['id']
 
         shop_serializer = ShopProductsSerializer(data=request.data)
         if shop_serializer.is_valid():
             shop_serializer.save()
+
             #return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         #serializer = ShopProductsSerializer(data=request.data)
