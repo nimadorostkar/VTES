@@ -480,31 +480,44 @@ class ShopProducts(GenericAPIView):
         self.request.POST._mutable = True
         data = request.data
 
-        '''
-        print('------------')
-        print(data)
-        data['code']
-        data['irancode']
-        data['name']
-        data['brand']
-        data['link']
-        data['category']
-        data['description']
-        data['banner']
-        data['datasheet']
-        '''
         product_serializer = ProductSerializer(data=request.data)
         if product_serializer.is_valid():
             product_serializer.save()
 
         data['product'] = product_serializer.data['id']
 
-        #obj, created = models.Attributes.objects.get_or_create(name=attr['name'])
-        #newattr.attribute = models.Attributes.objects.get(id=obj.id)
-
         shop_serializer = ShopProductsSerializer(data=request.data)
         if shop_serializer.is_valid():
             shop_serializer.save()
+
+
+
+        print('-------------')
+        print(data['colors'])
+
+
+        color = models.ProductColor.objects.filter(product=models.ShopProducts.objects.get(id=shop_serializer.data['id']))
+        color.delete()
+        for C in data['colors']:
+            print(C)
+            #newcolor = ProductColor()
+            #newcolor.product= models.ShopProducts.objects.get(id=shop_serializer.data['id'])
+            #newcolor.color=C
+            #newcolor.save()
+
+        '''
+
+        attrs = models.ProductAttr.objects.filter(product=shop_serializer.data['id'])
+        attrs.delete()
+        for attr in data['attr']:
+            for val in attr['value']:
+                newattr = ProductAttr()
+                newattr.product= models.ShopProducts.objects.get(id=shop_serializer.data['id'])
+                obj, created = models.Attributes.objects.get_or_create(name=attr['name'])
+                newattr.attribute = models.Attributes.objects.get(id=obj.id)
+                newattr.value = val
+                newattr.save()
+        '''
 
             #return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -512,7 +525,7 @@ class ShopProducts(GenericAPIView):
         #if serializer.is_valid():
             #serializer.save()
             #return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response('', status=status.HTTP_200_OK)
+        return Response(shop_serializer.data['id'], status=status.HTTP_200_OK)
 
 
 
