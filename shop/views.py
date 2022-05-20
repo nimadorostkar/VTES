@@ -475,7 +475,6 @@ class ShopProducts(GenericAPIView):
 
 
 
-
     def post(self, request, format=None):
         self.request.POST._mutable = True
         data = request.data
@@ -511,13 +510,42 @@ class ShopProducts(GenericAPIView):
                 newattr.value = val
                 newattr.save()
 
+        if data['img1']:
+            img = ProductImgs()
+            img.product = Product.objects.get(id=data['product'])
+            img.img = data['img1']
+            img.save()
 
-            #return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if data['img2']:
+            img = ProductImgs()
+            img.product = Product.objects.get(id=data['product'])
+            img.img = data['img2']
+            img.save()
 
-        #serializer = ShopProductsSerializer(data=request.data)
-        #if serializer.is_valid():
-            #serializer.save()
-            #return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if data['img3']:
+            img = ProductImgs()
+            img.product = Product.objects.get(id=data['product'])
+            img.img = data['img3']
+            img.save()
+
+        if data['img4']:
+            img = ProductImgs()
+            img.product = Product.objects.get(id=data['product'])
+            img.img = data['img4']
+            img.save()
+
+        if data['img5']:
+            img = ProductImgs()
+            img.product = Product.objects.get(id=data['product'])
+            img.img = data['img5']
+            img.save()
+
+        if data['img6']:
+            img = ProductImgs()
+            img.product = Product.objects.get(id=data['product'])
+            img.img = data['img6']
+            img.save()
+
         return Response(shop_serializer.data['id'], status=status.HTTP_200_OK)
 
 
