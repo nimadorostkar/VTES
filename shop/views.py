@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .serializers import ( ShopSerializer, ProductSerializer, CategorySerializer,
                            ProductAttrSerializer, SearchSerializer, ProductImgsSerializer, MainCatSerializer,
-                           ShopProductsSerializer, AttributesSerializer, ProductColorSerializer )
+                           ShopProductsSerializer, AttributesSerializer, ProductColorSerializer, MultiShopProductsSerializer )
 from rest_framework import viewsets, filters, status, pagination, mixins
 from .models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts, Attributes, ProductColor
 from django_filters.rest_framework import DjangoFilterBackend
@@ -12,6 +12,21 @@ from rest_framework.views import APIView
 from . import serializers
 from . import models
 from django.db.models import Q
+from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
+from rest_framework import pagination
+
+
+
+
+class CustomPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+
+
+
+
 
 
 
@@ -190,29 +205,15 @@ class Shops(GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
-        try:
-            shop = request.data
-            shop['user'] = request.user.id
-            serializer = ShopSerializer(data = shop)
-            if serializer.is_valid():
-                serializer.save()
-                S = Shop.objects.get(id=serializer.data['id'])
-                cat=[]
-                if shop['category']:
-                    for Q in [int(x) for x in shop['category'].split(',')]:
-                        S.category.add(Category.objects.get(id=Q))
-                        cat.append(Q)
-                    S.save()
-
-                data = {'id':S.id, 'name':S.name, 'phone':S.phone, 'email':S.email, 'city':S.city,
-                        'address':S.address, 'postal_code':S.postal_code, 'lat_long':S.lat_long,
-                        'logo':S.logo.url, 'cover':S.cover.url, 'description':S.description, 'shaba_number':S.shaba_number,
-                        'card_number':S.card_number, 'bank_account_number':S.bank_account_number, 'linkedin':S.linkedin,
-                        'instagram':S.instagram, 'whatsapp':S.whatsapp, 'telegram':S.telegram, 'category':cat  }
-                return Response(data, status=status.HTTP_200_OK)
-
-        except:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        self.request.POST._mutable = True
+        req = request.data
+        req['user'] = request.user.id
+        serializer = ShopSerializer(data=req)
+        if serializer.is_valid():
+            serializer.validated_data['category'] = [int(x) for x in req['category'].split(',')]
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -225,44 +226,16 @@ class ShopItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
-        try:
-            shop = get_object_or_404(Shop, id=self.kwargs["id"])
-            shop.user = request.user
-            shop.name = request.data['name']
-            shop.phone = request.data['phone']
-            shop.email = request.data['email']
-            shop.city = request.data['city']
-            shop.address = request.data['address']
-            shop.postal_code = request.data['postal_code']
-            shop.lat_long = request.data['lat_long']
-            shop.description = request.data['description']
-            shop.logo = request.data['logo']
-            shop.cover = request.data['cover']
-            shop.shaba_number = request.data['shaba_number']
-            shop.card_number = request.data['card_number']
-            shop.bank_account_number = request.data['bank_account_number']
-            shop.instagram = request.data['instagram']
-            shop.linkedin = request.data['linkedin']
-            shop.whatsapp = request.data['whatsapp']
-            shop.telegram = request.data['telegram']
-            shop.save()
-
-            cat=[]
-            if request.data['category']:
-                for Q in [int(x) for x in request.data['category'].split(',')]:
-                    shop.category.add(Category.objects.get(id=Q))
-                    cat.append(Q)
-                    shop.save()
-
-            data = {'id':shop.id, 'name':shop.name, 'phone':shop.phone, 'email':shop.email, 'city':shop.city,
-                    'address':shop.address, 'postal_code':shop.postal_code, 'lat_long':shop.lat_long,
-                    'logo':shop.logo.url, 'cover':shop.cover.url, 'description':shop.description, 'shaba_number':shop.shaba_number,
-                    'card_number':shop.card_number, 'bank_account_number':shop.bank_account_number, 'linkedin':shop.linkedin,
-                    'instagram':shop.instagram, 'whatsapp':shop.whatsapp, 'telegram':shop.telegram, 'category':cat  }
-            return Response(data, status=status.HTTP_200_OK)
-        except:
-            return Response('There is a problem, please try again. Make sure all fields are submitted', status=status.HTTP_400_BAD_REQUEST)
-
+        self.request.POST._mutable = True
+        shop = get_object_or_404(Shop, id=self.kwargs["id"])
+        req = request.data
+        req['user'] = request.user.id
+        serializer = ShopSerializer(shop, data=req)
+        if serializer.is_valid():
+            serializer.validated_data['category'] = [int(x) for x in req['category'].split(',')]
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
     def delete(self, request, *args, **kwargs):
@@ -279,20 +252,6 @@ class ShopItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView
 
 
 
-'''
-        req['user'] = request.user.id
-        serializer = ShopSerializer(shop, data=req)
-        if serializer.is_valid():
-            serializer.save()
-            for Q in [int(x) for x in req['category'].split(',')]:
-                shop.category.add(Category.objects.get(id=Q))
-            shop.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-'''
-
-
-
-
 
 
 
@@ -303,21 +262,22 @@ class ShopItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView
 class Products(GenericAPIView):
     permission_classes = [AllowAny]
     serializer_class = ProductSerializer
+    pagination_class = CustomPagination
     queryset = Product.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['category', 'approved', 'brand']
     search_fields = ['name', 'code', 'description']
-    ordering_fields = ['id', 'date_created']
+    ordering_fields = ['id', 'date_created', 'name', 'brand', 'code', 'approved']
 
     def get(self, request, format=None):
-        queryset = Product.objects.all()
         query = self.filter_queryset(Product.objects.all())
-        page = self.paginate_queryset(queryset)
+        page = self.paginate_queryset(query)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
         serializer = ProductSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
     def post(self, request, format=None):
         serializer = ProductSerializer(data=request.data)
@@ -447,14 +407,55 @@ class ProductImg(GenericAPIView):
 class ShopProducts(GenericAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = ShopProductsSerializer
+    pagination_class = CustomPagination
     queryset = ShopProducts.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['shop', 'product', 'available']
-    search_fields = ['shop__name', 'product__name', 'internal_code']
-    ordering_fields = ['id']
+    search_fields = ['shop__name', 'product__name', 'product__brand', 'internal_code']
+    ordering_fields = ['id', 'available', 'product__name', 'product__code', 'product__id', 'product__date_created', 'product__brand', 'product__approved', 'shop__name']
 
     def get(self, request, format=None):
         query = self.filter_queryset(models.ShopProducts.objects.all())
+        page = self.paginate_queryset(query)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            shopProduct=[]
+            for Product in page:
+                attr = models.ProductAttr.objects.filter(product=Product)
+                attr_serializer = ProductAttrSerializer(attr, many=True)
+
+                just_attr = []
+                for AA in attr_serializer.data:
+                    just_attr.append(AA['attribute'])
+                attr_ids = list(set(just_attr))
+
+                attrvalue = []
+                for Q in attr_ids:
+                    attribute=models.Attributes.objects.get(id=Q)
+                    values = []
+                    for A in attr:
+                        if A.attribute.id == Q:
+                            values.append(A.value)
+                    attrvalue.append({ 'attribute':attribute.id, 'attribute_name':attribute.name, 'value':values })
+                #print(attrvalue)
+
+                color = models.ProductColor.objects.filter(product=Product)
+                colors =[]
+                for C in color.values_list('color', flat=True):
+                    colors.append(C)
+                #print(colors)
+
+                product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
+                      "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
+                      "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand, "link":Product.product.link,
+                      "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
+                      "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
+                      "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
+                      "attr": attrvalue, "color": colors }
+                shopProduct.append(product)
+            return self.get_paginated_response(shopProduct)
+
         shopProduct=[]
         for Product in query:
             attr = models.ProductAttr.objects.filter(product=Product)
@@ -462,21 +463,63 @@ class ShopProducts(GenericAPIView):
             color = models.ProductColor.objects.filter(product=Product)
             color_serializer = ProductColorSerializer(color, many=True)
             product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
-                  "shop":Product.shop.name,  "shopID":Product.shop.id,
-                  "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand,
+                  "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
+                  "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand, "link":Product.product.link,
                   "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
                   "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
                   "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
-                  "attr": attr_serializer.data, "color": color_serializer.data }
+                  "attr": attrvalue, "color": colors }
             shopProduct.append(product)
         return Response(shopProduct, status=status.HTTP_200_OK)
 
+
+
+
+
     def post(self, request, format=None):
-        serializer = ShopProductsSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        self.request.POST._mutable = True
+        data = request.data
+
+        '''
+        print('------------')
+        print(data)
+        data['code']
+        data['irancode']
+        data['name']
+        data['brand']
+        data['link']
+        data['category']
+        data['description']
+        data['banner']
+        data['datasheet']
+        '''
+        product_serializer = ProductSerializer(data=request.data)
+        if product_serializer.is_valid():
+            product_serializer.save()
+
+        data['product'] = product_serializer.data['id']
+
+        shop_serializer = ShopProductsSerializer(data=request.data)
+        if shop_serializer.is_valid():
+            shop_serializer.save()
+
+            #return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        #serializer = ShopProductsSerializer(data=request.data)
+        #if serializer.is_valid():
+            #serializer.save()
+            #return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response('', status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
 
 
 class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
@@ -488,22 +531,101 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
         serializer = ShopProductsSerializer(Product)
         attr = models.ProductAttr.objects.filter(product=Product)
         attr_serializer = ProductAttrSerializer(attr, many=True)
+
         color = models.ProductColor.objects.filter(product=Product)
-        color_serializer = ProductColorSerializer(color, many=True)
+        colors =[]
+        for C in color.values_list('color', flat=True):
+            colors.append(C)
+        #print(colors)
+
+        just_attr = []
+        for AA in attr_serializer.data:
+            just_attr.append(AA['attribute'])
+        attr_ids = list(set(just_attr))
+
+        attrvalue = []
+        for Q in attr_ids:
+            attribute=models.Attributes.objects.get(id=Q)
+            values = []
+            for A in attr:
+                if A.attribute.id == Q:
+                    values.append(A.value)
+            attrvalue.append({ 'attribute':attribute.id, 'attribute_name':attribute.name, 'value':values })
+        #print(attrvalue)
         product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
-              "shop":Product.shop.name,  "shopID":Product.shop.id,
-              "available":Product.available, "internal_code":Product.internal_code, "qty":Product.qty,
+              "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
+              "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand, "link":Product.product.link,
+              "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
               "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
               "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
-              "attr": attr_serializer.data, "color": color_serializer.data }
+              "attr": attrvalue, "color": colors }
+
         return Response(product, status=status.HTTP_200_OK)
+
+
+
+
 
     def put(self, request, *args, **kwargs):
         shop_product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
-        serializer = ShopProductsSerializer(shop_product, data=request.data)
+        data=request.data
+        data['product'] = shop_product.product.id
+        data['shop'] = shop_product.shop.id
+
+        color = models.ProductColor.objects.filter(product=shop_product)
+        color.delete()
+        for C in data['colors']:
+            newcolor = ProductColor()
+            newcolor.product=shop_product
+            newcolor.color=C
+            newcolor.save()
+
+        attrs = models.ProductAttr.objects.filter(product=shop_product)
+        attrs.delete()
+        for attr in data['attr']:
+            for val in attr['value']:
+                newattr = ProductAttr()
+                newattr.product=shop_product
+                newattr.attribute = models.Attributes.objects.get(id=attr['name'])
+                newattr.value = val
+                newattr.save()
+
+        serializer = ShopProductsSerializer(shop_product, data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+            Product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
+            color = models.ProductColor.objects.filter(product=Product)
+            colors =[]
+            for C in color.values_list('color', flat=True):
+                colors.append(C)
+            #print(colors)
+
+            attr = models.ProductAttr.objects.filter(product=Product)
+            attr_serializer = ProductAttrSerializer(attr, many=True)
+            just_attr = []
+            for AA in attr_serializer.data:
+                just_attr.append(AA['attribute'])
+            attr_ids = list(set(just_attr))
+
+            attrvalue = []
+            for Q in attr_ids:
+                attribute=models.Attributes.objects.get(id=Q)
+                values = []
+                for A in attr:
+                    if A.attribute.id == Q:
+                        values.append(A.value)
+                attrvalue.append({ 'attribute':attribute.id, 'attribute_name':attribute.name, 'value':values })
+            #print(attrvalue)
+            product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
+                  "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
+                  "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand, "link":Product.product.link,
+                  "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
+                  "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
+                  "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
+                  "attr": attrvalue, "color": colors }
+
+            return Response(product, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
@@ -540,68 +662,67 @@ class ShopProductsDelete(APIView):
 
 
 
+# ------------------------------------------------------- Products ------------
 
+class MultiShopProductsAdd(APIView):
+    permission_classes = [IsAuthenticated]
 
-
-
-
-
-'''
     def post(self, request, format=None):
-        try:
-            shop = Shop()
-            shop.user = request.user
-            shop.name = request.data['name']
-            shop.phone = request.data['phone']
-            shop.email = request.data['email']
-            shop.city = request.data['city']
-            shop.address = request.data['address']
-            shop.postal_code = request.data['postal_code']
-            shop.lat_long = request.data['lat_long']
-            shop.description = request.data['description']
-            shop.logo = request.data['logo']
-            shop.cover = request.data['cover']
-            shop.shaba_number = request.data['shaba_number']
-            shop.card_number = request.data['card_number']
-            shop.bank_account_number = request.data['bank_account_number']
-            shop.instagram = request.data['instagram']
-            shop.linkedin = request.data['linkedin']
-            shop.whatsapp = request.data['whatsapp']
-            shop.telegram = request.data['telegram']
-            shop.save()
-            for Q in [int(x) for x in request.data['category'].split(',')]:
-                shop.category.add(Category.objects.get(id=Q))
-                shop.save()
+        serializer = serializers.MultiShopProductsSerializer(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            data = { 'id':shop.id, 'user':shop.user, 'name':shop.name, 'phone':shop.phone, 'email':shop.email, 'city':shop.city,
-                     'address':shop.address, 'postal_code':shop.postal_code, 'lat_long':shop.lat_long,
-                     'logo':shop.logo.url, 'cover':shop.cover.url, 'description':shop.description, 'shaba_number':shop.shaba_number,
-                     'card_number':shop.card_number, 'bank_account_number':shop.bank_account_number, 'linkedin':shop.linkedin,
-                     'instagram':shop.instagram, 'whatsapp':shop.whatsapp, 'telegram':shop.telegram }
+        added_products = []
+        products_id = [int(x) for x in data['products'].split(',')]
+        for Q in products_id:
+            data['product'] = Q
+            shopproduct = ShopProductsSerializer(data=data)
+            if shopproduct.is_valid():
+                shopproduct.save()
+                added_products.append(shopproduct.data)
+        return Response(added_products, status=status.HTTP_200_OK)
 
 
-            return Response(shop.id, status=status.HTTP_201_CREATED)
-
-        except:
-            return Response('There is a problem, please try again. Make sure all fields are submitted',status=status.HTTP_400_BAD_REQUEST)
-
-        #print(shop['category'])
-        #cat = Category.objects.filter(id__in=[int(x) for x in shop['category'].split(',')])
-        #print(cat)
-        #cat_serializer = CatSerializer(cat, many=True)
-        #print(cat_serializer)
-
-        #for Q in [int(x) for x in shop['category'].split(',')]:
-            #S.category.add(Category.objects.get(id=Q))
 
 
-        #cat = Category.objects.filter(id__in=[int(x) for x in shop['category'].split(',')])
-        #cat_serializer = ShopSerializer(data = cat)
-        #shop['category'] = cat_serializer
-        #serializer = ShopSerializer(data = shop)
-        #if serializer.is_valid():
-            #serializer.save()
-'''
+
+
+
+
+
+
+
+
+# ------------------------------------------------------- Attributes ------------
+
+class Color(GenericAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = ProductColorSerializer
+    #queryset = ProductImgs.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['product',]
+    search_fields = ['product', 'color']
+    ordering_fields = ['id',]
+
+    def get(self, request, format=None):
+        query = self.filter_queryset(ProductColor.objects.all())
+        serializer = ProductColorSerializer(query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, format=None):
+        serializer = ProductColorSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
 
 
 

@@ -11,11 +11,9 @@ from import_export.admin import ImportExportModelAdmin, ImportExportMixin
 
 
 
-
-
 #------------------------------------------------------------------------------
 class ShopAdmin(admin.ModelAdmin):
-    list_display = ('name','short_description', 'date_created','logo_tag')
+    list_display = ('name','short_description', 'date_created', 'id')
     list_filter = ("category","date_created")
     search_fields = ['name',]
     raw_id_fields = ('category'),
@@ -64,7 +62,7 @@ class ProductImgsInline(admin.TabularInline):
     extra = 1
 
 class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ('img_tag', 'name', 'category', 'date_created','approved')
+    list_display = ('img_tag', 'name', 'category', 'date_created','approved', 'id')
     list_filter = ("category", "date_created", "approved")
     search_fields = ['name', 'code']
     raw_id_fields = ('category'),

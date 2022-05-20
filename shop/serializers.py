@@ -65,23 +65,12 @@ class ProductImgsSerializer(serializers.ModelSerializer):
 #------------------------------------------------------------------------------
 class ShopSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True, many=True)
+    logo = serializers.ImageField(default='logos/default.png', required = False, allow_null=True)
+    cover = serializers.ImageField(default='covers/default.png', required = False, allow_null=True)
     class Meta:
         model = Shop
         fields = ('id' ,'name', 'user','user_mobile', 'phone', 'email', 'city', 'address', 'postal_code', 'lat_long', 'description','category', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram', 'date_created')
 
-
-
-
-
-
-'''
-#------------------------------------------------------------------------------
-class CreateShopSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True, many=True)
-    class Meta:
-        model = Shop
-        fields = ('id', 'name', 'user', 'phone', 'email', 'city', 'address', 'postal_code', 'lat_long', 'description', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram', 'category')
-'''
 
 
 
@@ -147,6 +136,24 @@ class ShopProductsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShopProducts
         fields = ('id' ,'available', 'shop','product', 'internal_code', 'qty', 'price_model', 'one_price', 'medium_volume_price', 'medium_volume_qty', 'wholesale_volume_price', 'wholesale_volume_qty') #, 'attr', 'color'
+
+
+
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class MultiShopProductsSerializer(serializers.Serializer):
+    products = serializers.CharField(max_length=100, allow_null=False)
+    shop = serializers.CharField(max_length=30, allow_null=False)
+
+
+
 
 
 
