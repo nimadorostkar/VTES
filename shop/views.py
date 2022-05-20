@@ -15,7 +15,7 @@ from django.db.models import Q
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework import pagination
 
-
+import json
 
 
 class CustomPagination(PageNumberPagination):
@@ -490,26 +490,19 @@ class ShopProducts(GenericAPIView):
         if shop_serializer.is_valid():
             shop_serializer.save()
 
-
-
-        print('-------------')
-        print(data['colors'])
-
-
+        color_data = json.loads(data['colors'])
         color = models.ProductColor.objects.filter(product=models.ShopProducts.objects.get(id=shop_serializer.data['id']))
         color.delete()
-        for C in data['colors']:
-            print(C)
-            #newcolor = ProductColor()
-            #newcolor.product= models.ShopProducts.objects.get(id=shop_serializer.data['id'])
-            #newcolor.color=C
-            #newcolor.save()
+        for C in color_data:
+            newcolor = ProductColor()
+            newcolor.product= models.ShopProducts.objects.get(id=shop_serializer.data['id'])
+            newcolor.color=C
+            newcolor.save()
 
-        '''
-
+        attr_data = json.loads(data['attr'])
         attrs = models.ProductAttr.objects.filter(product=shop_serializer.data['id'])
         attrs.delete()
-        for attr in data['attr']:
+        for attr in attr_data:
             for val in attr['value']:
                 newattr = ProductAttr()
                 newattr.product= models.ShopProducts.objects.get(id=shop_serializer.data['id'])
@@ -517,7 +510,7 @@ class ShopProducts(GenericAPIView):
                 newattr.attribute = models.Attributes.objects.get(id=obj.id)
                 newattr.value = val
                 newattr.save()
-        '''
+
 
             #return Response(serializer.data, status=status.HTTP_201_CREATED)
 
