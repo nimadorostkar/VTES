@@ -499,6 +499,9 @@ class ShopProducts(GenericAPIView):
 
         data['product'] = product_serializer.data['id']
 
+        #obj, created = models.Attributes.objects.get_or_create(name=attr['name'])
+        #newattr.attribute = models.Attributes.objects.get(id=obj.id)
+
         shop_serializer = ShopProductsSerializer(data=request.data)
         if shop_serializer.is_valid():
             shop_serializer.save()
@@ -586,7 +589,8 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
             for val in attr['value']:
                 newattr = ProductAttr()
                 newattr.product=shop_product
-                newattr.attribute = models.Attributes.objects.get(id=attr['name'])
+                obj, created = models.Attributes.objects.get_or_create(name=attr['name'])
+                newattr.attribute = models.Attributes.objects.get(id=obj.id)
                 newattr.value = val
                 newattr.save()
 
