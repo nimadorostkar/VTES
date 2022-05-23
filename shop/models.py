@@ -30,6 +30,8 @@ class Category(MPTTModel):
     def __str__(self):
         return str(self.name)
 
+    def child(self):
+        return self.get_children()
 
 
 
@@ -115,7 +117,7 @@ class Product(models.Model):
     name = models.CharField(max_length=80, verbose_name = "نام محصول")
     banner = models.ImageField(default='products/default.png', upload_to='products', verbose_name = "تصویر")
     brand = models.CharField(max_length=50, null=True, blank=True, verbose_name = "برند محصول")
-    link = models.URLField(max_length=200, null=True, blank=True, verbose_name = "لینک محصول")
+    link = models.CharField(max_length=200, null=True, blank=True, verbose_name = "لینک محصول")
     category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.CASCADE, related_name='product_category', verbose_name = "دسته بند")
     description = models.TextField(max_length=1000,null=True, blank=True, verbose_name = "توضیحات")
     datasheet = models.FileField(upload_to='datasheet', null=True, blank=True, max_length=254, verbose_name = "فایل و Datasheet")

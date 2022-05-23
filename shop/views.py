@@ -15,7 +15,7 @@ from django.db.models import Q
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework import pagination
 
-
+import json
 
 
 class CustomPagination(PageNumberPagination):
@@ -475,24 +475,10 @@ class ShopProducts(GenericAPIView):
 
 
 
-
     def post(self, request, format=None):
         self.request.POST._mutable = True
         data = request.data
 
-        '''
-        print('------------')
-        print(data)
-        data['code']
-        data['irancode']
-        data['name']
-        data['brand']
-        data['link']
-        data['category']
-        data['description']
-        data['banner']
-        data['datasheet']
-        '''
         product_serializer = ProductSerializer(data=request.data)
         if product_serializer.is_valid():
             product_serializer.save()
@@ -503,13 +489,64 @@ class ShopProducts(GenericAPIView):
         if shop_serializer.is_valid():
             shop_serializer.save()
 
-            #return Response(serializer.data, status=status.HTTP_201_CREATED)
+        color_data = json.loads(data['colors'])
+        color = models.ProductColor.objects.filter(product=models.ShopProducts.objects.get(id=shop_serializer.data['id']))
+        color.delete()
+        for C in color_data:
+            newcolor = ProductColor()
+            newcolor.product= models.ShopProducts.objects.get(id=shop_serializer.data['id'])
+            newcolor.color=C
+            newcolor.save()
 
-        #serializer = ShopProductsSerializer(data=request.data)
-        #if serializer.is_valid():
-            #serializer.save()
-            #return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response('', status=status.HTTP_200_OK)
+        attr_data = json.loads(data['attr'])
+        attrs = models.ProductAttr.objects.filter(product=shop_serializer.data['id'])
+        attrs.delete()
+        for attr in attr_data:
+            for val in attr['value']:
+                newattr = ProductAttr()
+                newattr.product= models.ShopProducts.objects.get(id=shop_serializer.data['id'])
+                obj, created = models.Attributes.objects.get_or_create(name=attr['name'])
+                newattr.attribute = models.Attributes.objects.get(id=obj.id)
+                newattr.value = val
+                newattr.save()
+
+        if data['img1']:
+            img = ProductImgs()
+            img.product = Product.objects.get(id=data['product'])
+            img.img = data['img1']
+            img.save()
+
+        if data['img2']:
+            img = ProductImgs()
+            img.product = Product.objects.get(id=data['product'])
+            img.img = data['img2']
+            img.save()
+
+        if data['img3']:
+            img = ProductImgs()
+            img.product = Product.objects.get(id=data['product'])
+            img.img = data['img3']
+            img.save()
+
+        if data['img4']:
+            img = ProductImgs()
+            img.product = Product.objects.get(id=data['product'])
+            img.img = data['img4']
+            img.save()
+
+        if data['img5']:
+            img = ProductImgs()
+            img.product = Product.objects.get(id=data['product'])
+            img.img = data['img5']
+            img.save()
+
+        if data['img6']:
+            img = ProductImgs()
+            img.product = Product.objects.get(id=data['product'])
+            img.img = data['img6']
+            img.save()
+
+        return Response(shop_serializer.data['id'], status=status.HTTP_200_OK)
 
 
 
@@ -586,7 +623,8 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
             for val in attr['value']:
                 newattr = ProductAttr()
                 newattr.product=shop_product
-                newattr.attribute = models.Attributes.objects.get(id=attr['name'])
+                obj, created = models.Attributes.objects.get_or_create(name=attr['name'])
+                newattr.attribute = models.Attributes.objects.get(id=obj.id)
                 newattr.value = val
                 newattr.save()
 
@@ -674,16 +712,23 @@ class MultiShopProductsAdd(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        added_products = []
-        products_id = [int(x) for x in data['products'].split(',')]
-        for Q in products_id:
-            data['product'] = Q
-            shopproduct = ShopProductsSerializer(data=data)
-            if shopproduct.is_valid():
-                shopproduct.save()
-                added_products.append(shopproduct.data)
-        return Response(added_products, status=status.HTTP_200_OK)
+        try:
+            shop = Shop.objects.get(id=data['shop'])
+            products_id = [int(x) for x in data['products'].split(',')]
+            for P in products_id:
+                if models.ShopProducts.objects.filter(shop=shop,product__id=P).exists():
+                    return Response('محصولی با شناسه {} پیش از این در فروشگاه شما ثبت شده است'.format(P), status=status.HTTP_400_BAD_REQUEST)
 
+            added_products = []
+            for Q in products_id:
+                data['product'] = Q
+                shopproduct = ShopProductsSerializer(data=data)
+                if shopproduct.is_valid():
+                    shopproduct.save()
+                    added_products.append(shopproduct.data)
+            return Response(added_products, status=status.HTTP_200_OK)
+        except:
+            return Response('مشکلی رخ داده است ، شناسه  فروشگاه و محصولات را بررسی کنید',status=status.HTTP_400_BAD_REQUEST)
 
 
 
