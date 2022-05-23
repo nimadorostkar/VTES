@@ -30,6 +30,9 @@ class Category(MPTTModel):
     def __str__(self):
         return str(self.name)
 
+    def child(self):
+        return self.get_children()
+
 
 
 
