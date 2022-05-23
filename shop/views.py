@@ -712,17 +712,23 @@ class MultiShopProductsAdd(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        added_products = []
-        products_id = [int(x) for x in data['products'].split(',')]
-        for Q in products_id:
-            data['product'] = Q
-            print(data['product'])
-            shopproduct = ShopProductsSerializer(data=data)
-            if shopproduct.is_valid():
-                shopproduct.save()
-                added_products.append(shopproduct.data)
-        return Response(added_products, status=status.HTTP_200_OK)
+        try:
+            shop = Shop.objects.get(id=data['shop'])
+            products_id = [int(x) for x in data['products'].split(',')]
+            for P in products_id:
+                if models.ShopProducts.objects.filter(shop=shop,product__id=P).exists():
+                    return Response('محصولی با شناسه {} پیش از این در فروشگاه شما ثبت شده است'.format(P), status=status.HTTP_400_BAD_REQUEST)
 
+            added_products = []
+            for Q in products_id:
+                data['product'] = Q
+                shopproduct = ShopProductsSerializer(data=data)
+                if shopproduct.is_valid():
+                    shopproduct.save()
+                    added_products.append(shopproduct.data)
+            return Response(added_products, status=status.HTTP_200_OK)
+        except:
+            return Response('مشکلی رخ داده است ، شناسه  فروشگاه و محصولات را بررسی کنید',status=status.HTTP_400_BAD_REQUEST)
 
 
 
