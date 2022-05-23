@@ -716,6 +716,7 @@ class MultiShopProductsAdd(APIView):
         products_id = [int(x) for x in data['products'].split(',')]
         for Q in products_id:
             data['product'] = Q
+            print(data['product'])
             shopproduct = ShopProductsSerializer(data=data)
             if shopproduct.is_valid():
                 shopproduct.save()
