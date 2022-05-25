@@ -141,7 +141,7 @@ class Categories(GenericAPIView):
     ordering_fields = ['id',]
 
     def get(self, request, format=None):
-        query = self.filter_queryset(Category.objects.all())
+        query = self.filter_queryset(Category.objects.filter(mptt_level=0))
         serializer = CategorySerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
