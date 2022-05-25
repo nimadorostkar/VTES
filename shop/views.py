@@ -715,9 +715,14 @@ class MultiShopProductsAdd(APIView):
         try:
             shop = Shop.objects.get(id=data['shop'])
             products_id = [int(x) for x in data['products'].split(',')]
+
+            exists = []
             for P in products_id:
                 if models.ShopProducts.objects.filter(shop=shop,product__id=P).exists():
-                    return Response('محصولی با شناسه {} پیش از این در فروشگاه شما ثبت شده است'.format(P), status=status.HTTP_400_BAD_REQUEST)
+                    exists.append(P)
+            if exists:
+                return Response(exists, status=status.HTTP_400_BAD_REQUEST)
+
 
             added_products = []
             for Q in products_id:
