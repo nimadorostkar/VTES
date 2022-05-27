@@ -345,13 +345,15 @@ class Search(APIView):
         if search:
             product = models.Product.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(brand__icontains=search) | Q(code__icontains=search) )
             shop = models.Shop.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(phone__icontains=search) | Q(email__icontains=search) | Q(address__icontains=search) )
+            shop_products = models.ShopProducts.objects.filter( Q(product__name__icontains=search) | Q(shop__name__icontains=search) | Q(product__description__icontains=search) | Q(shop__description__icontains=search) | Q(product__brand__icontains=search) | Q(product__code__icontains=search) | Q(product__irancode__icontains=search) )
             category = models.Category.objects.filter( Q(name__icontains=search) )
 
             product_serializer = ProductSerializer(product, many=True)
             shop_serializer = ShopSerializer(shop, many=True)
+            shop_products_serializer = ShopProductsSerializer(shop_products, many=True)
             category_serializer = CategorySerializer(category, many=True)
 
-            search_data={ "product":product_serializer.data , "shops":shop_serializer.data, "categories":category_serializer.data }
+            search_data={ "product":product_serializer.data , "shops":shop_serializer.data, "shop_products":shop_products_serializer.data, "categories":category_serializer.data }
             return Response(search_data, status=status.HTTP_200_OK)
         else:
             return Response('please send query for search', status=status.HTTP_400_BAD_REQUEST)
