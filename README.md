@@ -34,6 +34,43 @@ pip install -r requirements.txt
 
 ```
 python manage.py makemigrations
-python manage.py migrate --run-syncdb
+python manage.py migrate
+python manage.py createsuperuser
 python manage.py runserver
+```
+
+
+
+
+
+
+### you can run them manually, after the containers spin up, like so:
+
+```
+docker-compose exec web python manage.py makemigrations
+docker-compose exec web python manage.py migrate   
+```
+
+
+
+
+### Build the image:
+
+```
+docker-compose build
+```
+
+
+### Once the image is built, run the container:
+
+```
+docker-compose up -d
+```
+
+
+
+### Build the image and spin up the two containers:
+
+```
+docker-compose up -d --build
 ```
