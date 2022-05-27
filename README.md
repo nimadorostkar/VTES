@@ -74,3 +74,29 @@ docker-compose up -d
 ```
 docker-compose up -d --build
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Bring down the development containers (and the associated volumes with the -v flag):
+
+```
+docker-compose down -v
+```
+
+
+### Then, build the production images and spin up the containers:
+
+```
+docker-compose -f docker-compose.prod.yml up -d --build
+```
