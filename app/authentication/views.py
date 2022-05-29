@@ -240,45 +240,50 @@ class Register(APIView):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def post(self, request):
+        if request.data["mobile"] in User.objects.all().values_list('mobile',flat=True):
+            msg = 'این شماره تلفن قبلا ثبت شده است'
+        elif len(request.data["mobile"]) != 11 :
+            msg = 'شماره تماس را تصحیح کنید، شماره باید ۱۱ رقم باشد'
+        elif request.data["mobile"][0] != '0' :
+            msg = 'شماره تماس را تصحیح کنید، شماره باید با ۰ شروع شود'
+        elif request.data["mobile"][1] != '9' :
+            msg = 'شماره تماس را تصحیح کنید، شماره باید با ۰۹ شروع شود'
+        else:
+            msg = None
+        if msg:
+            return Response( msg , status=status.HTTP_400_BAD_REQUEST)
+
         serializer = serializers.registerSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
         else:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE, data = serializer.errors)
 
+        user=User()
+        user.is_legal = data['is_legal']
 
-        try:
-            mobile = data['mobile']
-            user = User.objects.get(mobile=mobile)
-            return Response('این شماره تلفن قبلا ثبت شده است', status=status.HTTP_400_BAD_REQUEST)
+        if user.is_legal:
+            user.mobile = data['mobile']
+            user.company = data['company']
+            user.email = data['email']
+            user.address = data['address']
+            user.referral_code = data['referral_code']
+        else:
+            user.mobile = data['mobile']
+            user.first_name = data['first_name']
+            user.last_name = data['last_name']
+            user.referral_code = data['referral_code']
 
-        except User.DoesNotExist:
-            user=User()
-            user.is_legal = data['is_legal']
-
-            if user.is_legal:
-                user.mobile = data['mobile']
-                user.company = data['company']
-                user.email = data['email']
-                user.address = data['address']
-                user.referral_code = data['referral_code']
-            else:
-                user.mobile = data['mobile']
-                user.first_name = data['first_name']
-                user.last_name = data['last_name']
-                user.referral_code = data['referral_code']
-
-            # send otp
-            #otp = helper.get_random_otp()
-            otp = '12345'
-            helper.otpsend(mobile, otp)
-            #helper.send_otp_soap(mobile, otp)
-            # save otp
-            print(otp)
-            user.otp = otp
-            user.is_active = False
-            user.save()
-            return Response('کد تایید به شماره {} ارسال شد'.format(user.mobile) , status=status.HTTP_200_OK)
+        # send otp
+        otp = helper.get_random_otp()
+        helper.otpsend(data['mobile'], otp)
+        #helper.send_otp_soap(mobile, otp)
+        # save otp
+        print(otp)
+        user.otp = otp
+        user.is_active = False
+        user.save()
+        return Response('کد تایید به شماره {} ارسال شد'.format(user.mobile) , status=status.HTTP_200_OK)
 
 
 
