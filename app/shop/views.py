@@ -188,6 +188,7 @@ class CategoryItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPI
 class Shops(GenericAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = ShopSerializer
+    pagination_class = CustomPagination
     queryset = Shop.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['user', 'category', 'city']
