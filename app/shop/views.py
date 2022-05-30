@@ -191,14 +191,25 @@ class Shops(GenericAPIView):
     pagination_class = CustomPagination
     queryset = Shop.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['user', 'category', 'city']
+    filterset_fields = ['user', 'city']
     search_fields = ['name', 'phone','email','address', 'description']
     ordering_fields = ['id', 'date_created']
 
     def get(self, request, format=None):
-        queryset = Shop.objects.all()
-        query = self.filter_queryset(Shop.objects.all())
-        page = self.paginate_queryset(queryset)
+
+        if request.GET.get('category'):
+            category = []
+            cat_ids = [int(x) for x in request.GET.get('category').split(',')]
+            for id in cat_ids:
+                cat = Category.objects.get(id=id)
+                cat_childs = cat.get_descendants(include_self=True)
+                for C in cat_childs:
+                    category.append(C.id)
+        else:
+            category = Category.objects.all()
+
+        query = self.filter_queryset(Shop.objects.filter(category__in=category))
+        page = self.paginate_queryset(query)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
