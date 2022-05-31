@@ -211,10 +211,10 @@ class Shops(GenericAPIView):
         query = self.filter_queryset(Shop.objects.filter(category__in=category))
         page = self.paginate_queryset(query)
         if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            print('------------------')
-            print(serializer.data)
+            #serializer = self.get_serializer(page, many=True)
+            serializer = ShopSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
+
         serializer = ShopSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -299,7 +299,8 @@ class Products(GenericAPIView):
         query = self.filter_queryset(Product.objects.filter(category__in=category))
         page = self.paginate_queryset(query)
         if page is not None:
-            serializer = self.get_serializer(page, many=True)
+            #serializer = self.get_serializer(page, many=True)
+            serializer = ProductSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
         serializer = ProductSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
