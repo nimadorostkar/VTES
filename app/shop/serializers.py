@@ -65,20 +65,9 @@ class ProductImgsSerializer(serializers.ModelSerializer):
 #------------------------------------------------------------------------------
 class ShopSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True, many=True)
-    #logo_url = serializers.SerializerMethodField('get_logo_url')
-    #cover_url = serializers.SerializerMethodField('get_cover_url')
-    #logo = serializers.ImageField(default='logos/default.png', required = False, allow_null=True)
-    #cover = serializers.ImageField(default='covers/default.png', required = False, allow_null=True)
     class Meta:
         model = Shop
         fields = ('id' ,'name', 'user','user_mobile', 'phone', 'email', 'city', 'address', 'postal_code', 'lat_long', 'description','category', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram', 'date_created')
-
-    #def get_logo_url(self, obj):
-        #return obj.logo.url
-    #def get_cover_url(self, obj):
-        #return obj.cover.url
-
-    #  'logo_url', 'cover_url',
 
 
 
