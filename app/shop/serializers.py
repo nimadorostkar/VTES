@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Shop, Product, Category, Attributes, ProductAttr, ProductImgs, ShopProducts, Attributes, ProductColor
+from .models import Shop, Product, Category, Brand, Attributes, ProductAttr, ProductImgs, ShopProducts, Attributes, ProductColor
 
 
 
@@ -23,6 +23,20 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields=('id', 'name', 'children',)
 
+
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class BrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Brand
+        fields = ('id', 'name')
 
 
 

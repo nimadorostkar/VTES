@@ -40,6 +40,24 @@ class Category(MPTTModel):
 
 
 #------------------------------------------------------------------------------
+class Brand(models.Model):
+    name = models.CharField(max_length=256, unique=True, verbose_name='برند')
+
+    def __str__(self):
+        return str(self.name)
+
+    class Meta:
+        verbose_name = "برند"
+        verbose_name_plural = "برند ها"
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
 class Attributes(models.Model):
     name = models.CharField(max_length=60, unique=True, verbose_name='ویژگی')
 
@@ -116,7 +134,7 @@ class Product(models.Model):
     irancode = models.CharField(max_length=50, null=True, blank=True, verbose_name = "ایران کد")
     name = models.CharField(max_length=80, verbose_name = "نام محصول")
     banner = models.ImageField(default='products/default.png', upload_to='products', verbose_name = "تصویر")
-    brand = models.CharField(max_length=50, null=True, blank=True, verbose_name = "برند محصول")
+    brand = models.ForeignKey(Brand, null=True, blank=True, on_delete=models.CASCADE, related_name='product_brand', verbose_name = "برند")
     link = models.CharField(max_length=200, null=True, blank=True, verbose_name = "لینک محصول")
     category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.CASCADE, related_name='product_category', verbose_name = "دسته بند")
     description = models.TextField(max_length=1000,null=True, blank=True, verbose_name = "توضیحات")

@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from .serializers import ( ShopSerializer, ProductSerializer, CategorySerializer,
                            ProductAttrSerializer, SearchSerializer, ProductImgsSerializer, MainCatSerializer,
-                           ShopProductsSerializer, AttributesSerializer, ProductColorSerializer, MultiShopProductsSerializer )
+                           ShopProductsSerializer, AttributesSerializer, ProductColorSerializer,
+                           MultiShopProductsSerializer, BrandSerializer )
 from rest_framework import viewsets, filters, status, pagination, mixins
 from .models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts, Attributes, ProductColor
 from django_filters.rest_framework import DjangoFilterBackend
@@ -25,6 +26,29 @@ class CustomPagination(PageNumberPagination):
 
 
 
+
+
+
+
+
+
+
+
+
+# --------------------------------------------------------- Brands -------------
+class Brands(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request, format=None):
+        query = models.Brand.objects.all()
+        serializer = BrandSerializer(query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, format=None):
+        serializer = AttributesSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
