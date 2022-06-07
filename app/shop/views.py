@@ -660,14 +660,14 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
             datasheet = None
 
         shop_info = { "id":Product.shop.id, "user":Product.shop.user.mobile, "name":Product.shop.name, "phone":Product.shop.phone,
-                      "email":Product.shop.email, "description":Product.shop.description,
+                      "email":Product.shop.email, "description":Product.shop.description, "category":Product.shop.category.all().values_list('id', 'name'),
                       "city":Product.shop.city, "address":Product.shop.address, "postal_code":Product.shop.postal_code, "lat_long":Product.shop.lat_long,
                       "instagram":Product.shop.instagram, "linkedin":Product.shop.linkedin, "whatsapp":Product.shop.whatsapp, "telegram":Product.shop.telegram,
                       "logo":Product.shop.logo.url, "cover":Product.shop.cover.url }
 
         product_info = { "id":Product.product.id, "name":Product.product.name, "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode,
                          "brand_name":Product.product.brand.name, "brand_id":Product.product.brand.id, "link":Product.product.link, "description":Product.product.description,
-                         "datasheet":datasheet, "banner":Product.product.banner.url, 'imgs':imgs   }
+                         "datasheet":datasheet, "banner":Product.product.banner.url, 'imgs':imgs, "category":Product.product.category.id  }
 
         general_info = { "id":Product.id, "available":Product.available, "qty":Product.qty, "price_model":Product.price_model,
                     "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price, "medium_volume_qty":Product.medium_volume_qty,
