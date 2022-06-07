@@ -505,7 +505,7 @@ class ShopProducts(GenericAPIView):
                     brand_name = None
 
 
-                product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
+                product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "category":Product.product.category.id,
                       "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
                       "available":Product.available, "internal_code":Product.internal_code, "brand":brand_name, "link":Product.product.link,
                       "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
@@ -748,6 +748,36 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
         shop_product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
         shop_product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
+
+
+
+
+# -------------------------------------------------- SimilarProducts -----------
+class SimilarProducts(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
+        similar_products = models.ShopProducts.objects.filter(shop=product.shop, product__category=product.product.category)
+
+        serializer = ShopProductsSerializer(similar_products, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
