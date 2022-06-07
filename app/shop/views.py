@@ -670,7 +670,6 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
                     "attr": attrvalue, "color": colors }
 
         data = { 'shop_info':shop_info, 'product_info':product_info, 'general_info':general_info }
-
         return Response(data, status=status.HTTP_200_OK)
 
 
