@@ -499,10 +499,15 @@ class ShopProducts(GenericAPIView):
                     colors.append(C)
                 #print(colors)
 
+                if Product.product.brand.name:
+                    brand_name = Product.product.brand.name
+                else:
+                    brand_name = None
+
 
                 product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
                       "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
-                      "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand.name, "link":Product.product.link,
+                      "available":Product.available, "internal_code":Product.internal_code, "brand":brand_name, "link":Product.product.link,
                       "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
                       "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
                       "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
