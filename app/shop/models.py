@@ -138,7 +138,7 @@ class Product(models.Model):
     link = models.CharField(max_length=200, null=True, blank=True, verbose_name = "لینک محصول")
     category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.CASCADE, related_name='product_category', verbose_name = "دسته بند")
     description = models.TextField(max_length=1000,null=True, blank=True, verbose_name = "توضیحات")
-    datasheet = models.FileField(upload_to='datasheet', null=True, blank=True, max_length=254, verbose_name = "فایل و Datasheet")
+    datasheet = models.FileField(upload_to='datasheet', null=True, blank=True, verbose_name = "فایل و Datasheet")
     date_created = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
 
     def __str__(self):

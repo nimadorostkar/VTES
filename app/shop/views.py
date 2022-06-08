@@ -653,7 +653,7 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
         #print(attrvalue)
 
         if Product.product.datasheet:
-            datasheet = Product.product.datasheet
+            datasheet = Product.product.datasheet.url
         else:
             datasheet = None
 
