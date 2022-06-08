@@ -15,7 +15,6 @@ from . import models
 from django.db.models import Q
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework import pagination
-
 import json
 
 
@@ -735,7 +734,7 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
             #print(attrvalue)
             product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
                   "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
-                  "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand, "link":Product.product.link,
+                  "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand.id, "link":Product.product.link,
                   "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
                   "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
                   "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
@@ -757,15 +756,82 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
 
 
 # -------------------------------------------------- SimilarProducts -----------
-class SimilarProducts(APIView):
+class SimilarProducts(GenericAPIView):
     permission_classes = [AllowAny]
+    serializer_class = ShopProductsSerializer
+    queryset = models.ShopProducts.objects.all()
+    pagination_class = CustomPagination
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['shop', 'product', 'available']
+    search_fields = ['shop__name', 'product__name', 'internal_code']
+    ordering_fields = ['id', 'available', 'product__name', 'product__code', 'product__id', 'product__date_created', 'product__brand', 'product__approved', 'shop__name']
 
     def get(self, request, *args, **kwargs):
         product = get_object_or_404(models.ShopProducts, id=self.kwargs["id"])
-        similar_products = models.ShopProducts.objects.filter(shop=product.shop, product__category=product.product.category)
+        similar_products = self.filter_queryset(models.ShopProducts.objects.filter(shop=product.shop, product__category=product.product.category))
+        page = self.paginate_queryset(similar_products)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            shopProduct=[]
+            for Product in page:
+                attr = models.ProductAttr.objects.filter(product=Product)
+                attr_serializer = ProductAttrSerializer(attr, many=True)
 
-        serializer = ShopProductsSerializer(similar_products, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+                just_attr = []
+                for AA in attr_serializer.data:
+                    just_attr.append(AA['attribute'])
+                attr_ids = list(set(just_attr))
+
+                attrvalue = []
+                for Q in attr_ids:
+                    attribute=models.Attributes.objects.get(id=Q)
+                    values = []
+                    for A in attr:
+                        if A.attribute.id == Q:
+                            values.append(A.value)
+                    attrvalue.append({ 'attribute':attribute.id, 'attribute_name':attribute.name, 'value':values })
+                #print(attrvalue)
+
+                color = models.ProductColor.objects.filter(product=Product)
+                colors =[]
+                for C in color.values_list('color', flat=True):
+                    colors.append(C)
+                #print(colors)
+
+                if Product.product.brand.name:
+                    brand_name = Product.product.brand.name
+                else:
+                    brand_name = None
+
+
+                product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "category":Product.product.category.id,
+                      "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
+                      "available":Product.available, "internal_code":Product.internal_code, "brand":brand_name, "link":Product.product.link,
+                      "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
+                      "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
+                      "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
+                      "attr": attrvalue, "color": colors }
+                shopProduct.append(product)
+            return self.get_paginated_response(shopProduct)
+
+        shopProduct=[]
+        for Product in query:
+            attr = models.ProductAttr.objects.filter(product=Product)
+            attr_serializer = ProductAttrSerializer(attr, many=True)
+            color = models.ProductColor.objects.filter(product=Product)
+            color_serializer = ProductColorSerializer(color, many=True)
+            product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id,
+                  "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
+                  "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand.name, "link":Product.product.link,
+                  "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
+                  "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
+                  "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
+                  "attr": attrvalue, "color": colors }
+            shopProduct.append(product)
+        return Response(shopProduct, status=status.HTTP_200_OK)
+
+
+
 
 
 
