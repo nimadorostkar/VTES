@@ -33,7 +33,6 @@ class CustomPagination(PageNumberPagination):
 
 
 
-
 # --------------------------------------------------------- Brands -------------
 class Brands(APIView):
     permission_classes = [AllowAny]
