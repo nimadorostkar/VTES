@@ -667,7 +667,7 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
                          "brand_name":Product.product.brand.name, "brand_id":Product.product.brand.id, "link":Product.product.link, "description":Product.product.description,
                          "datasheet":datasheet, "banner":Product.product.banner.url, 'imgs':imgs, "category":Product.product.category.id  }
 
-        general_info = { "id":Product.id, "available":Product.available, "qty":Product.qty, "price_model":Product.price_model,
+        general_info = { "id":Product.id, "available":Product.available, "qty":Product.qty, "price_model":Product.price_model, "internal_code":Product.internal_code,
                     "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price, "medium_volume_qty":Product.medium_volume_qty,
                     "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
                     "attr": attrvalue, "color": colors }
