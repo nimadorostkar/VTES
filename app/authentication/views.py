@@ -172,7 +172,12 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
         else:
             has_a_shop = False
 
-        user_data={"id":profile.id, "first_name":profile.first_name, "last_name":profile.last_name, "email":profile.email, "image":profile.image.url, "mobile":profile.mobile, "is_legal":profile.is_legal, "has_a_shop":has_a_shop, 'user_shops':user_shops.values_list('id', 'name'), "address":profile.address, "company":profile.company, "email_verification":profile.email_verification, "referral_code":profile.referral_code}
+        user_data = { "id":profile.id, "first_name":profile.first_name, "last_name":profile.last_name, "email":profile.email,
+                      "image":profile.image.url, "mobile":profile.mobile, "is_legal":profile.is_legal, "has_a_shop":has_a_shop,
+                      'user_shops':user_shops.values_list('id', 'name'), "address":profile.address, "company":profile.company,
+                      "email_verification":profile.email_verification, "referral_code":profile.referral_code, "national_code":profile.national_code,
+                      "postal_code":profile.postal_code, "telephone":profile.telephone, "warehouse_address":profile.warehouse_address,
+                      "national_id":profile.national_id, "reg_number":profile.reg_number, "economic_code":profile.economic_code }
         return Response(user_data, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
