@@ -147,6 +147,9 @@ class Product(models.Model):
     def category_name(self):
         return str(self.category.name)
 
+    def brand_name(self):
+        return str(self.brand.name)
+
     def img_tag(self):
         return format_html("<img width=40 src='{}'>".format(self.banner.url))
 
