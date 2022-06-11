@@ -385,9 +385,9 @@ class Search(APIView):
             return Response('There is a problem with the submitted information, please resend query',status=status.HTTP_400_BAD_REQUEST)
         search = data['q']
         if search:
-            product = models.Product.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(brand__icontains=search) | Q(code__icontains=search) )
+            product = models.Product.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(brand__name__icontains=search) | Q(code__icontains=search) )
             shop = models.Shop.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(phone__icontains=search) | Q(email__icontains=search) | Q(address__icontains=search) )
-            shop_products = models.ShopProducts.objects.filter( Q(product__name__icontains=search) | Q(shop__name__icontains=search) | Q(product__description__icontains=search) | Q(shop__description__icontains=search) | Q(product__brand__icontains=search) | Q(product__code__icontains=search) | Q(product__irancode__icontains=search) )
+            shop_products = models.ShopProducts.objects.filter( Q(product__name__icontains=search) | Q(shop__name__icontains=search) | Q(product__description__icontains=search) | Q(shop__description__icontains=search) | Q(product__brand__name__icontains=search) | Q(product__code__icontains=search) | Q(product__irancode__icontains=search) )
             category = models.Category.objects.filter( Q(name__icontains=search) )
 
             product_serializer = ProductSerializer(product, many=True)
