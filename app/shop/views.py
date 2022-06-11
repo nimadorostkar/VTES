@@ -230,7 +230,7 @@ class Shops(GenericAPIView):
         else:
             category = Category.objects.all()
 
-        query = self.filter_queryset(Shop.objects.filter(category__in=category))
+        query = self.filter_queryset(Shop.objects.filter(category__in=category).distinct())
         page = self.paginate_queryset(query)
         if page is not None:
             #serializer = self.get_serializer(page, many=True)
