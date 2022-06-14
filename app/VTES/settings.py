@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_filters',
     'shop',
+    'cart',
     'mptt',
     'colorfield',
     'import_export'
