@@ -369,16 +369,15 @@ class ProductItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIV
 
 
 # ------------------------------------------------------- Search ------------
-
 class Search(GenericAPIView):
     permission_classes = [AllowAny]
-    #serializer_class = ShopProductsSerializer
-    #pagination_class = CustomPagination
-    #queryset = ShopProducts.objects.all()
-    #filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    #filterset_fields = ['shop', 'product', 'available']
-    #search_fields = ['shop__name', 'product__name', 'internal_code']
-    #ordering_fields = ['id', 'available', 'product__name', 'product__code', 'product__id', 'product__date_created', 'product__brand', 'product__approved', 'shop__name']
+    serializer_class = ShopProductsSerializer
+    pagination_class = CustomPagination
+    queryset = ShopProducts.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['shop', 'product', 'available']
+    search_fields = ['shop__name', 'product__name', 'internal_code']
+    ordering_fields = ['id', 'available', 'product__name', 'product__code', 'product__id', 'product__date_created', 'product__brand', 'product__approved', 'shop__name']
 
 
     def get(self, request, **kwargs):
@@ -403,46 +402,51 @@ class Search(GenericAPIView):
 
             #shop_products Start
             #shop_products_serializer = ShopProductsSerializer(shop_products, many=True)
-            shopProduct=[]
-            for Product in shop_products:
-                attr = models.ProductAttr.objects.filter(product=Product)
-                attr_serializer = ProductAttrSerializer(attr, many=True)
+            query = self.filter_queryset(models.ShopProducts.objects.all())
+            page = self.paginate_queryset(query)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                shopProduct=[]
+                for Product in page:
+                    attr = models.ProductAttr.objects.filter(product=Product)
+                    attr_serializer = ProductAttrSerializer(attr, many=True)
 
-                just_attr = []
-                for AA in attr_serializer.data:
-                    just_attr.append(AA['attribute'])
-                attr_ids = list(set(just_attr))
+                    just_attr = []
+                    for AA in attr_serializer.data:
+                        just_attr.append(AA['attribute'])
+                    attr_ids = list(set(just_attr))
 
-                attrvalue = []
-                for QQ in attr_ids:
-                    attribute=models.Attributes.objects.get(id=QQ)
-                    values = []
-                    for A in attr:
-                        if A.attribute.id == QQ:
-                            values.append(A.value)
-                    attrvalue.append({ 'attribute':attribute.id, 'attribute_name':attribute.name, 'value':values })
-                #print(attrvalue)
-                color = models.ProductColor.objects.filter(product=Product)
-                colors =[]
-                for C in color.values_list('color', flat=True):
-                    colors.append(C)
-                #print(colors)
+                    attrvalue = []
+                    for QQ in attr_ids:
+                        attribute=models.Attributes.objects.get(id=QQ)
+                        values = []
+                        for A in attr:
+                            if A.attribute.id == QQ:
+                                values.append(A.value)
+                        attrvalue.append({ 'attribute':attribute.id, 'attribute_name':attribute.name, 'value':values })
+                    #print(attrvalue)
+                    color = models.ProductColor.objects.filter(product=Product)
+                    colors =[]
+                    for C in color.values_list('color', flat=True):
+                        colors.append(C)
+                    #print(colors)
 
-                if Product.product.brand.name:
-                    brand_name = Product.product.brand.name
-                else:
-                    brand_name = None
-                product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "category":Product.product.category.id,
-                      "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
-                      "available":Product.available, "internal_code":Product.internal_code, "brand":brand_name, "link":Product.product.link,
-                      "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
-                      "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
-                      "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
-                      "attr": attrvalue, "color": colors }
-                shopProduct.append(product)
+                    if Product.product.brand.name:
+                        brand_name = Product.product.brand.name
+                    else:
+                        brand_name = None
+                    product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "category":Product.product.category.id,
+                          "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
+                          "available":Product.available, "internal_code":Product.internal_code, "brand":brand_name, "link":Product.product.link,
+                          "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
+                          "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
+                          "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
+                          "attr": attrvalue, "color": colors }
+                    shopProduct.append(product)
+                shopproductwithpage = self.get_paginated_response(shopProduct)
             #shop_products End
 
-            search_data={ "product":product_serializer.data , "shops":shop_serializer.data, "shop_products":shopProduct, "categories":category_serializer.data }
+            search_data={ "product":product_serializer.data , "shops":shop_serializer.data, "shop_products":shopproductwithpage.data, "categories":category_serializer.data }
             return Response(search_data, status=status.HTTP_200_OK)
         else:
             return Response('please send query for search', status=status.HTTP_400_BAD_REQUEST)
