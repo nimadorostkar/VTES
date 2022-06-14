@@ -446,7 +446,11 @@ class Search(GenericAPIView):
                 shopproductwithpage = self.get_paginated_response(shopProduct)
             #shop_products End
 
-            search_data={ "product":product_serializer.data , "shops":shop_serializer.data, "shop_products":shopproductwithpage.data, "categories":category_serializer.data }
+            maxprice = models.ShopProducts.objects.all().order_by('one_price').last()
+            minprice = models.ShopProducts.objects.all().order_by('-wholesale_volume_price').last()
+            max_min_price = { 'min':minprice.wholesale_volume_price, 'max':maxprice.one_price }
+
+            search_data={ "product":product_serializer.data , "shops":shop_serializer.data, "shop_products":shopproductwithpage.data, "shop_product_prices":max_min_price, "categories":category_serializer.data }
             return Response(search_data, status=status.HTTP_200_OK)
         else:
             return Response('please send query for search', status=status.HTTP_400_BAD_REQUEST)
