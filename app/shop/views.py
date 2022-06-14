@@ -753,7 +753,7 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
 
 
 
-
+ 
 # -------------------------------------------------- SimilarProducts -----------
 class SimilarProducts(GenericAPIView):
     permission_classes = [AllowAny]
