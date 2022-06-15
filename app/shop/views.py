@@ -373,10 +373,10 @@ class Search(GenericAPIView):
     permission_classes = [AllowAny]
     serializer_class = ShopProductsSerializer
     pagination_class = CustomPagination
-    queryset = ShopProducts.objects.all()
+    #queryset = ShopProducts.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['shop', 'product', 'available']
-    search_fields = ['shop__name', 'product__name', 'internal_code']
+    #search_fields = ['shop__name', 'product__name', 'internal_code']
     ordering_fields = ['id', 'available', 'product__name', 'product__code', 'product__id', 'product__date_created', 'product__brand', 'product__approved', 'shop__name']
 
 
@@ -402,7 +402,7 @@ class Search(GenericAPIView):
 
             #shop_products Start
             #shop_products_serializer = ShopProductsSerializer(shop_products, many=True)
-            query = self.filter_queryset(models.ShopProducts.objects.all())
+            query = self.filter_queryset(shop_products)
             page = self.paginate_queryset(query)
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
