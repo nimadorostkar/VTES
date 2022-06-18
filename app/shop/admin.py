@@ -11,7 +11,7 @@ from import_export.admin import ImportExportModelAdmin, ImportExportMixin
 
 
 #------------------------------------------------------------------------------
-class BrandAdmin(admin.ModelAdmin):
+class BrandAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('name', 'fname', 'link')
     search_fields = ['name', 'fname']
 admin.site.register(models.Brand, BrandAdmin)
