@@ -376,20 +376,21 @@ class Search(GenericAPIView):
     #queryset = ShopProducts.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['shop', 'product', 'available']
-    #search_fields = ['shop__name', 'product__name', 'internal_code']
-    ordering_fields = ['id', 'available', 'product__name', 'product__code', 'product__id', 'product__date_created', 'product__brand', 'product__approved', 'shop__name']
+    search_fields = ['shop__name', 'product__name', 'internal_code']
+    ordering_fields = ['id', 'available', 'product__name', 'product__code', 'product__id', 'product__date_created', 'product__brand', 'product__approved', 'shop__name', 'one_price']
 
+    #def get(self, request, **kwargs):
+        #return Response( 'please use POST method, and send query for search' , status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    def get(self, request, **kwargs):
-        return Response( 'please use POST method, and send query for search' , status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    def get(self, request, format=None):
 
-    def post(self, request, format=None):
-        serializer = serializers.SearchSerializer(data=request.data)
-        if serializer.is_valid():
-            data = serializer.validated_data
+        if request.GET.get('q'):
+            q=request.GET.get('q')
         else:
-            return Response('There is a problem with the submitted information, please resend query',status=status.HTTP_400_BAD_REQUEST)
-        search = data['q']
+            q=[]
+
+        #search = data['q']
+        search = q
         if search:
             product = models.Product.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(brand__name__icontains=search) | Q(code__icontains=search) )
             shop = models.Shop.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(phone__icontains=search) | Q(email__icontains=search) | Q(address__icontains=search) )

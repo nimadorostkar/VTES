@@ -42,6 +42,8 @@ class Category(MPTTModel):
 #------------------------------------------------------------------------------
 class Brand(models.Model):
     name = models.CharField(max_length=256, unique=True, verbose_name='برند')
+    fname = models.CharField(max_length=256, unique=True, null=True, blank=True, verbose_name='برند (فارسی)')
+    link = models.CharField(max_length=256, null=True, blank=True)
 
     def __str__(self):
         return str(self.name)
