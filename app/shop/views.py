@@ -373,90 +373,92 @@ class Search(GenericAPIView):
     permission_classes = [AllowAny]
     serializer_class = ShopProductsSerializer
     pagination_class = CustomPagination
-    #queryset = ShopProducts.objects.all()
+    queryset = ShopProducts.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['shop', 'product', 'available']
     search_fields = ['shop__name', 'product__name', 'internal_code']
     ordering_fields = ['id', 'available', 'product__name', 'product__code', 'product__id', 'product__date_created', 'product__brand', 'product__approved', 'shop__name', 'one_price']
 
-    #def get(self, request, **kwargs):
-        #return Response( 'please use POST method, and send query for search' , status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
     def get(self, request, format=None):
 
         if request.GET.get('q'):
-            q=request.GET.get('q')
+            search=request.GET.get('q')
         else:
-            q=[]
+            search=''
 
-        #search = data['q']
-        search = q
-        if search:
-            product = models.Product.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(brand__name__icontains=search) | Q(code__icontains=search) )
-            shop = models.Shop.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(phone__icontains=search) | Q(email__icontains=search) | Q(address__icontains=search) )
-            shop_products = models.ShopProducts.objects.filter( Q(product__name__icontains=search) | Q(shop__name__icontains=search) | Q(product__description__icontains=search) | Q(shop__description__icontains=search) | Q(product__brand__name__icontains=search) | Q(product__code__icontains=search) | Q(product__irancode__icontains=search) )
-            category = models.Category.objects.filter( Q(name__icontains=search) )
-
-            product_serializer = ProductSerializer(product, many=True)
-            shop_serializer = ShopSerializer(shop, many=True)
-            category_serializer = CategorySerializer(category, many=True)
-
-            #shop_products Start
-            #shop_products_serializer = ShopProductsSerializer(shop_products, many=True)
-            query = self.filter_queryset(shop_products)
-            page = self.paginate_queryset(query)
-            if page is not None:
-                serializer = self.get_serializer(page, many=True)
-                shopProduct=[]
-                for Product in page:
-                    attr = models.ProductAttr.objects.filter(product=Product)
-                    attr_serializer = ProductAttrSerializer(attr, many=True)
-
-                    just_attr = []
-                    for AA in attr_serializer.data:
-                        just_attr.append(AA['attribute'])
-                    attr_ids = list(set(just_attr))
-
-                    attrvalue = []
-                    for QQ in attr_ids:
-                        attribute=models.Attributes.objects.get(id=QQ)
-                        values = []
-                        for A in attr:
-                            if A.attribute.id == QQ:
-                                values.append(A.value)
-                        attrvalue.append({ 'attribute':attribute.id, 'attribute_name':attribute.name, 'value':values })
-                    #print(attrvalue)
-                    color = models.ProductColor.objects.filter(product=Product)
-                    colors =[]
-                    for C in color.values_list('color', flat=True):
-                        colors.append(C)
-                    #print(colors)
-
-                    if Product.product.brand.name:
-                        brand_name = Product.product.brand.name
-                    else:
-                        brand_name = None
-                    product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "category":Product.product.category.id,
-                          "shop":Product.shop.name, "shop_logo":Product.shop.logo.url, "shop_cover":Product.shop.cover.url,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
-                          "available":Product.available, "internal_code":Product.internal_code, "brand":brand_name, "link":Product.product.link,
-                          "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
-                          "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
-                          "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
-                          "attr": attrvalue, "color": colors }
-                    shopProduct.append(product)
-                shopproductwithpage = self.get_paginated_response(shopProduct)
-            #shop_products End
-
-            maxprice = models.ShopProducts.objects.all().order_by('one_price').last()
-            minprice = models.ShopProducts.objects.all().order_by('-wholesale_volume_price').last()
-            max_min_price = { 'min':minprice.wholesale_volume_price, 'max':maxprice.one_price }
-
-            search_data={ "product":product_serializer.data , "shops":shop_serializer.data, "shop_products":shopproductwithpage.data, "shop_product_prices":max_min_price, "categories":category_serializer.data }
-            return Response(search_data, status=status.HTTP_200_OK)
+        if request.GET.get('maxp'):
+            maxp=request.GET.get('maxp')
         else:
-            return Response('please send query for search', status=status.HTTP_400_BAD_REQUEST)
+            maxp=999999999999
+
+        if request.GET.get('minp'):
+            minp=request.GET.get('minp')
+        else:
+            minp=0
 
 
+        product = models.Product.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(brand__name__icontains=search) | Q(code__icontains=search) )
+        shop = models.Shop.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(phone__icontains=search) | Q(email__icontains=search) | Q(address__icontains=search) )
+        shop_products = models.ShopProducts.objects.filter( Q(product__name__icontains=search) | Q(shop__name__icontains=search) | Q(product__description__icontains=search) | Q(shop__description__icontains=search) | Q(product__brand__name__icontains=search) | Q(product__code__icontains=search) | Q(product__irancode__icontains=search) )
+        category = models.Category.objects.filter( Q(name__icontains=search) )
+
+
+        product_serializer = ProductSerializer(product, many=True)
+        shop_serializer = ShopSerializer(shop, many=True)
+        category_serializer = CategorySerializer(category, many=True)
+
+        #shop_products Start
+        shop_products_with_price=shop_products.filter(one_price__range=(minp, maxp))
+        query = self.filter_queryset(shop_products_with_price)
+        page = self.paginate_queryset(query)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            shopProduct=[]
+            for Product in page:
+                attr = models.ProductAttr.objects.filter(product=Product)
+                attr_serializer = ProductAttrSerializer(attr, many=True)
+
+                just_attr = []
+                for AA in attr_serializer.data:
+                    just_attr.append(AA['attribute'])
+                attr_ids = list(set(just_attr))
+
+                attrvalue = []
+                for QQ in attr_ids:
+                    attribute=models.Attributes.objects.get(id=QQ)
+                    values = []
+                    for A in attr:
+                        if A.attribute.id == QQ:
+                            values.append(A.value)
+                    attrvalue.append({ 'attribute':attribute.id, 'attribute_name':attribute.name, 'value':values })
+                #print(attrvalue)
+                color = models.ProductColor.objects.filter(product=Product)
+                colors =[]
+                for C in color.values_list('color', flat=True):
+                    colors.append(C)
+                #print(colors)
+
+                if Product.product.brand.name:
+                    brand_name = Product.product.brand.name
+                else:
+                    brand_name = None
+                product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "category":Product.product.category.id,
+                      "shop":Product.shop.name, "shop_logo":Product.shop.logo.url, "shop_cover":Product.shop.cover.url,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
+                      "available":Product.available, "internal_code":Product.internal_code, "brand":brand_name, "link":Product.product.link,
+                      "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
+                      "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
+                      "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
+                      "attr": attrvalue, "color": colors }
+                shopProduct.append(product)
+            shopproductwithpage = self.get_paginated_response(shopProduct)
+        #shop_products End
+
+        maxprice = query.order_by('one_price').last()
+        minprice = query.order_by('one_price').first()
+        max_min_price = { 'min':minprice.wholesale_volume_price, 'max':maxprice.one_price }
+
+        search_data={ "product":product_serializer.data , "shops":shop_serializer.data, "shop_products":shopproductwithpage.data, "shop_product_prices":max_min_price, "categories":category_serializer.data }
+        return Response(shopproductwithpage.data, status=status.HTTP_200_OK)
 
 
 
