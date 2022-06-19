@@ -396,6 +396,7 @@ class Search(GenericAPIView):
         else:
             minp=0
 
+        allcolors=[]
 
         product = models.Product.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(brand__name__icontains=search) | Q(code__icontains=search) )
         shop = models.Shop.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(phone__icontains=search) | Q(email__icontains=search) | Q(address__icontains=search) )
@@ -436,7 +437,9 @@ class Search(GenericAPIView):
                 colors =[]
                 for C in color.values_list('color', flat=True):
                     colors.append(C)
+                    allcolors.append(C)
                 #print(colors)
+
 
                 if Product.product.brand.name:
                     brand_name = Product.product.brand.name
@@ -455,10 +458,14 @@ class Search(GenericAPIView):
 
         maxprice = query.order_by('one_price').last()
         minprice = query.order_by('one_price').first()
-        max_min_price = { 'min':minprice.wholesale_volume_price, 'max':maxprice.one_price }
+        max_min_price = { 'min':minprice.one_price, 'max':maxprice.one_price }
 
-        search_data={ "product":product_serializer.data , "shops":shop_serializer.data, "shop_products":shopproductwithpage.data, "shop_product_prices":max_min_price, "categories":category_serializer.data }
-        return Response(shopproductwithpage.data, status=status.HTTP_200_OK)
+
+
+
+
+        search_data={ "product":product_serializer.data , "shops":shop_serializer.data, "shop_products":shopproductwithpage.data, "shop_product_prices":max_min_price, "colors":list(set(allcolors)), "categories":category_serializer.data }
+        return Response(search_data, status=status.HTTP_200_OK)
 
 
 
