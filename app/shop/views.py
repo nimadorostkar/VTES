@@ -454,9 +454,14 @@ class Search(GenericAPIView):
             shopproductwithpage = self.get_paginated_response(shopProduct)
         #shop_products End
 
-        maxprice = query.order_by('one_price').last()
-        minprice = query.order_by('one_price').first()
-        max_min_price = { 'min':minprice.one_price, 'max':maxprice.one_price }
+        print('---------')
+        if not query:
+            max_min_price = { 'min':0, 'max':0 }
+        else:
+            maxprice = query.order_by('one_price').last()
+            minprice = query.order_by('one_price').first()
+            max_min_price = { 'min':minprice.one_price, 'max':maxprice.one_price }
+
 
         search_data={ "product":product_serializer.data , "shops":shop_serializer.data, "shop_products":shopproductwithpage.data, "shop_product_prices":max_min_price, "colors":list(set(allcolors)), "categories":category_serializer.data }
         return Response(search_data, status=status.HTTP_200_OK)
