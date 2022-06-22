@@ -381,6 +381,7 @@ class Search(GenericAPIView):
 
     def get(self, request, format=None):
 
+        allcolors=[]
         if request.GET.get('q'):
             search=request.GET.get('q')
         else:
@@ -396,7 +397,23 @@ class Search(GenericAPIView):
         else:
             minp=0
 
-        allcolors=[]
+        #----- color filter ----------------------
+        productcolorfilter=[]
+        if request.GET.get('color'):
+            get_color_filter=request.GET.get('color')
+            color_filter=[]
+            for element in json.loads(get_color_filter):
+                hexcolor = "#"+element
+                color_filter.append(hexcolor)
+
+            product_color = models.ProductColor.objects.filter(color__in=color_filter)
+            for producttt in product_color:
+                productcolorfilter.append(producttt.product.id)
+        else:
+            color_filter=None
+        #----- end color filter ------------------
+
+
 
         product = models.Product.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(brand__name__icontains=search) | Q(code__icontains=search) )
         shop = models.Shop.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(phone__icontains=search) | Q(email__icontains=search) | Q(address__icontains=search) )
@@ -408,8 +425,14 @@ class Search(GenericAPIView):
         category_serializer = CategorySerializer(category, many=True)
 
         #shop_products Start
-        shop_products_with_price=shop_products.filter(one_price__range=(minp, maxp))
-        query = self.filter_queryset(shop_products_with_price)
+        if productcolorfilter:
+            shop_products_with_price=shop_products.filter(one_price__range=(minp, maxp))
+            shop_products_with_price_colorfilter = shop_products_with_price.filter(id__in=productcolorfilter)
+        else:
+            shop_products_with_price_colorfilter=shop_products.filter(one_price__range=(minp, maxp))
+
+
+        query = self.filter_queryset(shop_products_with_price_colorfilter)
         page = self.paginate_queryset(query)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -454,7 +477,6 @@ class Search(GenericAPIView):
             shopproductwithpage = self.get_paginated_response(shopProduct)
         #shop_products End
 
-        print('---------')
         if not query:
             max_min_price = { 'min':0, 'max':0 }
         else:
