@@ -142,6 +142,8 @@ class Product(models.Model):
     description = models.TextField(max_length=1000,null=True, blank=True, verbose_name = "توضیحات")
     datasheet = models.FileField(upload_to='datasheet', null=True, blank=True, verbose_name = "فایل و Datasheet")
     date_created = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
+    CHOICES = ( ('متر','متر'), ('لیتر','لیتر'), ('کیلوگرم','کیلوگرم'), ('عدد','عدد') )
+    unit = models.CharField(max_length=256, choices=CHOICES, null=True, blank=True, verbose_name = "واحد اندازه گیری")
 
     def __str__(self):
         return str(self.name)
@@ -203,6 +205,9 @@ class ShopProducts(models.Model):
 
     def __str__(self):
         return str(self.shop.name)
+
+    def product_code(self):
+        return str(self.product.code)
 
     class Meta:
         verbose_name = "محصول فروشگاه"

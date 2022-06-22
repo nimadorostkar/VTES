@@ -12,7 +12,7 @@ from import_export.admin import ImportExportModelAdmin, ImportExportMixin
 
 #------------------------------------------------------------------------------
 class BrandAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ('name', 'fname', 'link')
+    list_display = ('name', 'fname', 'link', 'id')
     search_fields = ['name', 'fname']
 admin.site.register(models.Brand, BrandAdmin)
 
@@ -71,7 +71,7 @@ class ProductImgsInline(admin.TabularInline):
     extra = 1
 
 class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ('img_tag', 'name', 'category', 'date_created','approved', 'id')
+    list_display = ('img_tag', 'name', 'code', 'category', 'brand','approved', 'id')
     list_filter = ("category", "date_created", "approved")
     search_fields = ['name', 'code']
     raw_id_fields = ['category', 'brand']
@@ -100,7 +100,7 @@ class ProductColorInline(admin.TabularInline):
     extra = 1
 
 class ShopProductsAdmin(admin.ModelAdmin):
-    list_display = ('shop', 'qty', 'internal_code', 'product', 'available')
+    list_display = ('shop', 'qty', 'internal_code', 'product_code', 'product', 'available')
     list_filter = ("available", "shop")
     search_fields = ['shop__name', 'product__name', 'internal_code']
     raw_id_fields = ('shop','product')
