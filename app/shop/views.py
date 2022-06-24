@@ -375,7 +375,7 @@ class Search(GenericAPIView):
     pagination_class = CustomPagination
     queryset = ShopProducts.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['shop', 'product', 'available']
+    filterset_fields = ['shop', 'product', 'available', 'product__category']
     search_fields = ['shop__name', 'product__name', 'internal_code']
     ordering_fields = ['id', 'available', 'product__name', 'product__code', 'product__id', 'product__date_created', 'product__brand', 'product__approved', 'shop__name', 'one_price']
 
@@ -622,74 +622,83 @@ class ShopProducts(GenericAPIView):
         self.request.POST._mutable = True
         data = request.data
 
-        product_serializer = ProductSerializer(data=request.data)
-        if product_serializer.is_valid():
-            product_serializer.save()
+        existcodes = models.Product.objects.all().values_list('code',flat=True).distinct()
+        if data['code'] in existcodes:
+            return Response('کد محصول تکراری می باشد', status=status.HTTP_400_BAD_REQUEST)
+        else:
+            product_serializer = ProductSerializer(data=request.data)
+            if product_serializer.is_valid():
+                product_serializer.save()
 
-        data['product'] = product_serializer.data['id']
+            data['product'] = product_serializer.data['id']
 
-        shop_serializer = ShopProductsSerializer(data=request.data)
-        if shop_serializer.is_valid():
-            shop_serializer.save()
+            shop_serializer = ShopProductsSerializer(data=request.data)
+            if shop_serializer.is_valid():
+                shop_serializer.save()
 
-        color_data = json.loads(data['colors'])
-        color = models.ProductColor.objects.filter(product=models.ShopProducts.objects.get(id=shop_serializer.data['id']))
-        color.delete()
-        for C in color_data:
-            newcolor = ProductColor()
-            newcolor.product= models.ShopProducts.objects.get(id=shop_serializer.data['id'])
-            newcolor.color=C
-            newcolor.save()
+            color_data = json.loads(data['colors'])
+            color = models.ProductColor.objects.filter(product=models.ShopProducts.objects.get(id=shop_serializer.data['id']))
+            color.delete()
+            for C in color_data:
+                newcolor = ProductColor()
+                newcolor.product= models.ShopProducts.objects.get(id=shop_serializer.data['id'])
+                newcolor.color=C
+                newcolor.save()
 
-        attr_data = json.loads(data['attr'])
-        attrs = models.ProductAttr.objects.filter(product=shop_serializer.data['id'])
-        attrs.delete()
-        for attr in attr_data:
-            for val in attr['value']:
-                newattr = ProductAttr()
-                newattr.product= models.ShopProducts.objects.get(id=shop_serializer.data['id'])
-                obj, created = models.Attributes.objects.get_or_create(name=attr['name'])
-                newattr.attribute = models.Attributes.objects.get(id=obj.id)
-                newattr.value = val
-                newattr.save()
+            attr_data = json.loads(data['attr'])
+            attrs = models.ProductAttr.objects.filter(product=shop_serializer.data['id'])
+            attrs.delete()
+            for attr in attr_data:
+                for val in attr['value']:
+                    newattr = ProductAttr()
+                    newattr.product= models.ShopProducts.objects.get(id=shop_serializer.data['id'])
+                    obj, created = models.Attributes.objects.get_or_create(name=attr['name'])
+                    newattr.attribute = models.Attributes.objects.get(id=obj.id)
+                    newattr.value = val
+                    newattr.save()
 
-        if data['img1']:
-            img = ProductImgs()
-            img.product = Product.objects.get(id=data['product'])
-            img.img = data['img1']
-            img.save()
+            if data['img1']:
+                img = ProductImgs()
+                img.product = Product.objects.get(id=data['product'])
+                img.img = data['img1']
+                img.save()
 
-        if data['img2']:
-            img = ProductImgs()
-            img.product = Product.objects.get(id=data['product'])
-            img.img = data['img2']
-            img.save()
+            if data['img2']:
+                img = ProductImgs()
+                img.product = Product.objects.get(id=data['product'])
+                img.img = data['img2']
+                img.save()
 
-        if data['img3']:
-            img = ProductImgs()
-            img.product = Product.objects.get(id=data['product'])
-            img.img = data['img3']
-            img.save()
+            if data['img3']:
+                img = ProductImgs()
+                img.product = Product.objects.get(id=data['product'])
+                img.img = data['img3']
+                img.save()
 
-        if data['img4']:
-            img = ProductImgs()
-            img.product = Product.objects.get(id=data['product'])
-            img.img = data['img4']
-            img.save()
+            if data['img4']:
+                img = ProductImgs()
+                img.product = Product.objects.get(id=data['product'])
+                img.img = data['img4']
+                img.save()
 
-        if data['img5']:
-            img = ProductImgs()
-            img.product = Product.objects.get(id=data['product'])
-            img.img = data['img5']
-            img.save()
+            if data['img5']:
+                img = ProductImgs()
+                img.product = Product.objects.get(id=data['product'])
+                img.img = data['img5']
+                img.save()
 
-        if data['img6']:
-            img = ProductImgs()
-            img.product = Product.objects.get(id=data['product'])
-            img.img = data['img6']
-            img.save()
+            if data['img6']:
+                img = ProductImgs()
+                img.product = Product.objects.get(id=data['product'])
+                img.img = data['img6']
+                img.save()
 
-        return Response(shop_serializer.data['id'], status=status.HTTP_200_OK)
+            return Response(shop_serializer.data['id'], status=status.HTTP_200_OK)
+
+
+
+
+
 
 
 
