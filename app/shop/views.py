@@ -381,6 +381,18 @@ class Search(GenericAPIView):
 
     def get(self, request, format=None):
 
+        if request.GET.get('category'):
+            category = []
+            cat_ids = [int(x) for x in request.GET.get('category').split(',')]
+            for id in cat_ids:
+                cat = Category.objects.get(id=id)
+                cat_childs = cat.get_descendants(include_self=True)
+                for C in cat_childs:
+                    category.append(C.id)
+        else:
+            category = Category.objects.all()
+
+
         allcolors=[]
         if request.GET.get('q'):
             search=request.GET.get('q')
@@ -431,6 +443,7 @@ class Search(GenericAPIView):
         else:
             shop_products_with_price_colorfilter=shop_products.filter(one_price__range=(minp, maxp))
 
+        shop_products_with_price_colorfilter_and_cat =  shop_products_with_price_colorfilter
 
         query = self.filter_queryset(shop_products_with_price_colorfilter)
         page = self.paginate_queryset(query)
