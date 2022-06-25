@@ -60,6 +60,23 @@ class Brand(models.Model):
 
 
 #------------------------------------------------------------------------------
+class Unit(models.Model):
+    name = models.CharField(max_length=256, unique=True, verbose_name="واحد اندازه گیری")
+
+    def __str__(self):
+        return str(self.name)
+
+    class Meta:
+        verbose_name = "واحد اندازه گیری"
+        verbose_name_plural = "واحد اندازه گیری"
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
 class Attributes(models.Model):
     name = models.CharField(max_length=60, unique=True, verbose_name='ویژگی')
 
@@ -142,8 +159,9 @@ class Product(models.Model):
     description = models.TextField(max_length=1000,null=True, blank=True, verbose_name = "توضیحات")
     datasheet = models.FileField(upload_to='datasheet', null=True, blank=True, verbose_name = "فایل و Datasheet")
     date_created = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
-    CHOICES = ( ('متر','متر'), ('لیتر','لیتر'), ('کیلوگرم','کیلوگرم'), ('عدد','عدد') )
-    unit = models.CharField(max_length=256, choices=CHOICES, null=True, blank=True, verbose_name = "واحد اندازه گیری")
+    #CHOICES = ( ('متر','متر'), ('لیتر','لیتر'), ('کیلوگرم','کیلوگرم'), ('عدد','عدد') )
+    #unit = models.CharField(max_length=256, choices=CHOICES, null=True, blank=True, verbose_name = "واحد اندازه گیری")
+    unit = models.ForeignKey(Unit, null=True, blank=True, on_delete=models.CASCADE, related_name='product_unit', verbose_name = "واحد اندازه گیری")
 
     def __str__(self):
         return str(self.name)

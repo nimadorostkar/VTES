@@ -2,7 +2,7 @@ from django.contrib import admin
 from mptt.admin import MPTTModelAdmin, DraggableMPTTAdmin, TreeRelatedFieldListFilter
 from django.contrib.admin.models import LogEntry
 from . import models
-from .models import Brand, Category, Shop, Product, ShopProducts, Attributes, ProductAttr, ProductImgs, ProductColor
+from .models import Brand, Unit, Category, Shop, Product, ShopProducts, Attributes, ProductAttr, ProductImgs, ProductColor
 from import_export.admin import ImportExportModelAdmin, ImportExportMixin
 
 
@@ -15,6 +15,18 @@ class BrandAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('name', 'fname', 'link', 'id')
     search_fields = ['name', 'fname']
 admin.site.register(models.Brand, BrandAdmin)
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class UnitAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    list_display = ('name', 'id')
+    search_fields = ['name',]
+admin.site.register(models.Unit, UnitAdmin)
 
 
 
@@ -74,7 +86,7 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('img_tag', 'name', 'code', 'category', 'brand','approved', 'id')
     list_filter = ("category", "date_created", "approved")
     search_fields = ['name', 'code']
-    raw_id_fields = ['category', 'brand']
+    raw_id_fields = ['category', 'brand', 'unit']
     inlines = [ProductImgsInline]
 
 admin.site.register(models.Product, ProductAdmin)
