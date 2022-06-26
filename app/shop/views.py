@@ -432,7 +432,7 @@ class Search(GenericAPIView):
 
         product = models.Product.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(brand__name__icontains=search) | Q(code__icontains=search) )
         shop = models.Shop.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(phone__icontains=search) | Q(email__icontains=search) | Q(address__icontains=search) )
-        shop_products = models.ShopProducts.objects.filter( Q(product__category__in=category) | Q(product__name__icontains=search) | Q(shop__name__icontains=search) | Q(product__description__icontains=search) | Q(shop__description__icontains=search) | Q(product__brand__name__icontains=search) | Q(product__code__icontains=search) | Q(product__irancode__icontains=search) )
+        shop_products = models.ShopProducts.objects.filter( Q(product__name__icontains=search) | Q(shop__name__icontains=search) | Q(product__description__icontains=search) | Q(shop__description__icontains=search) | Q(product__brand__name__icontains=search) | Q(product__code__icontains=search) | Q(product__irancode__icontains=search) )
         category = models.Category.objects.filter( Q(name__icontains=search) )
 
         product_serializer = ProductSerializer(product, many=True)
@@ -447,6 +447,8 @@ class Search(GenericAPIView):
             shop_products_with_price_colorfilter=shop_products.filter(one_price__range=(minp, maxp))
 
         '''
+        Q(product__category__id__in=category)
+
         shop_products_with_price_colorfilter_and_cat =  shop_products_with_price_colorfilter.filter(product__category__in=category)
 
         for ffz in shop_products_with_price_colorfilter:
@@ -457,6 +459,14 @@ class Search(GenericAPIView):
         for ffc in shop_products_with_price_colorfilter_and_cat:
             print(ffc.id)
         '''
+
+        #shop_products_with_price_colorfilter_and_cat =  shop_products_with_price_colorfilter.filter(product__category__id__in=category)
+        print('-------')
+        for shp in shop_products_with_price_colorfilter:
+            if shp.product.category.id in category:
+                print(shp)
+            #print(shp.product.category.id)
+
 
         query = self.filter_queryset(shop_products_with_price_colorfilter)
         page = self.paginate_queryset(query)
