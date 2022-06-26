@@ -382,19 +382,15 @@ class Search(GenericAPIView):
     def get(self, request, format=None):
 
         if request.GET.get('category'):
-            category = []
+            category_param = []
             cat_ids = [int(x) for x in request.GET.get('category').split(',')]
             for id in cat_ids:
                 cat = Category.objects.get(id=id)
                 cat_childs = cat.get_descendants(include_self=True)
                 for C in cat_childs:
-                    category.append(C.id)
+                    category_param.append(C.id)
         else:
-            category = Category.objects.all()
-
-        print('----------------')
-        print(category)
-
+            category_param = Category.objects.all().values_list('id', flat=True)
 
         allcolors=[]
         if request.GET.get('q'):
@@ -429,7 +425,6 @@ class Search(GenericAPIView):
         #----- end color filter ------------------
 
 
-
         product = models.Product.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(brand__name__icontains=search) | Q(code__icontains=search) )
         shop = models.Shop.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(phone__icontains=search) | Q(email__icontains=search) | Q(address__icontains=search) )
         shop_products = models.ShopProducts.objects.filter( Q(product__name__icontains=search) | Q(shop__name__icontains=search) | Q(product__description__icontains=search) | Q(shop__description__icontains=search) | Q(product__brand__name__icontains=search) | Q(product__code__icontains=search) | Q(product__irancode__icontains=search) )
@@ -446,29 +441,9 @@ class Search(GenericAPIView):
         else:
             shop_products_with_price_colorfilter=shop_products.filter(one_price__range=(minp, maxp))
 
-        '''
-        Q(product__category__id__in=category)
+        filtering_caaat =  shop_products_with_price_colorfilter.filter(product__category__id__in=category_param)
 
-        shop_products_with_price_colorfilter_and_cat =  shop_products_with_price_colorfilter.filter(product__category__in=category)
-
-        for ffz in shop_products_with_price_colorfilter:
-            print(ffz.id)
-
-        print('-------')
-
-        for ffc in shop_products_with_price_colorfilter_and_cat:
-            print(ffc.id)
-        '''
-
-        #shop_products_with_price_colorfilter_and_cat =  shop_products_with_price_colorfilter.filter(product__category__id__in=category)
-        print('-------')
-        for shp in shop_products_with_price_colorfilter:
-            if shp.product.category.id in category:
-                print(shp)
-            #print(shp.product.category.id)
-
-
-        query = self.filter_queryset(shop_products_with_price_colorfilter)
+        query = self.filter_queryset(filtering_caaat)
         page = self.paginate_queryset(query)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
