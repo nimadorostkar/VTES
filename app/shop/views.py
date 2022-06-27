@@ -602,17 +602,17 @@ class ShopProducts(GenericAPIView):
 
                 productcat = Product.product.category
                 if productcat.parent == None:
-                    cat1 = productcat.id
+                    cat1 = { 'id':productcat.id, 'name':productcat.name }
                     cat2 = None
                     cat3 = None
                 elif productcat.parent.parent == None:
-                    cat1 = productcat.parent.id
-                    cat2 = productcat.id
+                    cat1 = { 'id':productcat.parent.id, 'name':productcat.parent.name }
+                    cat2 = { 'id':productcat.id, 'name':productcat.name }
                     cat3 = None
                 elif productcat.parent.parent.parent == None:
-                    cat1 = productcat.parent.parent.id
-                    cat2 = productcat.parent.id
-                    cat3 = productcat.id
+                    cat1 = { 'id':productcat.parent.parent.id, 'name':productcat.parent.parent.name }
+                    cat2 = { 'id':productcat.parent.id, 'name':productcat.parent.name }
+                    cat3 = { 'id':productcat.id, 'name':productcat.name }
                 else:
                     cat1 = None
                     cat2 = None
