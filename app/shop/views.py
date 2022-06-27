@@ -368,6 +368,7 @@ class ProductItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIV
 
 
 
+
 # ------------------------------------------------------- Search ------------
 class Search(GenericAPIView):
     permission_classes = [AllowAny]
