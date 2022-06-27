@@ -600,7 +600,27 @@ class ShopProducts(GenericAPIView):
                     brand_name = None
 
 
-                product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "category":Product.product.category.id,
+                productcat = Product.product.category
+                if productcat.parent == None:
+                    cat1 = productcat.id
+                    cat2 = None
+                    cat3 = None
+                elif productcat.parent.parent == None:
+                    cat1 = productcat.parent.id
+                    cat2 = productcat.id
+                    cat3 = None
+                elif productcat.parent.parent.parent == None:
+                    cat1 = productcat.parent.parent.id
+                    cat2 = productcat.parent.id
+                    cat3 = productcat.id
+                else:
+                    cat1 = None
+                    cat2 = None
+                    cat3 = None
+                cat = {'cat1':cat1, 'cat2':cat2, 'cat3':cat3}
+
+
+                product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "category":cat,
                       "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
                       "available":Product.available, "internal_code":Product.internal_code, "brand":brand_name, "link":Product.product.link,
                       "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
