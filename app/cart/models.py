@@ -13,7 +13,6 @@ from shop.models import ShopProducts
 class PostWay(models.Model):
     way = models.CharField(max_length=60, verbose_name='روش سفارش')
     price = models.IntegerField(verbose_name='هزینه ارسال')
-    selected = models.BooleanField(default=False, verbose_name='روش پست منتخب')
 
     class Meta:
         verbose_name = 'روش‌‌ ارسال'
@@ -116,12 +115,12 @@ class Order(models.Model):
         ('Canceled', 'لغو شده'),
     )
     PAY_WAY = ( ('online', 'پرداخت آنلاین'), ('credit', 'اعتباری'))
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name='کاربر')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='کاربر')
     code = models.CharField(max_length=10, editable=False, verbose_name='کد سفارش')
-    carts = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True, verbose_name='محصولات')
-    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, verbose_name='آدرس')
-    delivery_time = models.ForeignKey(ShippingTime, on_delete=models.SET_NULL, null=True, verbose_name='زمان تحویل')
-    post_way = models.ForeignKey(PostWay, on_delete=models.SET_NULL, null=True, verbose_name='نحوه ارسال')
+    carts = models.ForeignKey(Cart, on_delete=models.CASCADE, verbose_name='سبد محصولات')
+    address = models.ForeignKey(Address, on_delete=models.CASCADE, verbose_name='آدرس')
+    delivery_time = models.ForeignKey(ShippingTime, on_delete=models.CASCADE, verbose_name='زمان تحویل')
+    post_way = models.ForeignKey(PostWay, on_delete=models.CASCADE, verbose_name='نحوه ارسال')
     pay_way = models.CharField(max_length=50, choices=PAY_WAY, default='online', verbose_name='نحوه پرداخت')
     total = models.IntegerField(verbose_name='جمع مبلغ کل سفارشات')
     amount = models.IntegerField(verbose_name='جمع تعداد کل سفارشات')

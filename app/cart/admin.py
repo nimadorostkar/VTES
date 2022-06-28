@@ -7,6 +7,16 @@ from . import models
 
 
 
+#------------------------------------------------------------------------------
+class PostWayAdmin(admin.ModelAdmin):
+    list_display = ('way','price')
+    list_filter = ("way",)
+admin.site.register(models.PostWay, PostWayAdmin)
+
+
+
+
+
 
 
 #------------------------------------------------------------------------------
@@ -39,12 +49,26 @@ admin.site.register(models.ShippingTime, ShippingTimeAdmin)
 
 #------------------------------------------------------------------------------
 class CartAdmin(admin.ModelAdmin):
-    list_display = ('user', )
+    list_display = ('user', 'product', 'quantity' )
     list_filter = ("user", )
 admin.site.register(models.Cart, CartAdmin)
 
 
 
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('code', 'carts', 'total', 'status', 'pay_way', 'user')
+    list_filter = ("status", "pay_way", "create_at", "update_at")
+    search_fields = ['code', 'phone_number', 'postal_code']
+    raw_id_fields = ['user', 'address', 'carts']
+admin.site.register(models.Order, OrderAdmin)
 
 
 
