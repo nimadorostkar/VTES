@@ -61,7 +61,6 @@ class ShippingTime(models.Model):
 
 
 
-
 #------------------------------------------------------------------------------
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart_user', verbose_name = "کاربر")
