@@ -117,7 +117,7 @@ class Order(models.Model):
     PAY_WAY = ( ('online', 'پرداخت آنلاین'), ('credit', 'اعتباری'))
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='کاربر')
     code = models.CharField(max_length=10, editable=False, verbose_name='کد سفارش')
-    carts = models.ForeignKey(Cart, on_delete=models.CASCADE, verbose_name='سبد محصولات')
+    carts = models.ManyToManyField(Cart, verbose_name='سبد محصولات')
     address = models.ForeignKey(Address, on_delete=models.CASCADE, verbose_name='آدرس')
     delivery_time = models.ForeignKey(ShippingTime, on_delete=models.CASCADE, verbose_name='زمان تحویل')
     post_way = models.ForeignKey(PostWay, on_delete=models.CASCADE, verbose_name='نحوه ارسال')

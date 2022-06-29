@@ -478,7 +478,28 @@ class Search(GenericAPIView):
                     brand_name = Product.product.brand.name
                 else:
                     brand_name = None
-                product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "category":Product.product.category.id,
+
+                productcat = Product.product.category
+                if productcat.parent == None:
+                    cat1 = { 'id':productcat.id, 'name':productcat.name }
+                    cat2 = None
+                    cat3 = None
+                elif productcat.parent.parent == None:
+                    cat1 = { 'id':productcat.parent.id, 'name':productcat.parent.name }
+                    cat2 = { 'id':productcat.id, 'name':productcat.name }
+                    cat3 = None
+                elif productcat.parent.parent.parent == None:
+                    cat1 = { 'id':productcat.parent.parent.id, 'name':productcat.parent.parent.name }
+                    cat2 = { 'id':productcat.parent.id, 'name':productcat.parent.name }
+                    cat3 = { 'id':productcat.id, 'name':productcat.name }
+                else:
+                    cat1 = None
+                    cat2 = None
+                    cat3 = None
+                cat = {'cat1':cat1, 'cat2':cat2, 'cat3':cat3}
+
+
+                product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "category":cat,
                       "shop":Product.shop.name, "shop_logo":Product.shop.logo.url, "shop_cover":Product.shop.cover.url,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
                       "available":Product.available, "internal_code":Product.internal_code, "brand":brand_name, "link":Product.product.link,
                       "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
@@ -784,6 +805,27 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
         else:
             datasheet = None
 
+
+        productcat = Product.product.category
+        if productcat.parent == None:
+            cat1 = { 'id':productcat.id, 'name':productcat.name }
+            cat2 = None
+            cat3 = None
+        elif productcat.parent.parent == None:
+            cat1 = { 'id':productcat.parent.id, 'name':productcat.parent.name }
+            cat2 = { 'id':productcat.id, 'name':productcat.name }
+            cat3 = None
+        elif productcat.parent.parent.parent == None:
+            cat1 = { 'id':productcat.parent.parent.id, 'name':productcat.parent.parent.name }
+            cat2 = { 'id':productcat.parent.id, 'name':productcat.parent.name }
+            cat3 = { 'id':productcat.id, 'name':productcat.name }
+        else:
+            cat1 = None
+            cat2 = None
+            cat3 = None
+        cat = {'cat1':cat1, 'cat2':cat2, 'cat3':cat3}
+
+
         shop_info = { "id":Product.shop.id, "user":Product.shop.user.mobile, "name":Product.shop.name, "phone":Product.shop.phone,
                       "email":Product.shop.email, "description":Product.shop.description, "category":Product.shop.category.all().values_list('id', 'name'),
                       "city":Product.shop.city, "address":Product.shop.address, "postal_code":Product.shop.postal_code, "lat_long":Product.shop.lat_long,
@@ -792,7 +834,7 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
 
         product_info = { "id":Product.product.id, "name":Product.product.name, "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode,
                          "brand_name":Product.product.brand.name, "brand_id":Product.product.brand.id, "link":Product.product.link, "description":Product.product.description,
-                         "datasheet":datasheet, "banner":Product.product.banner.url, 'imgs':imgs, "category":Product.product.category.id  }
+                         "datasheet":datasheet, "banner":Product.product.banner.url, 'imgs':imgs, "category":cat  }
 
         general_info = { "id":Product.id, "available":Product.available, "qty":Product.qty, "price_model":Product.price_model, "internal_code":Product.internal_code,
                     "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price, "medium_volume_qty":Product.medium_volume_qty,

@@ -51,6 +51,7 @@ admin.site.register(models.ShippingTime, ShippingTimeAdmin)
 class CartAdmin(admin.ModelAdmin):
     list_display = ('user', 'product', 'quantity' )
     list_filter = ("user", )
+    raw_id_fields = ['user', 'product']
 admin.site.register(models.Cart, CartAdmin)
 
 
@@ -64,7 +65,7 @@ admin.site.register(models.Cart, CartAdmin)
 
 #------------------------------------------------------------------------------
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('code', 'carts', 'total', 'status', 'pay_way', 'user')
+    list_display = ('code', 'total', 'status', 'pay_way', 'user')
     list_filter = ("status", "pay_way", "create_at", "update_at")
     search_fields = ['code', 'phone_number', 'postal_code']
     raw_id_fields = ['user', 'address', 'carts']
