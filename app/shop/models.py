@@ -38,7 +38,6 @@ class Category(MPTTModel):
 
 
 
-
 #------------------------------------------------------------------------------
 class Brand(models.Model):
     name = models.CharField(max_length=256, unique=True, verbose_name='برند')
