@@ -1,4 +1,3 @@
-import dj_database_url
 import os
 from pathlib import Path
 from datetime import timedelta
@@ -20,7 +19,7 @@ SECRET_KEY = '2d0qjb7q3gzq+(ad0hh#elqcvvxa-x4j@inomsl)&0()!icp0h'
 DEBUG = True
 #DEBUG = int(os.environ.get("DEBUG", default=0))
 
-ALLOWED_HOSTS = ['*','.herokuapp.com']
+ALLOWED_HOSTS = ['*']
 #ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
 

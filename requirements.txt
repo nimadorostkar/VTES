@@ -11,4 +11,5 @@ kavenegar
 gunicorn
 django-colorfield
 django-import-export
-gunicorn
+dj-database-url
+whitenoise

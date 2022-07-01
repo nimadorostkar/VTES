@@ -1,1 +1,1 @@
-web: gunicorn VTES.wsgi
+web: gunicorn VTES.wsgi --log-file -
