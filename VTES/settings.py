@@ -17,10 +17,11 @@ SECRET_KEY = '2d0qjb7q3gzq+(ad0hh#elqcvvxa-x4j@inomsl)&0()!icp0h'
 #SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 #DEBUG = int(os.environ.get("DEBUG", default=0))
 
-ALLOWED_HOSTS = ['*','.herokuapp.com']
+#ALLOWED_HOSTS = ['*','.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
 #ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
 
@@ -53,7 +54,8 @@ INSTALLED_APPS = [
     'cart',
     'mptt',
     'colorfield',
-    'import_export'
+    'import_export',
+    'whitenoise.runserver_nostatic'
 ]
 
 
@@ -69,6 +71,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'VTES.urls'
@@ -147,7 +150,6 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
 
@@ -198,6 +200,8 @@ STATICFILES_DIRS = ( os.path.join(BASE_DIR, 'static'),)
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # Directory where uploaded media is saved.
 MEDIA_URL = '/media/' # Public URL at the browser
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 
