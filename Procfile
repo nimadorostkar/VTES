@@ -1,1 +1,1 @@
-web: gunicorn app/VTES.wsgi
+web: gunicorn VTES.wsgi
