@@ -17,7 +17,7 @@ SECRET_KEY = '2d0qjb7q3gzq+(ad0hh#elqcvvxa-x4j@inomsl)&0()!icp0h'
 #SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 #DEBUG = int(os.environ.get("DEBUG", default=0))
 
 #ALLOWED_HOSTS = ['*','.herokuapp.com']
@@ -100,10 +100,10 @@ WSGI_APPLICATION = 'VTES.wsgi.application'
 
 
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:3000",
+    "https://vtesapi.herokuapp.com",
 ]
 CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:3000",
+    "https://vtesapi.herokuapp.com",
 ]
 
 
