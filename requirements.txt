@@ -13,3 +13,4 @@ django-colorfield
 django-import-export
 dj-database-url
 whitenoise
+django-storages
