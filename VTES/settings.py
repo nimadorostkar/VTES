@@ -20,7 +20,7 @@ SECRET_KEY = '2d0qjb7q3gzq+(ad0hh#elqcvvxa-x4j@inomsl)&0()!icp0h'
 #SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 #DEBUG = int(os.environ.get("DEBUG", default=0))
 
 #ALLOWED_HOSTS = ['*','.herokuapp.com']
@@ -106,7 +106,7 @@ WSGI_APPLICATION = 'VTES.wsgi.application'
 
 DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
 DROPBOX_OAUTH2_TOKEN = 'sl.BLPBtYieJzzr7YPpn15cBmyRWbnFwS7CVMuVrqQzXC6PQYzfyrRVRdyEw6Bq-MTs7VPB6yxnJLfOLk5YB_ZxljyydK4bQparfw7YgW63C7p3FBRhgrQRRZB9UpgvM0ADADIXLwB5cUWA'
-
+# https://www.dropbox.com/developers/apps
 
 
 
