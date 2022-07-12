@@ -110,12 +110,10 @@ DROPBOX_OAUTH2_TOKEN = 'sl.BLTMy11Tg4H4ZMcLYwa0cCfhYwVppYKL9PK_4CZSobvLlYqLqjY4a
 
 
 
-CORS_ALLOWED_ORIGINS = [
-    "https://vtesapi.herokuapp.com",
-]
-CSRF_TRUSTED_ORIGINS = [
-    "https://vtesapi.herokuapp.com",
-]
+CORS_ALLOWED_ORIGINS = ["https://herokuapp.com", "https://vtesapi.herokuapp.com"]
+CSRF_TRUSTED_ORIGINS = ["https://herokuapp.com", "https://vtesapi.herokuapp.com"]
+CORS_ORIGIN_ALLOW_ALL = True
+
 
 
 
