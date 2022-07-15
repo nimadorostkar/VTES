@@ -54,6 +54,7 @@ class Brands(APIView):
 
 
 
+
 # ------------------------------------------------------- Attributes ------------
 class Attributes(GenericAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
