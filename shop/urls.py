@@ -2,7 +2,8 @@ from django.urls import path
 from .views import ( Products, ProductItem, Shops, ShopItem, Categories,
                      CategoryItem, Attrs, Brands, AttrsItem, Search, ProductImg,
                      ShopProducts, ShopProductsItem, MainCat, Attributes,
-                     ShopProductsDelete, MultiShopProductsAdd, Color, SimilarProducts )
+                     ShopProductsDelete, MultiShopProductsAdd, Color, SimilarProducts,
+                     Unit )
 
 
 urlpatterns = [
@@ -25,4 +26,5 @@ urlpatterns = [
   path('shop_products_delete', ShopProductsDelete.as_view(), name='shop_products_delete'),
   path('multi_add_products', MultiShopProductsAdd.as_view(), name='multi_add_products'),
   path('color', Color.as_view(), name='color'),
+  path('units', Unit.as_view(), name='units'),
 ]

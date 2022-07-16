@@ -1,5 +1,20 @@
 from rest_framework import serializers
-from .models import Shop, Product, Category, Brand, Attributes, ProductAttr, ProductImgs, ShopProducts, Attributes, ProductColor
+from .models import Shop, Product, Category, Brand, Attributes, ProductAttr, ProductImgs, ShopProducts, Attributes, ProductColor, Unit
+
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class UnitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Unit
+        fields = ('id', 'name')
+
 
 
 

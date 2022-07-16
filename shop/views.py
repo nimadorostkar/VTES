@@ -2,9 +2,9 @@ from django.shortcuts import render, get_object_or_404
 from .serializers import ( ShopSerializer, ProductSerializer, CategorySerializer,
                            ProductAttrSerializer, SearchSerializer, ProductImgsSerializer, MainCatSerializer,
                            ShopProductsSerializer, AttributesSerializer, ProductColorSerializer,
-                           MultiShopProductsSerializer, BrandSerializer )
+                           MultiShopProductsSerializer, BrandSerializer, UnitSerializer )
 from rest_framework import viewsets, filters, status, pagination, mixins
-from .models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts, Attributes, ProductColor
+from .models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts, Attributes, ProductColor, Unit
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
@@ -1134,6 +1134,32 @@ class Color(GenericAPIView):
 
 
 
+
+
+
+
+
+
+
+# ------------------------------------------------------------- Units ---------
+
+class Unit(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        try:
+            units = models.Unit.objects.all()
+            serializer = UnitSerializer(units, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response('Something went wrong please try again', status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request, format=None):
+        serializer = UnitSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
