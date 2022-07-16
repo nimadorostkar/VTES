@@ -116,7 +116,7 @@ class Order(models.Model):
         ('Arrive', 'تحویل به مشتری'),
         ('Canceled', 'لغو شده'),
     )
-    PAY_WAY = ( ('online', 'پرداخت آنلاین'), ('credit', 'اعتباری'), ('inperson', 'حضوری'))
+    PAY_WAY = ( ('online', 'آنلاین'), ('credit', 'اعتباری'), ('inperson', 'حضوری'))
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='کاربر')
     #code = models.CharField(max_length=10, editable=False, verbose_name='کد سفارش')
     code = ShortUUIDField(length=8, max_length=15, alphabet="abcdefg1234", editable=False)
