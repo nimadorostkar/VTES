@@ -3,6 +3,8 @@ from django.urls import reverse
 from django.dispatch import receiver
 from authentication.models import User
 from shop.models import ShopProducts
+from shortuuid.django_fields import ShortUUIDField
+
 
 
 
@@ -114,9 +116,10 @@ class Order(models.Model):
         ('Arrive', 'تحویل به مشتری'),
         ('Canceled', 'لغو شده'),
     )
-    PAY_WAY = ( ('online', 'پرداخت آنلاین'), ('credit', 'اعتباری'))
+    PAY_WAY = ( ('online', 'پرداخت آنلاین'), ('credit', 'اعتباری'), ('inperson', 'حضوری'))
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='کاربر')
-    code = models.CharField(max_length=10, editable=False, verbose_name='کد سفارش')
+    #code = models.CharField(max_length=10, editable=False, verbose_name='کد سفارش')
+    code = ShortUUIDField(length=8, max_length=15, alphabet="abcdefg1234", editable=False)
     carts = models.ManyToManyField(Cart, verbose_name='سبد محصولات')
     address = models.ForeignKey(Address, on_delete=models.CASCADE, verbose_name='آدرس')
     delivery_time = models.ForeignKey(ShippingTime, on_delete=models.CASCADE, verbose_name='زمان تحویل')
