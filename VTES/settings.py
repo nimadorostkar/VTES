@@ -105,7 +105,7 @@ WSGI_APPLICATION = 'VTES.wsgi.application'
 
 
 DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
-DROPBOX_OAUTH2_TOKEN = 'sl.BLTMy11Tg4H4ZMcLYwa0cCfhYwVppYKL9PK_4CZSobvLlYqLqjY4aC0NlqP_FeGuIrtkzg2S2g5uFwl4Dh8c1Ca9iJghvnL6ep8L5kmTXB8yFmX96nFg5F3UoIgPvPs4fOsK5i3ckxAI'
+DROPBOX_OAUTH2_TOKEN = 'sl.BLeFjmQNokRRqbR87kwygmMYVYcEbTHrPosRURE8Nvfh_Mp_hHl7GKrldGY0grhxsB5lByE8C2Y1hDaitLcnaYqjLblVVMoLsUUaJ1jMiXrl9HTI71ba8ykUBhlh-jgF3Hn64lHMt-1j'
 # https://www.dropbox.com/developers/apps
 
 
