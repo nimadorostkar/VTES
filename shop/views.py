@@ -643,7 +643,7 @@ class ShopProducts(GenericAPIView):
                 cat = {'cat1':cat1, 'cat2':cat2, 'cat3':cat3}
 
 
-                product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "category":cat, "unit":Product.product.unit.id,
+                product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "category":cat, "unit":Product.product.unit.id, "unit_name":Product.product.unit.name,
                       "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
                       "available":Product.available, "internal_code":Product.internal_code, "brand":brand_name, "link":Product.product.link,
                       "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
@@ -836,8 +836,8 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
                       "logo":Product.shop.logo.url, "cover":Product.shop.cover.url }
 
         product_info = { "id":Product.product.id, "name":Product.product.name, "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode,
-                         "brand_name":Product.product.brand.name, "brand_id":Product.product.brand.id, "link":Product.product.link, "description":Product.product.description,
-                         "datasheet":datasheet, "banner":Product.product.banner.url, 'imgs':imgs, "category":cat  }
+                         "brand_name":Product.product.brand.name, "brand_id":Product.product.brand.id, "link":Product.product.link, "description":Product.product.description, "unit":Product.product.unit.id,
+                         "unit_name":Product.product.unit.name, "datasheet":datasheet, "banner":Product.product.banner.url, 'imgs':imgs, "category":cat  }
 
         general_info = { "id":Product.id, "available":Product.available, "qty":Product.qty, "price_model":Product.price_model, "internal_code":Product.internal_code,
                     "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price, "medium_volume_qty":Product.medium_volume_qty,
