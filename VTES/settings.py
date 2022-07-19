@@ -1,4 +1,3 @@
-import dj_database_url
 import os
 from pathlib import Path
 from datetime import timedelta
@@ -58,8 +57,7 @@ INSTALLED_APPS = [
     'mptt',
     'colorfield',
     'import_export',
-    'whitenoise.runserver_nostatic',
-    #'django_dropbox_storage'
+    'whitenoise.runserver_nostatic'
 ]
 
 
@@ -104,10 +102,6 @@ WSGI_APPLICATION = 'VTES.wsgi.application'
 
 
 
-DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
-DROPBOX_OAUTH2_TOKEN = 'sl.BLlkYNixEMTHrokbGid73eydrcnwFr8ZTfvK_ZmBeafNP58dHerZCNtpaRokugDmIbZNXgBDD47JFT0PrNNyij08RXLlmzMboHwIPtYmXPBrvu-jR4kFBoIS6fYjAl8EIuXLsQHmjr2U'
-# https://www.dropbox.com/developers/apps
-
 
 
 CORS_ALLOWED_ORIGINS = ["https://herokuapp.com", "https://vtesapi.herokuapp.com"]
@@ -140,27 +134,13 @@ REST_FRAMEWORK = {
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME'  : 'db.sqlite3',
     }
 }
-'''
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'df9mrrdmglh7qp',
-        'USER': 'xqmzdclpklvjxy',
-        'PASSWORD': '5e7263e671167a23321c534415c4b27e4453777abc7d91bad25fcfb7b2285ae8',
-        'HOST': 'ec2-3-217-251-77.compute-1.amazonaws.com',
-        'PORT': '5432',
-    }
-}
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
 
 
 

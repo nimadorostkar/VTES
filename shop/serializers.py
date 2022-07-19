@@ -66,7 +66,7 @@ class BrandSerializer(serializers.ModelSerializer):
 class ProductAttrSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductAttr
-        fields = ('id', 'product', 'product_name', 'attribute', 'attribute_name', 'value', 'unit')
+        fields = ('id', 'product', 'product_name', 'attribute', 'attribute_name', 'value')
 
 
 

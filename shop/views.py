@@ -683,6 +683,8 @@ class ShopProducts(GenericAPIView):
             product_serializer = ProductSerializer(data=request.data)
             if product_serializer.is_valid():
                 product_serializer.save()
+            else:
+                print(product_serializer.errors)
 
             data['product'] = product_serializer.data['id']
 
