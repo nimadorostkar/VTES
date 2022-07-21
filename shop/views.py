@@ -258,13 +258,13 @@ class ShopItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView
     serializer_class = ShopSerializer
 
     def get(self, request, *args, **kwargs):
-        shop = get_object_or_404(Shop, id=self.kwargs["id"])
+        shop = get_object_or_404(Shop, slug=self.kwargs["slug"])
         serializer = ShopSerializer(shop)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
         self.request.POST._mutable = True
-        shop = get_object_or_404(Shop, id=self.kwargs["id"])
+        shop = get_object_or_404(Shop, slug=self.kwargs["slug"])
         req = request.data
         req['user'] = request.user.id
         serializer = ShopSerializer(shop, data=req)
@@ -276,7 +276,7 @@ class ShopItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView
 
 
     def delete(self, request, *args, **kwargs):
-        shop = get_object_or_404(Shop, id=self.kwargs["id"])
+        shop = get_object_or_404(Shop, slug=self.kwargs["slug"])
         shop.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -836,7 +836,7 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
                       "logo":Product.shop.logo.url, "cover":Product.shop.cover.url }
 
         product_info = { "id":Product.product.id, "name":Product.product.name, "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode,
-                         "brand_name":Product.product.brand.name, "brand_id":Product.product.brand.id, "link":Product.product.link, "description":Product.product.description, "unit":Product.product.unit.id,
+                         "brand_fname":Product.product.brand.fname, "brand_name":Product.product.brand.name, "brand_id":Product.product.brand.id, "link":Product.product.link, "description":Product.product.description, "unit":Product.product.unit.id,
                          "unit_name":Product.product.unit.name, "datasheet":datasheet, "banner":Product.product.banner.url, 'imgs':imgs, "category":cat  }
 
         general_info = { "id":Product.id, "available":Product.available, "qty":Product.qty, "price_model":Product.price_model, "internal_code":Product.internal_code,
