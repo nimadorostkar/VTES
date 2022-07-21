@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'django_filters',
     'shop',
     'cart',
+    'ticket',
     'mptt',
     'colorfield',
     'import_export',

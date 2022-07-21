@@ -429,7 +429,7 @@ class Search(GenericAPIView):
 
         product = models.Product.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(brand__name__icontains=search) | Q(code__icontains=search) )
         shop = models.Shop.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(phone__icontains=search) | Q(email__icontains=search) | Q(address__icontains=search) )
-        shop_products = models.ShopProducts.objects.filter( Q(product__name__icontains=search) | Q(shop__name__icontains=search) | Q(product__description__icontains=search) | Q(shop__description__icontains=search) | Q(product__brand__name__icontains=search) | Q(product__code__icontains=search) | Q(product__irancode__icontains=search) )
+        shop_products = models.ShopProducts.objects.filter( Q(product__name__icontains=search) | Q(shop__name__icontains=search) | Q(product__description__icontains=search) | Q(shop__description__icontains=search) | Q(product__brand__name__icontains=search) | Q(product__brand__fname__icontains=search) | Q(product__code__icontains=search) | Q(product__irancode__icontains=search) )
         category = models.Category.objects.filter( Q(name__icontains=search) )
 
         product_serializer = ProductSerializer(product, many=True)
@@ -477,8 +477,10 @@ class Search(GenericAPIView):
 
                 if Product.product.brand.name:
                     brand_name = Product.product.brand.name
+                    brand_fname = Product.product.brand.fname
                 else:
                     brand_name = None
+                    brand_fname = None
 
                 productcat = Product.product.category
                 if productcat.parent == None:
@@ -502,7 +504,7 @@ class Search(GenericAPIView):
 
                 product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "category":cat,
                       "shop":Product.shop.name, "shop_logo":Product.shop.logo.url, "shop_cover":Product.shop.cover.url,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
-                      "available":Product.available, "internal_code":Product.internal_code, "brand":brand_name, "link":Product.product.link,
+                      "available":Product.available, "internal_code":Product.internal_code, "brand":brand_name, "brand_fname":brand_fname, "link":Product.product.link,
                       "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
                       "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
                       "medium_volume_qty":Product.medium_volume_qty, "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
