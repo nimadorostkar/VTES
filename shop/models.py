@@ -148,7 +148,7 @@ class Shop(models.Model):
     #country = models.CharField(max_length=20, null=True, blank=True, verbose_name = "کشور")
     #city = models.CharField(max_length=200, null=True, blank=True, verbose_name = "شهر")
     province = models.ForeignKey(Province, on_delete=models.CASCADE, null=True, blank=True, verbose_name = "استان")
-    city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True, verbose_name = "استان")
+    city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True, verbose_name = "شهر")
     address = models.CharField(max_length=200, null=True, blank=True, verbose_name = "آدرس")
     postal_code = models.CharField(max_length=200, null=True, blank=True, verbose_name = "کد پستی")
     lat_long = models.CharField(max_length=200, null=True, blank=True, verbose_name = "lat & long")
