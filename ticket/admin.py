@@ -1,6 +1,6 @@
 from django.contrib import admin
 from . import models
-from .models import Province
+from .models import Ticket
 from import_export.admin import ImportExportModelAdmin, ImportExportMixin
 
 
