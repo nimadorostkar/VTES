@@ -2,8 +2,35 @@ from django.contrib import admin
 from mptt.admin import MPTTModelAdmin, DraggableMPTTAdmin, TreeRelatedFieldListFilter
 from django.contrib.admin.models import LogEntry
 from . import models
-from .models import Brand, Unit, Category, Shop, Product, ShopProducts, Attributes, ProductAttr, ProductImgs, ProductColor
+from .models import Province, City, Brand, Unit, Category, Shop, Product, ShopProducts, Attributes, ProductAttr, ProductImgs, ProductColor
 from import_export.admin import ImportExportModelAdmin, ImportExportMixin
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class ProvinceAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ['name',]
+admin.site.register(models.Province, ProvinceAdmin)
+
+
+
+
+#------------------------------------------------------------------------------
+class CityAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    list_display = ('name', 'province')
+    search_fields = ['name', 'province']
+    list_filter = ("province",)
+    raw_id_fields = ('province'),
+admin.site.register(models.City, CityAdmin)
+
+
+
 
 
 

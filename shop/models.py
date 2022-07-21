@@ -40,8 +40,8 @@ class City(models.Model):
         return str(self.name)
 
     class Meta:
-        verbose_name = "استان"
-        verbose_name_plural = "استان ها"
+        verbose_name = "شهر"
+        verbose_name_plural = "شهر ها"
 
 
 
@@ -146,7 +146,9 @@ class Shop(models.Model):
     description = models.TextField(max_length=1000,null=True, blank=True, verbose_name = "توضیحات")
     category = models.ManyToManyField(Category, related_name='shop_category', verbose_name = "دسته بند")
     #country = models.CharField(max_length=20, null=True, blank=True, verbose_name = "کشور")
-    city = models.CharField(max_length=200, null=True, blank=True, verbose_name = "شهر")
+    #city = models.CharField(max_length=200, null=True, blank=True, verbose_name = "شهر")
+    province = models.ForeignKey(Province, on_delete=models.CASCADE, null=True, blank=True, verbose_name = "استان")
+    city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True, verbose_name = "استان")
     address = models.CharField(max_length=200, null=True, blank=True, verbose_name = "آدرس")
     postal_code = models.CharField(max_length=200, null=True, blank=True, verbose_name = "کد پستی")
     lat_long = models.CharField(max_length=200, null=True, blank=True, verbose_name = "lat & long")
