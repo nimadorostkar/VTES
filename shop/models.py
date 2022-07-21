@@ -145,8 +145,6 @@ class Shop(models.Model):
     email = models.EmailField(max_length=50, null=True, blank=True, verbose_name = "ایمیل")
     description = models.TextField(max_length=1000,null=True, blank=True, verbose_name = "توضیحات")
     category = models.ManyToManyField(Category, related_name='shop_category', verbose_name = "دسته بند")
-    #country = models.CharField(max_length=20, null=True, blank=True, verbose_name = "کشور")
-    #city = models.CharField(max_length=200, null=True, blank=True, verbose_name = "شهر")
     province = models.ForeignKey(Province, on_delete=models.CASCADE, null=True, blank=True, verbose_name = "استان")
     city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True, verbose_name = "شهر")
     address = models.CharField(max_length=200, null=True, blank=True, verbose_name = "آدرس")
@@ -203,7 +201,6 @@ class Product(models.Model):
     date_created = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
     #CHOICES = ( ('متر','متر'), ('لیتر','لیتر'), ('کیلوگرم','کیلوگرم'), ('عدد','عدد') )
     #unit = models.CharField(max_length=256, choices=CHOICES, null=True, blank=True, verbose_name = "واحد اندازه گیری")
-    unit = models.ForeignKey(Unit, null=True, blank=True, on_delete=models.CASCADE, verbose_name = "واحد اندازه گیری")
 
     def __str__(self):
         return str(self.name)
@@ -258,6 +255,7 @@ class ShopProducts(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product',  verbose_name = "محصول")
     internal_code = models.CharField(max_length=50, null=True, blank=True, verbose_name = "کد داخلی محصول")
     qty = models.IntegerField(default=0, verbose_name = "تعداد")
+    unit = models.ForeignKey(Unit, null=True, blank=True, on_delete=models.CASCADE, verbose_name = "واحد اندازه گیری")
     CHOICES = ( ('1','1'), ('2','2'), ('3','3') )
     price_model = models.CharField(max_length=254, choices=CHOICES, null=True, blank=True, verbose_name = "مدل قیمتی")
     one_price = models.IntegerField(default=0, verbose_name = "قیمت تکی")
