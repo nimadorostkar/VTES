@@ -165,6 +165,12 @@ class Shop(models.Model):
     def user_mobile(self):
         return str(self.user.mobile)
 
+    def city_name(self):
+        return str(self.city.name)
+
+    def province_name(self):
+        return str(self.province.name)
+
     @property
     def short_description(self):
         return truncatechars(self.description, 50)
@@ -208,9 +214,6 @@ class Product(models.Model):
     def brand_name(self):
         return str(self.brand.name)
 
-    def unit_name(self):
-        return str(self.unit.name)
-
     def img_tag(self):
         return format_html("<img width=40 src='{}'>".format(self.banner.url))
 
@@ -252,7 +255,7 @@ class ShopProducts(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product',  verbose_name = "محصول")
     internal_code = models.CharField(max_length=50, null=True, blank=True, verbose_name = "کد داخلی محصول")
     qty = models.IntegerField(default=0, verbose_name = "تعداد")
-    unit = models.ForeignKey(Unit, null=True, blank=True, on_delete=models.CASCADE, verbose_name = "واحد اندازه گیری")
+    unit = models.ForeignKey(Unit, on_delete=models.CASCADE, verbose_name = "واحد اندازه گیری")
     CHOICES = ( ('1','1'), ('2','2'), ('3','3') )
     price_model = models.CharField(max_length=254, choices=CHOICES, null=True, blank=True, verbose_name = "مدل قیمتی")
     one_price = models.IntegerField(default=0, verbose_name = "قیمت تکی")
@@ -266,6 +269,9 @@ class ShopProducts(models.Model):
 
     def product_code(self):
         return str(self.product.code)
+
+    def unit_name(self):
+        return str(self.unit.name)
 
     class Meta:
         verbose_name = "محصول فروشگاه"
