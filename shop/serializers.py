@@ -96,7 +96,7 @@ class ShopSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True, many=True)
     class Meta:
         model = Shop
-        fields = ('id', 'slug', 'name', 'user','user_mobile', 'phone', 'email', 'city', 'address', 'postal_code', 'lat_long', 'description','category', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram', 'date_created')
+        fields = ('id', 'slug', 'name', 'user','user_mobile', 'phone', 'email', 'province', 'city', 'address', 'postal_code', 'lat_long', 'description','category', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram', 'date_created')
 
 
 
@@ -114,7 +114,7 @@ class ProductSerializer(serializers.ModelSerializer):
     #attributes = AttributesSerializer(read_only=True, many=True)
     class Meta:
         model = Product
-        fields = ('id', 'name', 'code', 'irancode', 'approved', 'banner', 'brand', 'brand_name', 'link', 'category', 'category_name', 'description', 'datasheet', 'unit', 'unit_name', 'date_created')
+        fields = ('id', 'name', 'code', 'irancode', 'approved', 'banner', 'brand', 'brand_name', 'link', 'category', 'category_name', 'description', 'datasheet', 'unit_name', 'date_created')
 
 
 
@@ -162,7 +162,7 @@ class ShopProductsSerializer(serializers.ModelSerializer):
     #color = ProductColorSerializer(many=True)
     class Meta:
         model = ShopProducts
-        fields = ('id' ,'available', 'shop','product', 'internal_code', 'qty', 'price_model', 'one_price', 'medium_volume_price', 'medium_volume_qty', 'wholesale_volume_price', 'wholesale_volume_qty') #, 'attr', 'color'
+        fields = ('id' ,'available', 'shop','product', 'internal_code', 'qty', 'unit', 'price_model', 'one_price', 'medium_volume_price', 'medium_volume_qty', 'wholesale_volume_price', 'wholesale_volume_qty') #, 'attr', 'color'
 
 
 

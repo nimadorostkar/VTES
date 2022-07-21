@@ -113,7 +113,7 @@ class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('img_tag', 'name', 'code', 'category', 'brand','approved', 'id')
     list_filter = ("category", "date_created", "approved")
     search_fields = ['name', 'code']
-    raw_id_fields = ['category', 'brand', 'unit']
+    raw_id_fields = ['category', 'brand']
     inlines = [ProductImgsInline]
 
 admin.site.register(models.Product, ProductAdmin)

@@ -16,9 +16,6 @@ from colorfield.fields import ColorField
 
 
 
-
-
-
 #------------------------------------------------------------------------------
 class Province(models.Model):
     name = models.CharField(max_length=256, unique=True, verbose_name="نام")
