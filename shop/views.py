@@ -831,15 +831,15 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
 
         shop_info = { "id":Product.shop.id, "user":Product.shop.user.mobile, "name":Product.shop.name, "phone":Product.shop.phone,
                       "email":Product.shop.email, "description":Product.shop.description, "category":Product.shop.category.all().values_list('id', 'name'),
-                      "city":Product.shop.city, "address":Product.shop.address, "postal_code":Product.shop.postal_code, "lat_long":Product.shop.lat_long,
+                      "province":Product.shop.province.id, "province_name":Product.shop.province.name, "city":Product.shop.city.id, "city_name":Product.shop.city.name, "address":Product.shop.address, "postal_code":Product.shop.postal_code, "lat_long":Product.shop.lat_long,
                       "instagram":Product.shop.instagram, "linkedin":Product.shop.linkedin, "whatsapp":Product.shop.whatsapp, "telegram":Product.shop.telegram,
                       "logo":Product.shop.logo.url, "cover":Product.shop.cover.url }
 
         product_info = { "id":Product.product.id, "name":Product.product.name, "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode,
-                         "brand_fname":Product.product.brand.fname, "brand_name":Product.product.brand.name, "brand_id":Product.product.brand.id, "link":Product.product.link, "description":Product.product.description, "unit":Product.product.unit.id,
-                         "unit_name":Product.product.unit.name, "datasheet":datasheet, "banner":Product.product.banner.url, 'imgs':imgs, "category":cat  }
+                         "brand_fname":Product.product.brand.fname, "brand_name":Product.product.brand.name, "brand_id":Product.product.brand.id, "link":Product.product.link, "description":Product.product.description,
+                         "datasheet":datasheet, "banner":Product.product.banner.url, 'imgs':imgs, "category":cat  }
 
-        general_info = { "id":Product.id, "available":Product.available, "qty":Product.qty, "price_model":Product.price_model, "internal_code":Product.internal_code,
+        general_info = { "id":Product.id, "available":Product.available, "qty":Product.qty, "price_model":Product.price_model, "internal_code":Product.internal_code, "unit":Product.unit.id, "unit_name":Product.unit.name,
                     "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price, "medium_volume_qty":Product.medium_volume_qty,
                     "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
                     "attr": attrvalue, "color": colors }
