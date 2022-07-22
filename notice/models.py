@@ -12,9 +12,10 @@ from authentication.models import User
 
 
 
+'''
 
 #------------------------------------------------------------------------------
-class Ticket(models.Model):
+class PartnerExchangeNotice(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, verbose_name = "کاربر")
     subject = models.CharField(max_length=256, null=True, blank=True, verbose_name="موضوع")
     type = models.CharField(max_length=256, null=True, blank=True, verbose_name="نوع")
@@ -28,3 +29,14 @@ class Ticket(models.Model):
     class Meta:
         verbose_name = "تیکت"
         verbose_name_plural = "تیکت ها"
+'''
+
+
+
+
+
+
+
+
+
+#End

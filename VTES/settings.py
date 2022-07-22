@@ -55,6 +55,8 @@ INSTALLED_APPS = [
     'shop',
     'cart',
     'ticket',
+    'notice',
+    'partners',
     'mptt',
     'colorfield',
     'import_export',
