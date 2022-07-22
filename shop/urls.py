@@ -3,7 +3,7 @@ from .views import ( Products, ProductItem, Shops, ShopItem, Categories,
                      CategoryItem, Attrs, Brands, AttrsItem, Search, ProductImg,
                      ShopProducts, ShopProductsItem, MainCat, Attributes,
                      ShopProductsDelete, MultiShopProductsAdd, Color, SimilarProducts,
-                     Unit )
+                     Unit, Provinces, ShopSlugs )
 
 
 urlpatterns = [
@@ -27,4 +27,6 @@ urlpatterns = [
   path('multi_add_products', MultiShopProductsAdd.as_view(), name='multi_add_products'),
   path('color', Color.as_view(), name='color'),
   path('units', Unit.as_view(), name='units'),
+  path('provinces', Provinces.as_view(), name='provinces'),
+  path('shopslugs', ShopSlugs.as_view(), name='shopslugs'),
 ]

@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from .serializers import ( ShopSerializer, ProductSerializer, CategorySerializer,
                            ProductAttrSerializer, SearchSerializer, ProductImgsSerializer, MainCatSerializer,
                            ShopProductsSerializer, AttributesSerializer, ProductColorSerializer,
-                           MultiShopProductsSerializer, BrandSerializer, UnitSerializer )
+                           MultiShopProductsSerializer, BrandSerializer, UnitSerializer, CitySerializer )
 from rest_framework import viewsets, filters, status, pagination, mixins
 from .models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts, Attributes, ProductColor, Unit
 from django_filters.rest_framework import DjangoFilterBackend
@@ -1167,6 +1167,49 @@ class Unit(APIView):
 
 
 
+
+
+
+
+
+
+
+
+# ---------------------------------------------------------- Provinces ---------
+class Provinces(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        try:
+            provinces = models.Province.objects.all()
+            all_provinces=[]
+            for Province in provinces:
+                cities = models.City.objects.filter(province=Province)
+                cities_serializer = CitySerializer(cities, many=True)
+                province = {"id":Province.id, "name":Province.name, "cities":cities_serializer.data}
+                all_provinces.append(province)
+            return Response(all_provinces, status=status.HTTP_200_OK)
+        except:
+            return Response('Something went wrong please try again', status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
+
+
+# ---------------------------------------------------------- ShopSlugs ---------
+class ShopSlugs(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        try:
+            slugs = models.Shop.objects.all().values_list('slug',flat=True)
+            return Response(slugs, status=status.HTTP_200_OK)
+        except:
+            return Response('Something went wrong please try again', status=status.HTTP_400_BAD_REQUEST)
 
 
 
