@@ -15,8 +15,9 @@ from authentication.models import User
 
 #------------------------------------------------------------------------------
 class Ticket(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name = "کاربر")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, verbose_name = "کاربر")
     subject = models.CharField(max_length=256, verbose_name="موضوع")
+    type = models.CharField(max_length=256, verbose_name="نوع")
     description = models.TextField()
 
     def __str__(self):
