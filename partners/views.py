@@ -31,6 +31,7 @@ class Partners(APIView):
         serializer = ExchangePartnerSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
     def post(self, request, format=None):
         data=request.data
         data['user_shop'] = Shop.objects.filter(user=request.user).first().id
@@ -45,6 +46,11 @@ class Partners(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
 
 
 
