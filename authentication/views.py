@@ -103,7 +103,7 @@ class Verify(APIView):
         else:
             has_a_shop = False
 
-        user_data={"id":user.id, "first_name":user.first_name, "last_name":user.last_name, "image":user.image.url, "mobile":user.mobile, "is_legal":user.is_legal, "has_a_shop":has_a_shop, 'user_shops':user_shops.values_list('id', 'name'), "company":user.company, "token": token.key}
+        user_data={"id":user.id, "first_name":user.first_name, "last_name":user.last_name, "image":user.image.url, "mobile":user.mobile, "is_legal":user.is_legal, "has_a_shop":has_a_shop, 'user_shops':user_shops.values_list('id', 'name', 'slug'), "company":user.company, "token": token.key}
 
         login(request, user)
         return Response(user_data, status=status.HTTP_200_OK)
@@ -174,7 +174,7 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
 
         user_data = { "id":profile.id, "first_name":profile.first_name, "last_name":profile.last_name, "email":profile.email,
                       "image":profile.image.url, "mobile":profile.mobile, "is_legal":profile.is_legal, "has_a_shop":has_a_shop,
-                      'user_shops':user_shops.values_list('id', 'name'), "address":profile.address, "company":profile.company,
+                      'user_shops':user_shops.values_list('id', 'name', 'slug'), "address":profile.address, "company":profile.company,
                       "email_verification":profile.email_verification, "referral_code":profile.referral_code, "national_code":profile.national_code,
                       "postal_code":profile.postal_code, "telephone":profile.telephone, "warehouse_address":profile.warehouse_address,
                       "national_id":profile.national_id, "reg_number":profile.reg_number, "economic_code":profile.economic_code }

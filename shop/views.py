@@ -646,7 +646,7 @@ class ShopProducts(GenericAPIView):
 
 
                 product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "category":cat, "unit_id":Product.unit.id, "unit_name":Product.unit.name,
-                      "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
+                      "shop":Product.shop.name, "shop_slug":Product.shop.slug,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
                       "available":Product.available, "internal_code":Product.internal_code, "brand":brand_name, "link":Product.product.link,
                       "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
                       "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
@@ -1210,6 +1210,24 @@ class ShopSlugs(APIView):
             return Response(slugs, status=status.HTTP_200_OK)
         except:
             return Response('Something went wrong please try again', status=status.HTTP_400_BAD_REQUEST)
+
+
+    def post(self, request, format=None):
+        try:
+            data = request.data
+            existslugs = models.Shop.objects.all().values_list('slug',flat=True)
+            if data['slug'] in existslugs:
+                slugexist = True
+            else:
+                slugexist = False
+            data = {'slug_exist':slugexist}
+            return Response(data, status=status.HTTP_200_OK)
+        except:
+            return Response('Something went wrong please try again', status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 
 
 
