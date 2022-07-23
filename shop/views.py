@@ -583,9 +583,9 @@ class ShopProducts(GenericAPIView):
     pagination_class = CustomPagination
     queryset = ShopProducts.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['shop', 'product', 'available']
+    filterset_fields = ['shop', 'product', 'available', 'shop__slug']
     search_fields = ['shop__name', 'product__name', 'internal_code']
-    ordering_fields = ['id', 'available', 'product__name', 'product__code', 'product__id', 'product__date_created', 'product__brand', 'product__approved', 'shop__name']
+    ordering_fields = ['id', 'slug', 'available', 'product__name', 'product__code', 'product__id', 'product__date_created', 'product__brand', 'product__approved', 'shop__name']
 
     def get(self, request, format=None):
         query = self.filter_queryset(models.ShopProducts.objects.all())
