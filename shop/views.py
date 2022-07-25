@@ -644,8 +644,17 @@ class ShopProducts(GenericAPIView):
                     cat3 = None
                 cat = {'cat1':cat1, 'cat2':cat2, 'cat3':cat3}
 
+                if Product.unit:
+                    p_unit_id = Product.unit.id
+                    p_unit_name = Product.unit.name
+                else:
+                    p_unit_id = None
+                    p_unit_name = None
 
-                product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "category":cat, "unit_id":Product.unit.id, "unit_name":Product.unit.name,
+
+
+
+                product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "category":cat, "unit_id":p_unit_id, "unit_name":p_unit_name,
                       "shop":Product.shop.name, "shop_slug":Product.shop.slug,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
                       "available":Product.available, "internal_code":Product.internal_code, "brand":brand_name, "link":Product.product.link,
                       "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
@@ -661,7 +670,7 @@ class ShopProducts(GenericAPIView):
             attr_serializer = ProductAttrSerializer(attr, many=True)
             color = models.ProductColor.objects.filter(product=Product)
             color_serializer = ProductColorSerializer(color, many=True)
-            product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "unit_id":Product.unit.id, "unit_name":Product.unit.name,
+            product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "unit_id":p_unit_id, "unit_name":p_unit_name,
                   "shop":Product.shop.name,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
                   "available":Product.available, "internal_code":Product.internal_code, "brand":Product.product.brand.name, "link":Product.product.link,
                   "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
