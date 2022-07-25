@@ -133,7 +133,7 @@ class ProductSerializer(serializers.ModelSerializer):
     #attributes = AttributesSerializer(read_only=True, many=True)
     class Meta:
         model = Product
-        fields = ('id', 'name', 'code', 'irancode', 'approved', 'banner', 'brand', 'brand_name', 'link', 'category', 'category_name', 'description', 'datasheet', 'date_created')
+        fields = ('id', 'name', 'code', 'irancode', 'approved', 'banner', 'brand', 'brand_name', 'link', 'category', 'description', 'datasheet', 'date_created')
 
 
 

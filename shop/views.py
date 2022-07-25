@@ -503,7 +503,7 @@ class Search(GenericAPIView):
 
 
                 product = { "id":Product.id, "product":Product.product.name, "productId":Product.product.id, "category":cat,
-                      "shop":Product.shop.name, "shop_logo":Product.shop.logo.url, "shop_cover":Product.shop.cover.url,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
+                      "shop":Product.shop.name, "shop_slug":Product.shop.slug, "shop_logo":Product.shop.logo.url, "shop_cover":Product.shop.cover.url,  "shopID":Product.shop.id, "image":Product.product.banner.url, "description":Product.product.description,
                       "available":Product.available, "internal_code":Product.internal_code, "brand":brand_name, "brand_fname":brand_fname, "link":Product.product.link,
                       "approved":Product.product.approved, "code":Product.product.code, "irancode":Product.product.irancode, "qty":Product.qty,
                       "price_model":Product.price_model, "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price,
@@ -820,24 +820,29 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
             datasheet = None
 
 
-        productcat = Product.product.category
-        if productcat.parent == None:
-            cat1 = { 'id':productcat.id, 'name':productcat.name }
-            cat2 = None
-            cat3 = None
-        elif productcat.parent.parent == None:
-            cat1 = { 'id':productcat.parent.id, 'name':productcat.parent.name }
-            cat2 = { 'id':productcat.id, 'name':productcat.name }
-            cat3 = None
-        elif productcat.parent.parent.parent == None:
-            cat1 = { 'id':productcat.parent.parent.id, 'name':productcat.parent.parent.name }
-            cat2 = { 'id':productcat.parent.id, 'name':productcat.parent.name }
-            cat3 = { 'id':productcat.id, 'name':productcat.name }
+        if Product.product.category:
+            productcat = Product.product.category
+            if productcat.parent == None:
+                cat1 = { 'id':productcat.id, 'name':productcat.name }
+                cat2 = None
+                cat3 = None
+            elif productcat.parent.parent == None:
+                cat1 = { 'id':productcat.parent.id, 'name':productcat.parent.name }
+                cat2 = { 'id':productcat.id, 'name':productcat.name }
+                cat3 = None
+            elif productcat.parent.parent.parent == None:
+                cat1 = { 'id':productcat.parent.parent.id, 'name':productcat.parent.parent.name }
+                cat2 = { 'id':productcat.parent.id, 'name':productcat.parent.name }
+                cat3 = { 'id':productcat.id, 'name':productcat.name }
+            else:
+                cat1 = None
+                cat2 = None
+                cat3 = None
+            cat = {'cat1':cat1, 'cat2':cat2, 'cat3':cat3}
         else:
-            cat1 = None
-            cat2 = None
-            cat3 = None
-        cat = {'cat1':cat1, 'cat2':cat2, 'cat3':cat3}
+            cat=None
+
+
 
         if Product.unit:
             p_unit_id = Product.unit.id
@@ -847,7 +852,7 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
             p_unit_name = None
 
 
-        shop_info = { "id":Product.shop.id, "user":Product.shop.user.mobile, "name":Product.shop.name, "phone":Product.shop.phone,
+        shop_info = { "id":Product.shop.id, "slug":Product.shop.slug, "user":Product.shop.user.mobile, "name":Product.shop.name, "phone":Product.shop.phone,
                       "email":Product.shop.email, "description":Product.shop.description, "category":Product.shop.category.all().values_list('id', 'name'),
                       "province":Product.shop.province.id, "province_name":Product.shop.province.name, "city":Product.shop.city.id, "city_name":Product.shop.city.name, "address":Product.shop.address, "postal_code":Product.shop.postal_code, "lat_long":Product.shop.lat_long,
                       "instagram":Product.shop.instagram, "linkedin":Product.shop.linkedin, "whatsapp":Product.shop.whatsapp, "telegram":Product.shop.telegram,
