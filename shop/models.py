@@ -255,7 +255,7 @@ class ShopProducts(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product',  verbose_name = "محصول")
     internal_code = models.CharField(max_length=50, null=True, blank=True, verbose_name = "کد داخلی محصول")
     qty = models.IntegerField(default=0, verbose_name = "تعداد")
-    unit = models.ForeignKey(Unit, on_delete=models.CASCADE, verbose_name = "واحد اندازه گیری")
+    unit = models.ForeignKey(Unit, on_delete=models.CASCADE, null=True, blank=True, verbose_name = "واحد اندازه گیری")
     CHOICES = ( ('1','1'), ('2','2'), ('3','3') )
     price_model = models.CharField(max_length=254, choices=CHOICES, null=True, blank=True, verbose_name = "مدل قیمتی")
     one_price = models.IntegerField(default=0, verbose_name = "قیمت تکی")

@@ -1068,7 +1068,7 @@ class ShopProductsDelete(APIView):
 
 
 
-# ------------------------------------------------------- Products ------------
+# -------------------------------------------- MultiShopProductsAdd ------------
 
 class MultiShopProductsAdd(APIView):
     permission_classes = [IsAuthenticated]
