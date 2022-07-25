@@ -839,6 +839,13 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
             cat3 = None
         cat = {'cat1':cat1, 'cat2':cat2, 'cat3':cat3}
 
+        if Product.unit:
+            p_unit_id = Product.unit.id
+            p_unit_name = Product.unit.name
+        else:
+            p_unit_id = None
+            p_unit_name = None
+
 
         shop_info = { "id":Product.shop.id, "user":Product.shop.user.mobile, "name":Product.shop.name, "phone":Product.shop.phone,
                       "email":Product.shop.email, "description":Product.shop.description, "category":Product.shop.category.all().values_list('id', 'name'),
@@ -850,7 +857,7 @@ class ShopProductsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Generi
                          "brand_fname":Product.product.brand.fname, "brand_name":Product.product.brand.name, "brand_id":Product.product.brand.id, "link":Product.product.link, "description":Product.product.description,
                          "datasheet":datasheet, "banner":Product.product.banner.url, 'imgs':imgs, "category":cat  }
 
-        general_info = { "id":Product.id, "available":Product.available, "qty":Product.qty, "price_model":Product.price_model, "internal_code":Product.internal_code, "unit":Product.unit.id, "unit_name":Product.unit.name,
+        general_info = { "id":Product.id, "available":Product.available, "qty":Product.qty, "price_model":Product.price_model, "internal_code":Product.internal_code, "unit":p_unit_id, "unit_name":p_unit_name,
                     "one_price":Product.one_price, "medium_volume_price":Product.medium_volume_price, "medium_volume_qty":Product.medium_volume_qty,
                     "wholesale_volume_price":Product.wholesale_volume_price, "wholesale_volume_qty":Product.wholesale_volume_qty,
                     "attr": attrvalue, "color": colors }
