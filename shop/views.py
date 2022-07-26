@@ -410,6 +410,7 @@ class Search(GenericAPIView):
         else:
             minp=0
 
+
         #----- color filter ----------------------
         productcolorfilter=[]
         if request.GET.get('color'):
@@ -425,10 +426,6 @@ class Search(GenericAPIView):
         else:
             color_filter=None
         #----- end color filter ------------------
-        print('---------------')
-        print(color_filter)
-        print(color_filter)
-
 
         product = models.Product.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(brand__name__icontains=search) | Q(code__icontains=search) )
         shop = models.Shop.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(phone__icontains=search) | Q(email__icontains=search) | Q(address__icontains=search) )
