@@ -154,6 +154,9 @@ class Shop(models.Model):
     linkedin = models.CharField(max_length=120, null=True, blank=True)
     whatsapp = models.CharField(max_length=120, null=True, blank=True)
     telegram = models.CharField(max_length=120, null=True, blank=True)
+    economic_code = models.CharField(max_length=120, null=True, blank=True, verbose_name = "کد اقتصادی")
+    national_ID = models.CharField(max_length=120, null=True, blank=True, verbose_name = "شناسه ملی")
+    registration_number = models.CharField(max_length=120, null=True, blank=True, verbose_name = "شماره ثبت")
     date_created = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
 
     def __str__(self):

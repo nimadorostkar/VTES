@@ -425,6 +425,9 @@ class Search(GenericAPIView):
         else:
             color_filter=None
         #----- end color filter ------------------
+        print('---------------')
+        print(color_filter)
+        print(color_filter)
 
 
         product = models.Product.objects.filter( Q(name__icontains=search) | Q(description__icontains=search) | Q(brand__name__icontains=search) | Q(code__icontains=search) )
@@ -437,7 +440,7 @@ class Search(GenericAPIView):
         category_serializer = CategorySerializer(category, many=True)
 
         #shop_products Start
-        if productcolorfilter:
+        if color_filter:
             shop_products_with_price=shop_products.filter(one_price__range=(minp, maxp))
             shop_products_with_price_colorfilter = shop_products_with_price.filter(id__in=productcolorfilter)
         else:
