@@ -13,4 +13,4 @@ from .models import ExchangePartner
 class ExchangePartnerSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExchangePartner
-        fields = ('user_shop', 'partner_shop', 'status')
+        fields = ('id', 'user_shop', 'partner_shop', 'status')
