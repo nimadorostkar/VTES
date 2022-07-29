@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Q
 from .serializers import ExchangePartnerSerializer
 from rest_framework import viewsets, filters, status, pagination, mixins
 from .models import ExchangePartner
@@ -9,7 +10,6 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticate
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
-from django.db.models import Q
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework import pagination
 import json
@@ -125,6 +125,12 @@ class PartnersProducts(GenericAPIView):
     ordering_fields = ['id', 'slug', 'available', 'product__name', 'product__code', 'product__id', 'product__date_created', 'product__brand', 'product__approved', 'shop__name']
 
     def get(self, request, format=None):
+
+        usershops = Shop.objects.filter(user=request.user)
+        partner_shops = ExchangePartner.objects.filter( Q(user_shop__in=usershops) | Q(partner_shop__in=usershops) )
+        print('----------')
+        print(partner_shops)
+
         query = self.filter_queryset(models.ShopProducts.objects.all())
         page = self.paginate_queryset(query)
 
