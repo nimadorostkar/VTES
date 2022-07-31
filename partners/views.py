@@ -13,7 +13,6 @@ from rest_framework.views import APIView
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework import pagination
 import json
-
 from shop.serializers import ( ShopSerializer, ProductSerializer, CategorySerializer,
                            ProductAttrSerializer, SearchSerializer, ProductImgsSerializer, MainCatSerializer,
                            ShopProductsSerializer, AttributesSerializer, ProductColorSerializer,
