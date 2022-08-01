@@ -19,7 +19,7 @@ class Ticket(models.Model):
     subject = models.CharField(max_length=256, null=True, blank=True, verbose_name="موضوع")
     type = models.CharField(max_length=256, null=True, blank=True, verbose_name="نوع")
     description = models.TextField(verbose_name="توضیحات")
-    date_created = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
+    created_date = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
 
 
     def __str__(self):
