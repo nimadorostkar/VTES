@@ -84,7 +84,10 @@ class PartnerItem(APIView):
 
     def put(self, request, *args, **kwargs):
         partner = ExchangePartner.objects.get(id=self.kwargs["id"])
-        serializer = ExchangePartnerSerializer(partner, data=request.data)
+        data=request.data
+        data['user_shop']=partner.user_shop.id
+        data['partner_shop']=partner.partner_shop.id
+        serializer = ExchangePartnerSerializer(partner, data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
