@@ -174,6 +174,9 @@ class Shop(models.Model):
     def province_name(self):
         return str(self.province.name)
 
+    def owner_name(self):
+        return str(self.user.first_name) +' '+ str(self.user.last_name)
+
     @property
     def short_description(self):
         return truncatechars(self.description, 50)
