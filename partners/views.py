@@ -36,15 +36,20 @@ class CustomPagination(PageNumberPagination):
 
 
 
-
-
-
 #-------------------------------------------------------- Partners -------------
-class Partners(APIView):
+class Partners(GenericAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = ExchangePartnerSerializer
+    queryset = ExchangePartner.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['partner_shop', 'status', 'partner_shop__name', 'partner_shop__province', 'partner_shop__city', 'partner_shop__user', 'partner_shop__phone']
+    search_fields = ['partner_shop', 'status']
+    ordering_fields = ['id', 'partner_shop', 'status', 'partner_shop__name', 'partner_shop__province', 'partner_shop__city', 'partner_shop__user', 'partner_shop__phone']
+
+
     def get(self, request, format=None):
         usershops = Shop.objects.filter(user=request.user)
-        query = ExchangePartner.objects.filter( Q(user_shop__in=usershops) | Q(partner_shop__in=usershops) )
+        query = self.filter_queryset(ExchangePartner.objects.filter( Q(user_shop__in=usershops) | Q(partner_shop__in=usershops) ) )
         serializer = ExchangePartnerSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
