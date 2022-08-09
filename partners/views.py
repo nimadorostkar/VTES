@@ -334,6 +334,44 @@ class PartnersProducts(GenericAPIView):
 
 
 
+#-------------------------------------------------------- Partners -------------
+class MultiPartners(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        data=request.data
+        data['user_shop'] = Shop.objects.filter(user=request.user).first().id
+        data['status'] = "در انتظار تایید"
+        shops_list = [int(x) for x in data['partner_shop'].split(',')]
+        try:
+            for ID in shops_list:
+                partnerExist = ExchangePartner.objects.filter( Q( user_shop=data['user_shop'], partner_shop=ID ) | Q( user_shop=ID, partner_shop=data['user_shop']) )
+                if partnerExist:
+                    ans = { 'message':'فروشگاه مورد نظر در لیست همکاران شما موجود میباشد و یا درخواست همکاری پیش از این ارسال شده است', 'shop_id':ID}
+                    return Response(ans, status=status.HTTP_400_BAD_REQUEST)
+
+                data['partner_shop'] = ID
+                serializer = ExchangePartnerSerializer(data=data)
+                if serializer.is_valid():
+                    serializer.save()
+            return Response('درخواست همکاری ارسال شد، فروشگاه های مورد نظر پس از تایید در لیست همکاری قرار میگیرند', status=status.HTTP_200_OK)
+        except:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
