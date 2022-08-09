@@ -334,7 +334,7 @@ class PartnersProducts(GenericAPIView):
 
 
 
-#-------------------------------------------------------- Partners -------------
+#--------------------------------------------------- MultiPartners -------------
 class MultiPartners(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -361,6 +361,27 @@ class MultiPartners(APIView):
 
 
 
+
+
+
+
+
+#--------------------------------------------------- MultiPartners -------------
+class MultiPartnersDel(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        data=request.data
+        data['user_shop'] = Shop.objects.filter(user=request.user).first().id
+        shops_list = [int(x) for x in data['partner_shop'].split(',')]
+        try:
+            for ID in shops_list:
+                partner = ExchangePartner.objects.filter( Q( user_shop=data['user_shop'], partner_shop=ID ) | Q( user_shop=ID, partner_shop=data['user_shop']) )
+                partner.delete()
+            return Response('فروشگاه مورد نظر از لیست همکاری حذف شد', status=status.HTTP_200_OK)
+
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 
