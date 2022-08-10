@@ -115,7 +115,13 @@ class ShopSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True, many=True)
     class Meta:
         model = Shop
-        fields = ('id', 'slug', 'name', 'user', 'owner_name', 'user_mobile', 'phone', 'email', 'province', 'province_name', 'city', 'city_name', 'address', 'postal_code', 'lat_long', 'description','category', 'logo', 'cover', 'shaba_number', 'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp', 'telegram', 'national_ID', 'registration_number', 'economic_code', 'date_created')
+        fields = ( 'id', 'slug', 'name', 'user', 'owner_name', 'user_mobile', 'phone', 'email',
+                   'province', 'province_name', 'city', 'city_name', 'address', 'postal_code',
+                   'lat_long', 'description','category', 'logo', 'cover', 'shaba_number',
+                   'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp',
+                   'telegram', 'national_ID', 'registration_number', 'economic_code',
+                   'central_office_province', 'central_office_city', 'landline_phone_number',
+                   'date_created')
 
 
 
