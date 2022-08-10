@@ -133,7 +133,7 @@ class Order(models.Model):
     update_at = models.DateTimeField(auto_now=True, verbose_name='آخرین آپدیت')
 
     def __str__(self):
-        return self.user
+        return str(self.user)
 
     class Meta:
         verbose_name = 'سفارش'
