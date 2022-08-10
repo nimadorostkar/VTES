@@ -387,14 +387,21 @@ class MultiPartnersDel(APIView):
         data=request.data
         data['user_shop'] = Shop.objects.filter(user=request.user).first().id
         shops_list = [int(x) for x in data['partner_shop'].split(',')]
-        try:
-            for ID in shops_list:
-                partner = ExchangePartner.objects.filter( Q( user_shop=data['user_shop'], partner_shop=ID ) | Q( user_shop=ID, partner_shop=data['user_shop']) )
-                partner.delete()
-            return Response('فروشگاه مورد نظر از لیست همکاری حذف شد', status=status.HTTP_200_OK)
 
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        for ID in shops_list:
+            try:
+                #partner = ExchangePartner.objects.get(user_shop=data['user_shop'], partner_shop=ID)
+                partner = ExchangePartner.objects.get(id=ID)
+                partner.delete()
+            except:
+                ans = { 'message':'فروشگاه مورد نظر برای حذف کردن در لیست همکاران یافت نشد', 'shop_id':ID}
+                return Response(ans, status=status.HTTP_400_BAD_REQUEST)
+        return Response('فروشگاه مورد نظر از لیست همکاری حذف شد', status=status.HTTP_200_OK)
+
+
+
+
+
 
 
 
