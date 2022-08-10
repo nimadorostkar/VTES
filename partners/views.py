@@ -40,24 +40,33 @@ class CustomPagination(PageNumberPagination):
 class Partners(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ExchangePartnerSerializer
+    pagination_class = CustomPagination
     queryset = ExchangePartner.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['partner_shop', 'status', 'partner_shop__name', 'partner_shop__province', 'partner_shop__city', 'partner_shop__user', 'partner_shop__phone']
-    search_fields = ['partner_shop', 'status']
+    search_fields = ['user_shop__name', 'partner_shop__name', 'status']
     ordering_fields = ['id', 'partner_shop', 'status', 'partner_shop__name', 'partner_shop__province', 'partner_shop__city', 'partner_shop__user', 'partner_shop__phone']
 
 
     def get(self, request, format=None):
         usershops = Shop.objects.filter(user=request.user)
         query = self.filter_queryset(ExchangePartner.objects.filter( Q(user_shop__in=usershops) | Q(partner_shop__in=usershops) ) )
+        page = self.paginate_queryset(query)
+        if page is not None:
+            serializer = ExchangePartnerSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
         serializer = ExchangePartnerSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
     def post(self, request, format=None):
         data=request.data
         data['user_shop'] = Shop.objects.filter(user=request.user).first().id
         data['status'] = "در انتظار تایید"
+
+        if data['partner_shop'] == data['user_shop']:
+            return Response('نمی‌توانید فروشگاه خود را به لیست همکاری اضافه کنید', status=status.HTTP_400_BAD_REQUEST)
 
         partnerExist = ExchangePartner.objects.filter( Q( user_shop=data['user_shop'], partner_shop=data['partner_shop'] ) | Q( user_shop=data['partner_shop'], partner_shop=data['user_shop']) )
         if partnerExist:
@@ -345,6 +354,10 @@ class MultiPartners(APIView):
         shops_list = [int(x) for x in data['partner_shop'].split(',')]
         try:
             for ID in shops_list:
+
+                if ID == data['user_shop']:
+                    return Response('نمی‌توانید فروشگاه خود را به لیست همکاری اضافه کنید', status=status.HTTP_400_BAD_REQUEST)
+
                 partnerExist = ExchangePartner.objects.filter( Q( user_shop=data['user_shop'], partner_shop=ID ) | Q( user_shop=ID, partner_shop=data['user_shop']) )
                 if partnerExist:
                     ans = { 'message':'فروشگاه مورد نظر در لیست همکاران شما موجود میباشد و یا درخواست همکاری پیش از این ارسال شده است', 'shop_id':ID}
