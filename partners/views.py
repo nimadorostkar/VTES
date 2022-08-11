@@ -44,7 +44,7 @@ class Partners(GenericAPIView):
     queryset = ExchangePartner.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['partner_shop', 'status', 'partner_shop__name', 'partner_shop__province', 'partner_shop__city', 'partner_shop__user', 'partner_shop__phone']
-    search_fields = ['user_shop__name', 'partner_shop__name', 'status']
+    search_fields = ['user_shop__name', 'partner_shop__name', 'status', 'partner_shop__user__first_name', 'partner_shop__user__last_name']
     ordering_fields = ['id', 'partner_shop', 'status', 'partner_shop__name', 'partner_shop__province', 'partner_shop__city', 'partner_shop__user', 'partner_shop__phone']
 
 
@@ -352,15 +352,23 @@ class MultiPartners(APIView):
         data['user_shop'] = Shop.objects.filter(user=request.user).first().id
         data['status'] = "در انتظار تایید"
         shops_list = [int(x) for x in data['partner_shop'].split(',')]
+
+        existids = []
+        for ID in shops_list:
+            partnerExist = ExchangePartner.objects.filter( Q( user_shop=data['user_shop'], partner_shop=ID ) | Q( user_shop=ID, partner_shop=data['user_shop']) )
+            if partnerExist:
+                existids.append(ID)
+
         try:
             for ID in shops_list:
 
                 if ID == data['user_shop']:
-                    return Response('نمی‌توانید فروشگاه خود را به لیست همکاری اضافه کنید', status=status.HTTP_400_BAD_REQUEST)
+                    ans = { 'message':'نمی‌توانید فروشگاه خود را به لیست همکاری اضافه کنید', 'shop_id':ID}
+                    return Response(ans, status=status.HTTP_400_BAD_REQUEST)
 
                 partnerExist = ExchangePartner.objects.filter( Q( user_shop=data['user_shop'], partner_shop=ID ) | Q( user_shop=ID, partner_shop=data['user_shop']) )
                 if partnerExist:
-                    ans = { 'message':'فروشگاه مورد نظر در لیست همکاران شما موجود میباشد و یا درخواست همکاری پیش از این ارسال شده است', 'shop_id':ID}
+                    ans = { 'message':'فروشگاه مورد نظر در لیست همکاران شما موجود میباشد و یا درخواست همکاری پیش از این ارسال شده است', 'shop_ids':existids}
                     return Response(ans, status=status.HTTP_400_BAD_REQUEST)
 
                 data['partner_shop'] = ID
