@@ -177,7 +177,8 @@ class Profile(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView)
                       'user_shops':user_shops.values_list('id', 'name', 'slug'), "address":profile.address, "company":profile.company,
                       "email_verification":profile.email_verification, "referral_code":profile.referral_code, "national_code":profile.national_code,
                       "postal_code":profile.postal_code, "telephone":profile.telephone, "warehouse_address":profile.warehouse_address,
-                      "national_id":profile.national_id, "reg_number":profile.reg_number, "economic_code":profile.economic_code }
+                      "national_id":profile.national_id, "reg_number":profile.reg_number, "economic_code":profile.economic_code,
+                      "shaba_number":profile.shaba_number, "card_number":profile.card_number, "bank_account_number":profile.bank_account_number }
         return Response(user_data, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
