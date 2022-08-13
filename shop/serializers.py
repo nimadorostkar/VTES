@@ -121,7 +121,7 @@ class ShopSerializer(serializers.ModelSerializer):
                    'card_number', 'bank_account_number', 'instagram', 'linkedin', 'whatsapp',
                    'telegram', 'national_ID', 'registration_number', 'economic_code',
                    'central_office_province', 'central_office_city', 'landline_phone_number',
-                   'date_created')
+                   'invoicing', 'date_created')
 
 
 

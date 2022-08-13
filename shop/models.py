@@ -160,6 +160,7 @@ class Shop(models.Model):
     central_office_province = models.ForeignKey(Province, on_delete=models.CASCADE, null=True, blank=True, related_name='central_office_province', verbose_name = "استان دفتر مرکزی")
     central_office_city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True, related_name='central_office_city', verbose_name = "شهر دفتر مرکزی")
     landline_phone_number = models.CharField(max_length=50, null=True, blank=True, verbose_name = "شماره تماس ثابت")
+    invoicing = models.BooleanField(default=False, verbose_name = "امکان صدور فاکتور رسمی")
     date_created = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
 
     def __str__(self):
