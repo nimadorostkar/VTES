@@ -386,6 +386,17 @@ class MultiPartners(APIView):
                 serializer = ExchangePartnerSerializer(data=data)
                 if serializer.is_valid():
                     serializer.save()
+
+                    try:
+                        notice = PartnerExchangeNotice()
+                        notice.status = 'unanswered'
+                        notice.type = 'cooperation-request'
+                        notice.exchange_partner = ExchangePartner.objects.get(id=serializer.data['id'])
+                        notice.save()
+                    except:
+                        return Response('Error in create notice', status=status.HTTP_400_BAD_REQUEST)
+
+
             return Response('درخواست همکاری ارسال شد، فروشگاه های مورد نظر پس از تایید در لیست همکاری قرار میگیرند', status=status.HTTP_200_OK)
         except:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
