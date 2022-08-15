@@ -6,6 +6,7 @@ from rest_framework import viewsets, filters, status, pagination, mixins
 from .models import ExchangePartner
 from shop.models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts, Attributes, ProductColor, Unit
 from shop import models
+from notice.models import PartnerExchangeNotice
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
@@ -75,6 +76,16 @@ class Partners(GenericAPIView):
         serializer = ExchangePartnerSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
+
+            try:
+                notice = PartnerExchangeNotice()
+                notice.status = 'unanswered'
+                notice.type = 'cooperation-request'
+                notice.exchange_partner = ExchangePartner.objects.get(id=serializer.data['id'])
+                notice.save()
+            except:
+                return Response('درخواست همکاری ایجاد شد اما مشکلی در ایجاد اعلان به وجود آمده', status=status.HTTP_400_BAD_REQUEST)
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
