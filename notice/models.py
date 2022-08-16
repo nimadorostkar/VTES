@@ -41,7 +41,7 @@ class PartnerExchangeNotice(models.Model):
     offer_price = models.CharField(max_length=256, null=True, blank=True, verbose_name="قیمت پیشنهادی")
     date_contract = jmodels.jDateTimeField(null=True, blank=True, verbose_name = "تاریخ قرارداد")
     accountingId = models.CharField(max_length=256, null=True, blank=True, verbose_name="شناسه حسابداری")
-    description = models.TextField(verbose_name="توضیحات")
+    description = models.TextField(null=True, blank=True, verbose_name="توضیحات")
     deposit_slip_image = models.ImageField(upload_to='PartnerExchangeNotice', null=True, blank=True , verbose_name = "تصویر فیش واریزی")
     #shopId =
     #shopName =
