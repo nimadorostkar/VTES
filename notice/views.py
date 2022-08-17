@@ -60,7 +60,7 @@ class PartnerNotice(GenericAPIView):
 
 
 #--------------------------------------------------- PartnerNotice -------------
-class CooperationReq(GenericAPIView):
+class PartnerReq(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = PartnerExchangeNoticeSerializer
     pagination_class = CustomPagination
@@ -93,7 +93,7 @@ class CooperationReq(GenericAPIView):
 
 
 
-class CooperationReqItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
+class PartnerReqItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView):
     serializer_class = PartnerExchangeNoticeSerializer
 
     def get(self, request, *args, **kwargs):
