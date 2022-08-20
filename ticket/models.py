@@ -36,7 +36,7 @@ class Ticket(models.Model):
     title = models.CharField(max_length=256, null=True, blank=True, verbose_name="موضوع")
     type = models.CharField(max_length=200, choices=TYPE, default='suggestion', verbose_name="نوع")
     status = models.CharField(max_length=200, choices=STATUS, default='New', verbose_name='وضعیت')
-    answer_status = models.CharField(max_length=200, choices=STATUS, default='not-declinable', verbose_name='وضعیت پاسخ')
+    answer_status = models.CharField(max_length=200, choices=ANSWER_STATUS, default='not-declinable', verbose_name='وضعیت پاسخ')
     description = models.TextField(verbose_name="توضیحات")
     state = models.BooleanField(default=False, verbose_name='وضعیت پاسخ')
     admin_ans = models.TextField(verbose_name="پاسخ ادمین", null=True, blank=True)
