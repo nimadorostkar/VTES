@@ -15,6 +15,9 @@ from shop.models import Shop #Product, Category , ProductAttr, ProductImgs, Shop
 from .models import PartnerExchangeNotice
 from .serializers import PartnerExchangeNoticeSerializer
 import json
+from ticket.models import Ticket
+from ticket.serializers import TicketSerializer
+
 
 
 class CustomPagination(PageNumberPagination):
@@ -26,30 +29,6 @@ class CustomPagination(PageNumberPagination):
 
 
 
-
-
-
-#--------------------------------------------------- PartnerNotice -------------
-class PartnerNotice(GenericAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = ExchangePartnerSerializer
-    pagination_class = CustomPagination
-    queryset = ExchangePartner.objects.all()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['partner_shop', 'status', 'partner_shop__name', 'partner_shop__province', 'partner_shop__city', 'partner_shop__user', 'partner_shop__phone']
-    search_fields = ['user_shop__name', 'partner_shop__name', 'status', 'partner_shop__user__first_name', 'partner_shop__user__last_name']
-    ordering_fields = ['id', 'partner_shop', 'status', 'partner_shop__name', 'partner_shop__address', 'partner_shop__user__first_name', 'partner_shop__user__last_name', 'partner_shop__user', 'partner_shop__phone']
-
-
-    def get(self, request, format=None):
-        usershops = Shop.objects.filter(user=request.user)
-        query = self.filter_queryset(ExchangePartner.objects.filter( Q(user_shop__in=usershops) | Q(partner_shop__in=usershops) ) )
-        page = self.paginate_queryset(query)
-        if page is not None:
-            serializer = ExchangePartnerSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = ExchangePartnerSerializer(query, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
@@ -119,6 +98,34 @@ class PartnerReqItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericA
 
 
 
+
+
+
+
+
+
+
+
+#--------------------------------------------------- PartnerNotice -------------
+class TicketNotice(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TicketSerializer
+    pagination_class = CustomPagination
+    queryset = Ticket.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['partner_shop', 'status', 'partner_shop__name', 'partner_shop__province', 'partner_shop__city', 'partner_shop__user', 'partner_shop__phone']
+    search_fields = ['user_shop__name', 'partner_shop__name', 'status', 'partner_shop__user__first_name', 'partner_shop__user__last_name']
+    ordering_fields = ['id', 'partner_shop', 'status', 'partner_shop__name', 'partner_shop__address', 'partner_shop__user__first_name', 'partner_shop__user__last_name', 'partner_shop__user', 'partner_shop__phone']
+
+
+    def get(self, request, format=None):
+        query = self.filter_queryset(Ticket.objects.filter(user=request.user))
+        page = self.paginate_queryset(query)
+        if page is not None:
+            serializer = TicketSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = TicketSerializer(query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
