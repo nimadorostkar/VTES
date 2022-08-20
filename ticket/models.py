@@ -22,19 +22,28 @@ class Ticket(models.Model):
         ('Canceled', 'لغو شده'),
         ('Completed', 'به اتمام رسیده'),
     )
+    ANSWER_STATUS = (
+        ('accepted', 'accepted'),
+        ('declined', 'declined'),
+        ('not-declinable', 'not-declinable'),
+    )
+    TYPE = (
+        ('suggestion', 'suggestion'),
+        ('support', 'support'),
+        ('add-attributes', 'add-attributes'),
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, verbose_name = "کاربر")
-    subject = models.CharField(max_length=256, null=True, blank=True, verbose_name="موضوع")
-    type = models.CharField(max_length=256, null=True, blank=True, verbose_name="نوع")
+    title = models.CharField(max_length=256, null=True, blank=True, verbose_name="موضوع")
+    type = models.CharField(max_length=200, choices=TYPE, default='suggestion', verbose_name="نوع")
+    status = models.CharField(max_length=200, choices=STATUS, default='New', verbose_name='وضعیت')
+    answer_status = models.CharField(max_length=200, choices=STATUS, default='not-declinable', verbose_name='وضعیت پاسخ')
     description = models.TextField(verbose_name="توضیحات")
-    created_date = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
-    status = models.CharField(max_length=40, choices=STATUS, default='New', verbose_name='وضعیت')
     state = models.BooleanField(default=False, verbose_name='وضعیت پاسخ')
     admin_ans = models.TextField(verbose_name="پاسخ ادمین", null=True, blank=True)
-
-
+    created_date = jmodels.jDateTimeField(auto_now_add=True, verbose_name = "تاریخ ایجاد")
 
     def __str__(self):
-        return str(self.subject) + "|" + str(self.user)
+        return str(self.title) + "|" + str(self.user)
 
     class Meta:
         verbose_name = "تیکت"

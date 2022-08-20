@@ -12,8 +12,8 @@ from import_export.admin import ImportExportModelAdmin, ImportExportMixin
 
 #------------------------------------------------------------------------------
 class TicketAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ('subject', 'user', 'status', 'state')
-    search_fields = ['subject', 'description']
-    list_filter = ("user", 'subject', 'status', 'state')
+    list_display = ('title', 'user', 'status', 'type', 'answer_status', 'state')
+    search_fields = ['title', 'description']
+    list_filter = ("user", 'title', 'status', 'type', 'answer_status', 'state')
     raw_id_fields = ('user'),
 admin.site.register(models.Ticket, TicketAdmin)

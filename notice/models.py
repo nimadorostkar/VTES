@@ -12,6 +12,13 @@ from partners.models import ExchangePartner
 
 
 
+
+
+
+
+
+
+
 #------------------------------------------------------------------------------
 class PartnerExchangeNotice(models.Model):
     STATUS = (

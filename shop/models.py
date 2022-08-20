@@ -130,7 +130,6 @@ class Attributes(models.Model):
 
 
 
-
 #------------------------------------------------------------------------------
 class Shop(models.Model):
     slug = models.SlugField(max_length=256, null=True, blank=True, unique=True)
