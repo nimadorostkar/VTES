@@ -39,7 +39,7 @@ admin.site.register(models.City, CityAdmin)
 
 #------------------------------------------------------------------------------
 class BrandAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ('name', 'fname', 'link', 'id')
+    list_display = ('name', 'fname', 'link', 'logo_tag', 'id')
     search_fields = ['name', 'fname']
 admin.site.register(models.Brand, BrandAdmin)
 

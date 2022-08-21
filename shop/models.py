@@ -81,9 +81,13 @@ class Brand(models.Model):
     name = models.CharField(max_length=256, unique=True, verbose_name='برند')
     fname = models.CharField(max_length=256, unique=True, null=True, blank=True, verbose_name='برند (فارسی)')
     link = models.CharField(max_length=256, null=True, blank=True)
+    image = models.ImageField(default='logos/default.png', upload_to='brands', null=True, blank=True , verbose_name = "لوگو ")
 
     def __str__(self):
         return str(self.name)
+
+    def logo_tag(self):
+        return format_html("<img width=40 src='{}'>".format(self.image.url))
 
     class Meta:
         verbose_name = "برند"

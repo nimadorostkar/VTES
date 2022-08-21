@@ -53,13 +53,22 @@ class PartnerReq(GenericAPIView):
     def get(self, request, format=None):
         usershops = Shop.objects.filter(user=request.user)
         query = self.filter_queryset(PartnerExchangeNotice.objects.filter(exchange_partner__partner_shop__in=usershops))
-        page = self.paginate_queryset(query)
-        if page is not None:
-            serializer = PartnerExchangeNoticeSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = PartnerExchangeNoticeSerializer(query, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
+        data = []
+        for partnering in query:
+            if partnering.deposit_slip_image:
+                deposit_slip_image = partnering.deposit_slip_image.url
+            else:
+                deposit_slip_image = None
+            obj = { 'id':partnering.id, 'status':partnering.status, 'type':partnering.type, 'quantity':partnering.quantity,
+                    'offer_price':partnering.offer_price, 'date_contract':partnering.date_contract, 'accountingId':partnering.accountingId,
+                    'description':partnering.description, 'deposit_slip_image':deposit_slip_image, 'shop_product':partnering.shop_product,
+                    'exchange_partner_id':partnering.exchange_partner.id, 'partner_shop':partnering.exchange_partner.user_shop.id, 'partnerShopName':partnering.exchange_partner.user_shop.name,
+                    'partner_first_name':partnering.exchange_partner.user_shop.user.first_name, 'partner_last_name':partnering.exchange_partner.user_shop.user.last_name, 'partnerShopUser':partnering.exchange_partner.user_shop.user.mobile,
+                    'partnerShopPhone':partnering.exchange_partner.user_shop.phone, 'exchange_partner_status':partnering.exchange_partner.status }
+            data.append(obj)
+        print(data)
+        return Response(data, status=status.HTTP_200_OK)
 
 
 
@@ -113,9 +122,9 @@ class TicketNotice(GenericAPIView):
     pagination_class = CustomPagination
     queryset = Ticket.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['partner_shop', 'status', 'partner_shop__name', 'partner_shop__province', 'partner_shop__city', 'partner_shop__user', 'partner_shop__phone']
-    search_fields = ['user_shop__name', 'partner_shop__name', 'status', 'partner_shop__user__first_name', 'partner_shop__user__last_name']
-    ordering_fields = ['id', 'partner_shop', 'status', 'partner_shop__name', 'partner_shop__address', 'partner_shop__user__first_name', 'partner_shop__user__last_name', 'partner_shop__user', 'partner_shop__phone']
+    #filterset_fields = ['partner_shop', 'status', 'partner_shop__name', 'partner_shop__province', 'partner_shop__city', 'partner_shop__user', 'partner_shop__phone']
+    #search_fields = ['user_shop__name', 'partner_shop__name', 'status', 'partner_shop__user__first_name', 'partner_shop__user__last_name']
+    #ordering_fields = ['id', 'partner_shop', 'status', 'partner_shop__name', 'partner_shop__address', 'partner_shop__user__first_name', 'partner_shop__user__last_name', 'partner_shop__user', 'partner_shop__phone']
 
 
     def get(self, request, format=None):
