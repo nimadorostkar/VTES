@@ -101,27 +101,34 @@ class PartnerReqItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericA
 
 
     def put(self, request, *args, **kwargs):
-        exchange = get_object_or_404(ExchangePartner, id=request.data['id'])
+        pe = get_object_or_404(PartnerExchangeNotice, id=self.kwargs["id"])
+        request.data['user_shop'] = pe.exchange_partner.user_shop.id
+        request.data['partner_shop'] = pe.exchange_partner.partner_shop.id
+        exchange = get_object_or_404(ExchangePartner, id=pe.exchange_partner.id )
         exchange_serializer = ExchangePartnerSerializer(exchange, data=request.data)
-        #
+        if exchange_serializer.is_valid():
+            exchange_serializer.save()
+        else:
+            return Response(exchange_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         request.data['status'] = request.data['notice_status']
         partner_exchange = get_object_or_404(PartnerExchangeNotice, id=self.kwargs["id"])
         serializer = PartnerExchangeNoticeSerializer(partner_exchange, data=request.data)
-
-        if exchange_serializer.is_valid():
-            exchange_serializer.save()
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
 
 
 
+'''
+exchange.status = request.data['status']
+exchange.save()
+'''
 
 
 
