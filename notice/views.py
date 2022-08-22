@@ -45,9 +45,9 @@ class PartnerReq(GenericAPIView):
     pagination_class = CustomPagination
     queryset = PartnerExchangeNotice.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    #filterset_fields = ['partner_shop', 'status', 'partner_shop__name', 'partner_shop__province', 'partner_shop__city', 'partner_shop__user', 'partner_shop__phone']
-    #search_fields = ['user_shop__name', 'partner_shop__name', 'status', 'partner_shop__user__first_name', 'partner_shop__user__last_name']
-    #ordering_fields = ['id', 'partner_shop', 'status', 'partner_shop__name', 'partner_shop__address', 'partner_shop__user__first_name', 'partner_shop__user__last_name', 'partner_shop__user', 'partner_shop__phone']
+    filterset_fields = ['status', 'type', 'accountingId', 'exchange_partner', 'exchange_partner__user_shop', 'exchange_partner__partner_shop', 'exchange_partner__status']
+    search_fields = ['exchange_partner__user_shop__name', 'exchange_partner__partner_shop__name', 'exchange_partner__status', 'exchange_partner__partner_shop__user__first_name', 'exchange_partner__partner_shop__user__last_name']
+    ordering_fields = ['id', 'date_contract']
 
 
     def get(self, request, format=None):
@@ -67,7 +67,6 @@ class PartnerReq(GenericAPIView):
                     'partner_first_name':partnering.exchange_partner.user_shop.user.first_name, 'partner_last_name':partnering.exchange_partner.user_shop.user.last_name, 'partnerShopUser':partnering.exchange_partner.user_shop.user.mobile,
                     'partnerShopPhone':partnering.exchange_partner.user_shop.phone, 'exchange_partner_status':partnering.exchange_partner.status }
             data.append(obj)
-        print(data)
         return Response(data, status=status.HTTP_200_OK)
 
 
