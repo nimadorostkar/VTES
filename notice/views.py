@@ -122,9 +122,9 @@ class TicketNotice(GenericAPIView):
     pagination_class = CustomPagination
     queryset = Ticket.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    #filterset_fields = ['partner_shop', 'status', 'partner_shop__name', 'partner_shop__province', 'partner_shop__city', 'partner_shop__user', 'partner_shop__phone']
-    #search_fields = ['user_shop__name', 'partner_shop__name', 'status', 'partner_shop__user__first_name', 'partner_shop__user__last_name']
-    #ordering_fields = ['id', 'partner_shop', 'status', 'partner_shop__name', 'partner_shop__address', 'partner_shop__user__first_name', 'partner_shop__user__last_name', 'partner_shop__user', 'partner_shop__phone']
+    filterset_fields = ['status', 'answer_status', 'type', 'state', 'user', 'title']
+    search_fields = ['title', 'user__first_name', 'user__last_name', 'description', 'admin_ans']
+    ordering_fields = ['id', 'created_date', 'status']
 
 
     def get(self, request, format=None):
