@@ -108,6 +108,10 @@ class PartnerReqItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericA
         exchange_serializer = ExchangePartnerSerializer(exchange, data=request.data)
         if exchange_serializer.is_valid():
             exchange_serializer.save()
+            #if request.data['status'] == 'تایید شده':
+            #    pass
+            #elif request.data['status'] == 'رد شده':
+            #    pass
         else:
             return Response(exchange_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         request.data['status'] = request.data['notice_status']
