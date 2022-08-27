@@ -62,12 +62,18 @@ class Partners(GenericAPIView):
         shop_ids = list(set(shop_ids))
         partner_shops = Shop.objects.filter(id__in=shop_ids)
 
-        page = self.paginate_queryset(partner_shops)
+        data = []
+        for P in partner_shops:
+            exPartner = ExchangePartner.objects.get( Q( user_shop__in=usershops, partner_shop=P ) | Q( user_shop=P, partner_shop__in=usershops) )
+            partner_data = { 'shop_id':P.id, 'shop_slug':P.slug, 'shop_name':P.name, 'shop_user':P.user.id, 'owner_name':P.user.first_name +' '+P.user.last_name,
+                             'shop_phone':P.phone, 'shop_address':P.address, 'partnership_id':exPartner.id, 'status':exPartner.status }
+            data.append(partner_data)
+
+        page = self.paginate_queryset(data)
         if page is not None:
-            serializer = ShopSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = ShopSerializer(partner_shops, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            return self.get_paginated_response(data)
+        return Response(data, status=status.HTTP_200_OK)
+
 
 
 
