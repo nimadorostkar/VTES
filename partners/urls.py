@@ -9,3 +9,4 @@ urlpatterns = [
   path('partner/<int:id>', PartnerItem.as_view(), name='partner'),
   path('partners_products', PartnersProducts.as_view(), name='partners_products'),
 ]
+ 

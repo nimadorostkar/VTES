@@ -52,7 +52,7 @@ class PartnerReq(GenericAPIView):
 
     def get(self, request, format=None):
         usershops = Shop.objects.filter(user=request.user)
-        query = self.filter_queryset(PartnerExchangeNotice.objects.filter(exchange_partner__partner_shop__in=usershops))
+        query = self.filter_queryset(PartnerExchangeNotice.objects.filter( Q(exchange_partner__partner_shop__in=usershops) | Q(exchange_partner__user_shop__in=usershops) ))
 
         data = []
         for partnering in query:

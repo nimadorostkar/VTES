@@ -52,11 +52,21 @@ class Partners(GenericAPIView):
     def get(self, request, format=None):
         usershops = Shop.objects.filter(user=request.user)
         query = self.filter_queryset(ExchangePartner.objects.filter( Q(user_shop__in=usershops) | Q(partner_shop__in=usershops) ) )
-        page = self.paginate_queryset(query)
+
+        shop_ids = []
+        for partner in query:
+            if partner.user_shop not in usershops:
+                shop_ids.append(partner.user_shop.id)
+            if partner.partner_shop not in usershops:
+                shop_ids.append(partner.partner_shop.id)
+        shop_ids = list(set(shop_ids))
+        partner_shops = Shop.objects.filter(id__in=shop_ids)
+
+        page = self.paginate_queryset(partner_shops)
         if page is not None:
-            serializer = ExchangePartnerSerializer(page, many=True)
+            serializer = ShopSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
-        serializer = ExchangePartnerSerializer(query, many=True)
+        serializer = ShopSerializer(partner_shops, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
