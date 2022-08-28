@@ -56,20 +56,39 @@ class PartnerReq(GenericAPIView):
 
         data = []
         for partnering in query:
+
+            if partnering.type == 'cooperation-request-answer' and partnering.exchange_partner.user_shop not in usershops:
+                continue
+
+
             if partnering.deposit_slip_image:
                 deposit_slip_image = partnering.deposit_slip_image.url
             else:
                 deposit_slip_image = None
+
+            if partnering.exchange_partner.user_shop in usershops:
+                partner_shop = partnering.exchange_partner.partner_shop.id
+                partnerShopName = partnering.exchange_partner.partner_shop.name
+                partner_first_name = partnering.exchange_partner.partner_shop.user.first_name
+                partner_last_name = partnering.exchange_partner.partner_shop.user.last_name
+                partnerShopUser = partnering.exchange_partner.partner_shop.user.mobile
+                partnerShopPhone = partnering.exchange_partner.partner_shop.phone
+            else:
+                partner_shop = partnering.exchange_partner.user_shop.id
+                partnerShopName = partnering.exchange_partner.user_shop.name
+                partner_first_name = partnering.exchange_partner.user_shop.user.first_name
+                partner_last_name = partnering.exchange_partner.user_shop.user.last_name
+                partnerShopUser = partnering.exchange_partner.user_shop.user.mobile
+                partnerShopPhone = partnering.exchange_partner.user_shop.phone
+
             obj = { 'id':partnering.id, 'status':partnering.status, 'type':partnering.type, 'quantity':partnering.quantity,
                     'offer_price':partnering.offer_price, 'date_contract':partnering.date_contract, 'accountingId':partnering.accountingId,
                     'description':partnering.description, 'deposit_slip_image':deposit_slip_image, 'shop_product':partnering.shop_product,
-                    'exchange_partner_id':partnering.exchange_partner.id, 'partner_shop':partnering.exchange_partner.user_shop.id, 'partnerShopName':partnering.exchange_partner.user_shop.name,
-                    'partner_first_name':partnering.exchange_partner.user_shop.user.first_name, 'partner_last_name':partnering.exchange_partner.user_shop.user.last_name, 'partnerShopUser':partnering.exchange_partner.user_shop.user.mobile,
-                    'partnerShopPhone':partnering.exchange_partner.user_shop.phone, 'exchange_partner_status':partnering.exchange_partner.status }
+                    'exchange_partner_id':partnering.exchange_partner.id, 'partner_shop':partner_shop, 'partnerShopName':partnerShopName,
+                    'partner_first_name':partner_first_name, 'partner_last_name':partner_last_name, 'partnerShopUser':partnerShopUser,
+                    'partnerShopPhone':partnerShopPhone, 'exchange_partner_status':partnering.exchange_partner.status }
             data.append(obj)
         return Response(data, status=status.HTTP_200_OK)
-
-
 
 
 
@@ -84,18 +103,35 @@ class PartnerReqItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericA
     serializer_class = PartnerExchangeNoticeSerializer
 
     def get(self, request, *args, **kwargs):
+        usershops = Shop.objects.filter(user=request.user)
         partnering = get_object_or_404(PartnerExchangeNotice, id=self.kwargs["id"])
+
         if partnering.deposit_slip_image:
             deposit_slip_image = partnering.deposit_slip_image.url
         else:
             deposit_slip_image = None
+
+        if partnering.exchange_partner.user_shop in usershops:
+            partner_shop = partnering.exchange_partner.partner_shop.id
+            partnerShopName = partnering.exchange_partner.partner_shop.name
+            partner_first_name = partnering.exchange_partner.partner_shop.user.first_name
+            partner_last_name = partnering.exchange_partner.partner_shop.user.last_name
+            partnerShopUser = partnering.exchange_partner.partner_shop.user.mobile
+            partnerShopPhone = partnering.exchange_partner.partner_shop.phone
+        else:
+            partner_shop = partnering.exchange_partner.user_shop.id
+            partnerShopName = partnering.exchange_partner.user_shop.name
+            partner_first_name = partnering.exchange_partner.user_shop.user.first_name
+            partner_last_name = partnering.exchange_partner.user_shop.user.last_name
+            partnerShopUser = partnering.exchange_partner.user_shop.user.mobile
+            partnerShopPhone = partnering.exchange_partner.user_shop.phone
+
         data = { 'id':partnering.id, 'status':partnering.status, 'type':partnering.type, 'quantity':partnering.quantity,
                 'offer_price':partnering.offer_price, 'date_contract':partnering.date_contract, 'accountingId':partnering.accountingId,
                 'description':partnering.description, 'deposit_slip_image':deposit_slip_image, 'shop_product':partnering.shop_product,
-                'exchange_partner_id':partnering.exchange_partner.id, 'partner_shop':partnering.exchange_partner.user_shop.id, 'partnerShopName':partnering.exchange_partner.user_shop.name,
-                'partner_first_name':partnering.exchange_partner.user_shop.user.first_name, 'partner_last_name':partnering.exchange_partner.user_shop.user.last_name, 'partnerShopUser':partnering.exchange_partner.user_shop.user.mobile,
-                'partnerShopPhone':partnering.exchange_partner.user_shop.phone, 'exchange_partner_status':partnering.exchange_partner.status }
-        print(data)
+                'exchange_partner_id':partnering.exchange_partner.id, 'partner_shop':partner_shop, 'partnerShopName':partnerShopName,
+                'partner_first_name':partner_first_name, 'partner_last_name':partner_last_name, 'partnerShopUser':partnerShopUser,
+                'partnerShopPhone':partnerShopPhone, 'exchange_partner_status':partnering.exchange_partner.status }
         return Response(data, status=status.HTTP_200_OK)
 
 
@@ -130,8 +166,36 @@ class PartnerReqItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericA
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        usershops = Shop.objects.filter(user=request.user)
+        partnering = partner_exchange
 
+        if partnering.deposit_slip_image:
+            deposit_slip_image = partnering.deposit_slip_image.url
+        else:
+            deposit_slip_image = None
+
+        if partnering.exchange_partner.user_shop in usershops:
+            partner_shop = partnering.exchange_partner.partner_shop.id
+            partnerShopName = partnering.exchange_partner.partner_shop.name
+            partner_first_name = partnering.exchange_partner.partner_shop.user.first_name
+            partner_last_name = partnering.exchange_partner.partner_shop.user.last_name
+            partnerShopUser = partnering.exchange_partner.partner_shop.user.mobile
+            partnerShopPhone = partnering.exchange_partner.partner_shop.phone
+        else:
+            partner_shop = partnering.exchange_partner.user_shop.id
+            partnerShopName = partnering.exchange_partner.user_shop.name
+            partner_first_name = partnering.exchange_partner.user_shop.user.first_name
+            partner_last_name = partnering.exchange_partner.user_shop.user.last_name
+            partnerShopUser = partnering.exchange_partner.user_shop.user.mobile
+            partnerShopPhone = partnering.exchange_partner.user_shop.phone
+
+        data = { 'id':partnering.id, 'status':partnering.status, 'type':partnering.type, 'quantity':partnering.quantity,
+                'offer_price':partnering.offer_price, 'date_contract':partnering.date_contract, 'accountingId':partnering.accountingId,
+                'description':partnering.description, 'deposit_slip_image':deposit_slip_image, 'shop_product':partnering.shop_product,
+                'exchange_partner_id':partnering.exchange_partner.id, 'partner_shop':partner_shop, 'partnerShopName':partnerShopName,
+                'partner_first_name':partner_first_name, 'partner_last_name':partner_last_name, 'partnerShopUser':partnerShopUser,
+                'partnerShopPhone':partnerShopPhone, 'exchange_partner_status':partnering.exchange_partner.status }
+        return Response(data, status=status.HTTP_200_OK)
 
 
 
