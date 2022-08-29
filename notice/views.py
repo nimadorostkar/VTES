@@ -59,8 +59,8 @@ class PartnerReq(GenericAPIView):
 
             if partnering.type == 'cooperation-request-answer' and partnering.exchange_partner.user_shop not in usershops:
                 continue
-
-
+            if partnering.type == 'cooperation-request' and partnering.exchange_partner.user_shop in usershops:
+                continue
             if partnering.deposit_slip_image:
                 deposit_slip_image = partnering.deposit_slip_image.url
             else:
