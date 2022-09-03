@@ -81,9 +81,14 @@ class PartnerReq(GenericAPIView):
                 partnerShopUser = partnering.exchange_partner.user_shop.user.mobile
                 partnerShopPhone = partnering.exchange_partner.user_shop.phone
 
+            if partnering.shop_product:
+                shop_product = partnering.shop_product.id
+            else:
+                shop_product = None
+
             obj = { 'id':partnering.id, 'status':partnering.status, 'type':partnering.type, 'quantity':partnering.quantity,
-                    'offer_price':partnering.offer_price, 'date_contract':partnering.date_contract, 'accountingId':partnering.accountingId,
-                    'description':partnering.description, 'deposit_slip_image':deposit_slip_image, 'shop_product':partnering.shop_product,
+                    'offer_price':partnering.offer_price, 'date_contract':str(partnering.date_contract), 'accountingId':partnering.accountingId,
+                    'description':partnering.description, 'deposit_slip_image':deposit_slip_image, 'shop_product':shop_product,
                     'exchange_partner_id':partnering.exchange_partner.id, 'partner_shop':partner_shop, 'partnerShopName':partnerShopName,
                     'partner_first_name':partner_first_name, 'partner_last_name':partner_last_name, 'partnerShopUser':partnerShopUser,
                     'partnerShopPhone':partnerShopPhone, 'exchange_partner_status':partnering.exchange_partner.status }
@@ -242,16 +247,18 @@ class ExchangeReq(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ExchangePartnerSerializer
     pagination_class = CustomPagination
-    queryset = ExchangePartner.objects.all()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['partner_shop', 'status', 'partner_shop__name', 'partner_shop__province', 'partner_shop__city', 'partner_shop__user', 'partner_shop__phone']
-    search_fields = ['user_shop__name', 'partner_shop__name', 'status', 'partner_shop__user__first_name', 'partner_shop__user__last_name']
-    ordering_fields = ['id', 'partner_shop', 'status', 'partner_shop__name', 'partner_shop__address', 'partner_shop__user__first_name', 'partner_shop__user__last_name', 'partner_shop__user', 'partner_shop__phone']
+    queryset = PartnerExchangeNotice.objects.all()
+    #filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    #filterset_fields = ['partner_shop', 'status', 'partner_shop__name', 'partner_shop__province', 'partner_shop__city', 'partner_shop__user', 'partner_shop__phone']
+    #search_fields = ['user_shop__name', 'partner_shop__name', 'status', 'partner_shop__user__first_name', 'partner_shop__user__last_name']
+    #ordering_fields = ['id', 'partner_shop', 'status', 'partner_shop__name', 'partner_shop__address', 'partner_shop__user__first_name', 'partner_shop__user__last_name', 'partner_shop__user', 'partner_shop__phone']
 
 
     def get(self, request, format=None):
         usershops = Shop.objects.filter(user=request.user)
-        query = self.filter_queryset(ExchangePartner.objects.filter( Q(user_shop__in=usershops) | Q(partner_shop__in=usershops) ) )
+        query = self.filter_queryset(PartnerExchangeNotice.objects.filter( Q(user_shop__in=usershops) | Q(partner_shop__in=usershops) and Q(type=usershops) ) )
+
+
 
         shop_ids = []
         for partner in query:
