@@ -61,6 +61,8 @@ class PartnerNotice(GenericAPIView):
                 continue
             if partnering.type == 'exchange-request' and partnering.shop_product.shop not in usershops:
                 continue
+            if partnering.type == 'exchange-request-answer' and partnering.shop_product.shop in usershops:
+                continue
             if partnering.deposit_slip_image:
                 deposit_slip_image = partnering.deposit_slip_image.url
             else:
@@ -133,7 +135,7 @@ class PartnerNoticeItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Gener
 
         data = { 'id':partnering.id, 'status':partnering.status, 'type':partnering.type, 'quantity':partnering.quantity,
                 'offer_price':partnering.offer_price, 'date_contract':partnering.date_contract, 'accountingId':partnering.accountingId,
-                'description':partnering.description, 'deposit_slip_image':deposit_slip_image, 'shop_product':partnering.shop_product,
+                'description':partnering.description, 'deposit_slip_image':deposit_slip_image, 'shop_product':partnering.shop_product.id,
                 'exchange_partner_id':partnering.exchange_partner.id, 'partner_shop':partner_shop, 'partnerShopName':partnerShopName,
                 'partner_first_name':partner_first_name, 'partner_last_name':partner_last_name, 'partnerShopUser':partnerShopUser,
                 'partnerShopPhone':partnerShopPhone, 'exchange_partner_status':partnering.exchange_partner.status }
@@ -156,11 +158,12 @@ class PartnerNoticeItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Gener
                 notice.type = 'cooperation-request-answer'
                 notice.save()
             elif request.data['status'] == 'رد شده':
-                notice = PartnerExchangeNotice()
-                notice.exchange_partner = exchange
-                notice.status = 'unanswerable'
-                notice.type = 'cooperation-request-answer'
-                notice.save()
+                exchange.delete()
+                #notice = PartnerExchangeNotice()
+                #notice.exchange_partner = exchange
+                #notice.status = 'unanswerable'
+                #notice.type = 'cooperation-request-answer'
+                #notice.save()
         else:
             return Response(exchange_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         request.data['status'] = request.data['notice_status']
@@ -196,11 +199,34 @@ class PartnerNoticeItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Gener
 
         data = { 'id':partnering.id, 'status':partnering.status, 'type':partnering.type, 'quantity':partnering.quantity,
                 'offer_price':partnering.offer_price, 'date_contract':partnering.date_contract, 'accountingId':partnering.accountingId,
-                'description':partnering.description, 'deposit_slip_image':deposit_slip_image, 'shop_product':partnering.shop_product,
+                'description':partnering.description, 'deposit_slip_image':deposit_slip_image, 'shop_product':partnering.shop_product.id,
                 'exchange_partner_id':partnering.exchange_partner.id, 'partner_shop':partner_shop, 'partnerShopName':partnerShopName,
                 'partner_first_name':partner_first_name, 'partner_last_name':partner_last_name, 'partnerShopUser':partnerShopUser,
                 'partnerShopPhone':partnerShopPhone, 'exchange_partner_status':partnering.exchange_partner.status }
         return Response(data, status=status.HTTP_200_OK)
+
+
+
+    def post(self, request, *args, **kwargs):
+        pe = get_object_or_404(PartnerExchangeNotice, id=self.kwargs["id"])
+
+        ans_notice = PartnerExchangeNotice()
+        ans_notice.exchange_partner = pe.exchange_partner
+        ans_notice.shop_product = pe.shop_product
+        ans_notice.quantity = pe.quantity
+        ans_notice.status = 'unanswerable'
+        ans_notice.type = 'exchange-request-answer'
+        ans_notice.offer_price = request.data['offer_price']
+        ans_notice.date_contract = request.data['date_contract']
+        ans_notice.description = request.data['description']
+        ans_notice.save()
+
+        serializer = PartnerExchangeNoticeSerializer(ans_notice)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
 
 
 
