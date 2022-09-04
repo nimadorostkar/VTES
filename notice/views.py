@@ -103,32 +103,23 @@ class ProductExchangeReq(APIView):
 
     def post(self, request, format=None):
         data=request.data
-        data['status'] = "unanswered"
-        data['type'] = "exchange-request"
 
         user_shop = Shop.objects.filter(user=request.user).first().id
         partner_shop = ShopProducts.objects.get(id=data['shop_product']).shop.id
-        data['exchange_partner'] = ExchangePartner.objects.get( Q(user_shop=user_shop, partner_shop=partner_shop ) | Q( user_shop=partner_shop, partner_shop=user_shop) ).id
 
-        serializer = PartnerExchangeNoticeSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        exchange = PartnerExchangeNotice()
+        exchange.status = "unanswered"
+        exchange.type = "exchange-request"
+        exchange.exchange_partner = ExchangePartner.objects.get( Q(user_shop=user_shop, partner_shop=partner_shop ) | Q( user_shop=partner_shop, partner_shop=user_shop) )
+        exchange.shop_product = ShopProducts.objects.get(id=data['shop_product'])
+        exchange.quantity = data['quantity']
+        exchange.offer_price = data['offer_price']
+        exchange.date_contract = data['date_contract']
+        exchange.save()
 
+        serializer = PartnerExchangeNoticeSerializer(exchange)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-        '''
-        try:
-            notice = PartnerExchangeNotice()
-            notice.status = 'unanswered'
-            notice.type = 'exchange-request'
-            notice.exchange_partner = data['exchange_partner']
-            notice.save()
-        except:
-            return Response('درخواست همکاری ایجاد شد اما مشکلی در ایجاد اعلان به وجود آمده', status=status.HTTP_400_BAD_REQUEST)
-        '''
 
 
 

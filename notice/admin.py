@@ -11,7 +11,7 @@ from jalali_date.admin import ModelAdminJalaliMixin, StackedInlineJalaliMixin, T
 
 
 #------------------------------------------------------------------------------
-class PartnerExchangeNoticeAdmin(ModelAdminJalaliMixin, admin.ModelAdmin):
+class PartnerExchangeNoticeAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ('exchange_partner', 'status', 'type')
     list_filter = ('exchange_partner', 'status', 'type')
     raw_id_fields = ('exchange_partner'),
