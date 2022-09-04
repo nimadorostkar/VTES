@@ -60,7 +60,8 @@ INSTALLED_APPS = [
     'mptt',
     'colorfield',
     'import_export',
-    'whitenoise.runserver_nostatic'
+    'whitenoise.runserver_nostatic',
+    'jalali_date'
 ]
 
 

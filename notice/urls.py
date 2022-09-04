@@ -3,6 +3,13 @@ from . import views
 
 
 urlpatterns = [
+
+  path('partner_notice', views.PartnerNotice.as_view(), name='partner_notice'),
+  path('product_exchange_req', views.ProductExchangeReq.as_view(), name='product_exchange_req'),
+  #path('partner_req_item_notice/<int:id>', views.PartnerReqItem.as_view(), name='partner_req_item_notice'),
+  #
+  #
+
   path('partner_req_notice', views.PartnerReq.as_view(), name='partner_req_notice'),
   path('partner_req_item_notice/<int:id>', views.PartnerReqItem.as_view(), name='partner_req_item_notice'),
   #

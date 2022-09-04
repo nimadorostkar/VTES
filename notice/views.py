@@ -11,7 +11,7 @@ from rest_framework.pagination import LimitOffsetPagination, PageNumberPaginatio
 from rest_framework import pagination
 from partners.models import ExchangePartner
 from partners.serializers import ExchangePartnerSerializer
-from shop.models import Shop #Product, Category , ProductAttr, ProductImgs, ShopProducts, Attributes, ProductColor, Unit
+from shop.models import Shop, ShopProducts #Product, Category , ProductAttr, ProductImgs, Attributes, ProductColor, Unit
 from .models import PartnerExchangeNotice
 from .serializers import PartnerExchangeNoticeSerializer
 import json
@@ -24,6 +24,132 @@ class CustomPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 100
+
+
+
+
+
+
+
+
+
+
+
+
+#--------------------------------------------------- PartnerNotice -------------
+class PartnerNotice(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PartnerExchangeNoticeSerializer
+    pagination_class = CustomPagination
+    queryset = PartnerExchangeNotice.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['status', 'type', 'accountingId', 'exchange_partner', 'exchange_partner__user_shop', 'exchange_partner__partner_shop', 'exchange_partner__status']
+    search_fields = ['exchange_partner__user_shop__name', 'exchange_partner__partner_shop__name', 'exchange_partner__status', 'exchange_partner__partner_shop__user__first_name', 'exchange_partner__partner_shop__user__last_name']
+    ordering_fields = ['id', 'date_contract']
+
+
+    def get(self, request, format=None):
+        usershops = Shop.objects.filter(user=request.user)
+        query = self.filter_queryset(PartnerExchangeNotice.objects.filter( Q(exchange_partner__partner_shop__in=usershops) | Q(exchange_partner__user_shop__in=usershops) ))
+
+        data = []
+        for partnering in query:
+
+            if partnering.type == 'cooperation-request-answer' and partnering.exchange_partner.user_shop not in usershops:
+                continue
+            if partnering.type == 'cooperation-request' and partnering.exchange_partner.user_shop in usershops:
+                continue
+            if partnering.deposit_slip_image:
+                deposit_slip_image = partnering.deposit_slip_image.url
+            else:
+                deposit_slip_image = None
+
+            if partnering.exchange_partner.user_shop in usershops:
+                partner_shop = partnering.exchange_partner.partner_shop.id
+                partnerShopName = partnering.exchange_partner.partner_shop.name
+                partner_first_name = partnering.exchange_partner.partner_shop.user.first_name
+                partner_last_name = partnering.exchange_partner.partner_shop.user.last_name
+                partnerShopUser = partnering.exchange_partner.partner_shop.user.mobile
+                partnerShopPhone = partnering.exchange_partner.partner_shop.phone
+            else:
+                partner_shop = partnering.exchange_partner.user_shop.id
+                partnerShopName = partnering.exchange_partner.user_shop.name
+                partner_first_name = partnering.exchange_partner.user_shop.user.first_name
+                partner_last_name = partnering.exchange_partner.user_shop.user.last_name
+                partnerShopUser = partnering.exchange_partner.user_shop.user.mobile
+                partnerShopPhone = partnering.exchange_partner.user_shop.phone
+
+            if partnering.shop_product:
+                shop_product = partnering.shop_product.id
+            else:
+                shop_product = None
+
+            obj = { 'id':partnering.id, 'status':partnering.status, 'type':partnering.type, 'quantity':partnering.quantity,
+                    'offer_price':partnering.offer_price, 'date_contract':str(partnering.date_contract), 'accountingId':partnering.accountingId,
+                    'description':partnering.description, 'deposit_slip_image':deposit_slip_image, 'shop_product':shop_product,
+                    'exchange_partner_id':partnering.exchange_partner.id, 'partner_shop':partner_shop, 'partnerShopName':partnerShopName,
+                    'partner_first_name':partner_first_name, 'partner_last_name':partner_last_name, 'partnerShopUser':partnerShopUser,
+                    'partnerShopPhone':partnerShopPhone, 'exchange_partner_status':partnering.exchange_partner.status }
+            data.append(obj)
+        return Response(data, status=status.HTTP_200_OK)
+
+
+
+
+
+#---------------------------------- ProductExchangeReq in partners -------------
+class ProductExchangeReq(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        data=request.data
+        data['status'] = "unanswered"
+        data['type'] = "exchange-request"
+
+        user_shop = Shop.objects.filter(user=request.user).first().id
+        partner_shop = ShopProducts.objects.get(id=data['shop_product']).shop.id
+        data['exchange_partner'] = ExchangePartner.objects.get( Q(user_shop=user_shop, partner_shop=partner_shop ) | Q( user_shop=partner_shop, partner_shop=user_shop) ).id
+
+        serializer = PartnerExchangeNoticeSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+        '''
+        try:
+            notice = PartnerExchangeNotice()
+            notice.status = 'unanswered'
+            notice.type = 'exchange-request'
+            notice.exchange_partner = data['exchange_partner']
+            notice.save()
+        except:
+            return Response('درخواست همکاری ایجاد شد اما مشکلی در ایجاد اعلان به وجود آمده', status=status.HTTP_400_BAD_REQUEST)
+        '''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

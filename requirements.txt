@@ -16,3 +16,4 @@ whitenoise
 django-storages
 dropbox
 django-shortuuidfield
+django-jalali-date
