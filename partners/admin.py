@@ -1,6 +1,6 @@
 from django.contrib import admin
 from . import models
-from .models import ExchangePartner, ExchangeReq
+from .models import ExchangePartner
 from import_export.admin import ImportExportModelAdmin, ImportExportMixin
 
 
