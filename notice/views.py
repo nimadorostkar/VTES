@@ -115,6 +115,7 @@ class ProductExchangeReq(APIView):
         exchange.quantity = data['quantity']
         exchange.offer_price = data['offer_price']
         exchange.date_contract = data['date_contract']
+        exchange.description = data['description']
         exchange.save()
 
         serializer = PartnerExchangeNoticeSerializer(exchange)
