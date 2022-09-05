@@ -33,6 +33,12 @@ class PartnerExchangeNotice(models.Model):
         ('creditor-alert-accounting', 'creditor-alert-accounting'),
         ('creditor-answer-accounting', 'creditor-answer-accounting'),
     )
+    ANS_STATUS = (
+        ('accepted', 'accepted'),
+        ('declined', 'declined'),
+        ('changed-value', 'changed-value'),
+    )
+
 
     exchange_partner = models.ForeignKey(ExchangePartner, on_delete=models.CASCADE, verbose_name = "همکاری")
     status = models.CharField(max_length=50, choices=STATUS, verbose_name='وضعیت')
@@ -44,6 +50,7 @@ class PartnerExchangeNotice(models.Model):
     accountingId = models.CharField(max_length=256, null=True, blank=True, verbose_name="شناسه حسابداری")
     description = models.TextField(null=True, blank=True, verbose_name="توضیحات")
     deposit_slip_image = models.ImageField(upload_to='PartnerExchangeNotice', null=True, blank=True , verbose_name = "تصویر فیش واریزی")
+    answer_status = models.CharField(max_length=70, choices=ANS_STATUS, verbose_name='وضعیت پاسخ')
 
     def __str__(self):
         return str(self.status) + "|" + str(self.type)

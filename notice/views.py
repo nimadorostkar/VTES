@@ -88,7 +88,7 @@ class PartnerNotice(GenericAPIView):
             else:
                 shop_product = None
 
-            obj = { 'id':partnering.id, 'status':partnering.status, 'type':partnering.type, 'quantity':partnering.quantity,
+            obj = { 'id':partnering.id, 'answer_status':partnering.answer_status, 'status':partnering.status, 'type':partnering.type, 'quantity':partnering.quantity,
                     'offer_price':partnering.offer_price, 'date_contract':str(partnering.date_contract), 'accountingId':partnering.accountingId,
                     'description':partnering.description, 'deposit_slip_image':deposit_slip_image, 'shop_product':shop_product,
                     'exchange_partner_id':partnering.exchange_partner.id, 'partner_shop':partner_shop, 'partnerShopName':partnerShopName,
@@ -210,7 +210,37 @@ class PartnerNoticeItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Gener
     def post(self, request, *args, **kwargs):
         pe = get_object_or_404(PartnerExchangeNotice, id=self.kwargs["id"])
 
-        if pe.type == 'exchange-request':
+        if request.data['answer_status'] == 'accepted':
+            ans_notice = PartnerExchangeNotice()
+            ans_notice.exchange_partner = pe.exchange_partner
+            ans_notice.shop_product = pe.shop_product
+            ans_notice.quantity = pe.quantity
+            ans_notice.status = 'unanswerable'
+            ans_notice.type = 'buyer_response'
+            ans_notice.offer_price = pe.offer_price
+            ans_notice.date_contract = pe.date_contract
+            ans_notice.answer_status = 'accepted'
+            ans_notice.description = request.data['description']
+            ans_notice.save()
+            serializer = PartnerExchangeNoticeSerializer(ans_notice)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        elif request.data['answer_status'] == 'declined':
+            ans_notice = PartnerExchangeNotice()
+            ans_notice.exchange_partner = pe.exchange_partner
+            ans_notice.shop_product = pe.shop_product
+            ans_notice.quantity = pe.quantity
+            ans_notice.status = 'unanswerable'
+            ans_notice.type = 'buyer_response'
+            ans_notice.offer_price = pe.offer_price
+            ans_notice.date_contract = pe.date_contract
+            ans_notice.answer_status = 'declined'
+            ans_notice.description = request.data['description']
+            ans_notice.save()
+            serializer = PartnerExchangeNoticeSerializer(ans_notice)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        elif request.data['answer_status'] == 'changed-value':
             ans_notice = PartnerExchangeNotice()
             ans_notice.exchange_partner = pe.exchange_partner
             ans_notice.shop_product = pe.shop_product
@@ -220,34 +250,13 @@ class PartnerNoticeItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Gener
             ans_notice.offer_price = request.data['offer_price']
             ans_notice.date_contract = request.data['date_contract']
             ans_notice.description = request.data['description']
+            ans_notice.answer_status = 'changed-value'
             ans_notice.save()
             serializer = PartnerExchangeNoticeSerializer(ans_notice)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        elif pe.type == 'exchange-request-answer':
-            if request.data['answer_status'] == 'accepted':
-                ans_notice = PartnerExchangeNotice()
-                ans_notice.exchange_partner = pe.exchange_partner
-                ans_notice.shop_product = pe.shop_product
-                ans_notice.quantity = pe.quantity
-                ans_notice.status = 'unanswerable'
-                ans_notice.type = 'buyer_response'
-                ans_notice.offer_price = pe.offer_price
-                ans_notice.date_contract = pe.date_contract
-                ans_notice.description = request.data['description']
-                ans_notice.save()
-                serializer = PartnerExchangeNoticeSerializer(ans_notice)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            else:
-                return Response('answer status is not accepted', status=status.HTTP_200_OK)
-
         else:
-            return Response('type is not exchange-request-answer or exchange-request', status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
+            return Response('specify the answer status', status=status.HTTP_400_BAD_REQUEST)
 
 
 
