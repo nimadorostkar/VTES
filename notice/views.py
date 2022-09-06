@@ -145,6 +145,7 @@ class PartnerNoticeItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Gener
 
     def put(self, request, *args, **kwargs):
         pe = get_object_or_404(PartnerExchangeNotice, id=self.kwargs["id"])
+        request.data['answer_status'] = 'accepted'
         request.data['user_shop'] = pe.exchange_partner.user_shop.id
         request.data['partner_shop'] = pe.exchange_partner.partner_shop.id
         exchange = get_object_or_404(ExchangePartner, id=pe.exchange_partner.id )
@@ -198,9 +199,9 @@ class PartnerNoticeItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Gener
             partnerShopUser = partnering.exchange_partner.user_shop.user.mobile
             partnerShopPhone = partnering.exchange_partner.user_shop.phone
 
-        data = { 'id':partnering.id, 'status':partnering.status, 'type':partnering.type, 'quantity':partnering.quantity,
+        data = { 'id':partnering.id, 'answer_status':partnering.answer_status, 'status':partnering.status, 'type':partnering.type, 'quantity':partnering.quantity,
                 'offer_price':partnering.offer_price, 'date_contract':partnering.date_contract, 'accountingId':partnering.accountingId,
-                'description':partnering.description, 'deposit_slip_image':deposit_slip_image, 'shop_product':partnering.shop_product.id,
+                'description':partnering.description, 'deposit_slip_image':deposit_slip_image, 'shop_product':partnering.shop_product,
                 'exchange_partner_id':partnering.exchange_partner.id, 'partner_shop':partner_shop, 'partnerShopName':partnerShopName,
                 'partner_first_name':partner_first_name, 'partner_last_name':partner_last_name, 'partnerShopUser':partnerShopUser,
                 'partnerShopPhone':partnerShopPhone, 'exchange_partner_status':partnering.exchange_partner.status }
