@@ -154,6 +154,7 @@ class PartnerNoticeItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Gener
             if request.data['status'] == 'تایید شده':
                 notice = PartnerExchangeNotice()
                 notice.exchange_partner = exchange
+                notice.answer_status = 'accepted'
                 notice.status = 'unanswerable'
                 notice.type = 'cooperation-request-answer'
                 notice.save()
