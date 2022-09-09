@@ -20,6 +20,7 @@ from ticket.serializers import TicketSerializer
 
 
 
+
 class CustomPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
