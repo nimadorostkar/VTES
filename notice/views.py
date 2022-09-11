@@ -85,7 +85,9 @@ class PartnerNotice(GenericAPIView):
                 partnerShopPhone = partnering.exchange_partner.user_shop.phone
 
             if partnering.shop_product:
-                shop_product = partnering.shop_product.id
+                shop_product = {'shop_product_id':partnering.shop_product.id, 'name':partnering.shop_product.product.name,
+                                'brand_id':partnering.shop_product.product.brand.id, 'brand_fname':partnering.shop_product.product.brand.fname,
+                                'brand_name':partnering.shop_product.product.brand.name, 'unit_measurment':partnering.shop_product.unit.name }
             else:
                 shop_product = None
 
@@ -161,12 +163,12 @@ class PartnerNoticeItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Gener
                 notice.type = 'cooperation-request-answer'
                 notice.save()
             elif request.data['status'] == 'رد شده':
-                exchange.delete()
-                #notice = PartnerExchangeNotice()
-                #notice.exchange_partner = exchange
-                #notice.status = 'unanswerable'
-                #notice.type = 'cooperation-request-answer'
-                #notice.save()
+                notice = PartnerExchangeNotice()
+                notice.exchange_partner = exchange
+                notice.answer_status = 'declined'
+                notice.status = 'unanswerable'
+                notice.type = 'cooperation-request-answer'
+                notice.save()
         else:
             return Response(exchange_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         request.data['status'] = request.data['notice_status']
