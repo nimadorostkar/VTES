@@ -35,10 +35,13 @@ class PostWay(models.Model):
 class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_address', verbose_name = "کاربر")
     CHOICES = ( ('خانه','خانه'), ('فروشگاه','فروشگاه'), ('انبار','انبار'))
-    place = models.CharField(max_length=256, choices=CHOICES, verbose_name = "محل")
+    place = models.CharField(max_length=256, null=True, blank=True, choices=CHOICES, verbose_name = "محل")
     address = models.CharField(max_length=256, verbose_name = "آدرس")
     phone_number = models.CharField(max_length=256, verbose_name = "شماره تماس")
     postal_code = models.CharField(max_length=256, verbose_name = "کد پستی")
+    name = models.CharField(max_length=256, verbose_name = "نام تحویل گیرنده")
+    lname = models.CharField(max_length=256, verbose_name = "نام خانوادگی تحویل گیرنده")
+    lat_long = models.CharField(max_length=256, null=True, blank=True, verbose_name = "lat & long")
 
     def __str__(self):
         return str(self.user) + str(self.place)
@@ -59,7 +62,7 @@ class Address(models.Model):
 
 #------------------------------------------------------------------------------
 class ShippingTime(models.Model):
-    date = models.DateField(verbose_name = "تاریخ")
+    date = models.CharField(max_length=256, verbose_name = "تاریخ")
     CHOICES = ( ('۹ تا ۱۲','۹ تا ۱۲'), ('۱۲ تا ۱۵','۱۲ تا ۱۵'), ('۱۵ تا ۱۸','۱۵ تا ۱۸'), ('۱۸ تا ۲۱','۱۸ تا ۲۱') )
     time = models.CharField(max_length=256, choices=CHOICES, verbose_name = "ساعت")
 
