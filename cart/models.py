@@ -100,7 +100,7 @@ class Order(models.Model):
         ('Arrive', 'تحویل به مشتری'),
         ('Canceled', 'لغو شده'),
     )
-    PAY_WAY = ( ('online', 'آنلاین'), ('credit', 'اعتباری'), ('inperson', 'حضوری'))
+    PAY_WAY = ( ('online', 'پرداخت از درگاه بانکی'), ('inperson', 'پرداخت در محل'))
     TIME_CHOICES = ( ('۹ تا ۱۲','۹ تا ۱۲'), ('۱۲ تا ۱۵','۱۲ تا ۱۵'), ('۱۵ تا ۱۸','۱۵ تا ۱۸'), ('۱۸ تا ۲۱','۱۸ تا ۲۱') )
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='کاربر')
     code = ShortUUIDField(length=8, max_length=15, alphabet="abcdefg1234", editable=False, verbose_name='کد سفارش')
