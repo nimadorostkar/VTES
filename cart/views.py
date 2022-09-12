@@ -77,7 +77,7 @@ class AddToCart(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, format=None):
-        query = Cart.objects.filter(user=request.user)
+        query = Cart.objects.filter(user=request.user, status='cart')
         serializer = CartSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -104,6 +104,7 @@ class AddToCart(APIView):
 
 
 
+
 #---------------------------------------------------------- Order --------------
 class Order(APIView):
     permission_classes = [IsAuthenticated]
@@ -115,11 +116,15 @@ class Order(APIView):
 
 
     def post(self, request, format=None):
+        carts = Cart.objects.filter(user=request.user, status='cart')
+
         request.data['user'] = request.user.id
-        carts = Cart.objects.filter(user=request.user)
-        #total
-        #amount
-        #status new
+        request.data['amount'] = carts.count()
+
+        cartlist = []
+        for c in carts:
+            cartlist.append(c.id)
+        request.data['carts'] = cartlist
 
         serializer = OrderSerializer(data=request.data)
         if serializer.is_valid():

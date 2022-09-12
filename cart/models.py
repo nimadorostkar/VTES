@@ -67,6 +67,8 @@ class Address(models.Model):
 
 #------------------------------------------------------------------------------
 class Cart(models.Model):
+    STATUS = (('cart', 'cart'), ('ordered', 'ordered'),)
+    status = models.CharField(max_length=30, choices=STATUS, default='cart')
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='کاربر')
     product = models.ForeignKey(ShopProducts, on_delete=models.CASCADE, verbose_name='محصول')
     quantity = models.IntegerField(verbose_name='تعداد')
@@ -101,7 +103,7 @@ class Order(models.Model):
         ('Canceled', 'لغو شده'),
     )
     PAY_WAY = ( ('online', 'پرداخت از درگاه بانکی'), ('inperson', 'پرداخت در محل'))
-    TIME_CHOICES = ( ('۹ تا ۱۲','۹ تا ۱۲'), ('۱۲ تا ۱۵','۱۲ تا ۱۵'), ('۱۵ تا ۱۸','۱۵ تا ۱۸'), ('۱۸ تا ۲۱','۱۸ تا ۲۱') )
+    TIME_CHOICES =  ( ('۹ تا ۱۲' ,'۹ تا ۱۲'), ('۱۲ تا ۱۵','۱۲ تا ۱۵'), ('۱۵ تا ۱۸','۱۵ تا ۱۸'), ('۱۸ تا ۲۱','۱۸ تا ۲۱') )
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='کاربر')
     code = ShortUUIDField(length=8, max_length=15, alphabet="abcdefg1234", editable=False, verbose_name='کد سفارش')
     carts = models.ManyToManyField(Cart, verbose_name='سبد محصولات')
