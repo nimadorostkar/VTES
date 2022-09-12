@@ -97,6 +97,25 @@ class AddToCart(APIView):
 
 
 
+#----------------------------------------------------- Cart Item ---------------
+class AddToCartItem(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        query = get_object_or_404(Cart, id=self.kwargs["id"])
+        serializer = CartSerializer(query)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    def delete(self, request, *args, **kwargs):
+        query = get_object_or_404(Cart, id=self.kwargs["id"])
+        query.delete()
+        return Response(status=status.HTTP_200_OK)
+
+
+
+
+
 
 
 
