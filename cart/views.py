@@ -11,32 +11,13 @@ from rest_framework.pagination import LimitOffsetPagination, PageNumberPaginatio
 from rest_framework import pagination
 from shop.models import Shop, ShopProducts #Product, Category , ProductAttr, ProductImgs, Attributes, ProductColor, Unit
 from . import models
-from .models import PostWay, Address, ShippingTime, Cart, Order
-from .serializers import CartSerializer, AddressSerializer, ShippingTimeSerializer
+from .models import PostWay, Address, Cart, Order
+from .serializers import CartSerializer, AddressSerializer
 
 
 
 
 
-
-
-#-------------------------------------------------- ShippingTime ---------------
-class ShippingTime(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, format=None):
-        query = ShippingTime.objects.filter(user=request.user)
-        serializer = ShippingTimeSerializer(query, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-    def post(self, request, format=None):
-        request.data['user'] = request.user.id
-        serializer = ShippingTimeSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 

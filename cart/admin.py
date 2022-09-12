@@ -33,14 +33,6 @@ admin.site.register(models.Address, AddressAdmin)
 
 
 
-#------------------------------------------------------------------------------
-class ShippingTimeAdmin(admin.ModelAdmin):
-    list_display = ('date', )
-    list_filter = ("date", )
-admin.site.register(models.ShippingTime, ShippingTimeAdmin)
-
-
-
 
 
 

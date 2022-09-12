@@ -60,25 +60,6 @@ class Address(models.Model):
 
 
 
-#------------------------------------------------------------------------------
-class ShippingTime(models.Model):
-    date = models.CharField(max_length=256, verbose_name = "تاریخ")
-    CHOICES = ( ('۹ تا ۱۲','۹ تا ۱۲'), ('۱۲ تا ۱۵','۱۲ تا ۱۵'), ('۱۵ تا ۱۸','۱۵ تا ۱۸'), ('۱۸ تا ۲۱','۱۸ تا ۲۱') )
-    time = models.CharField(max_length=256, choices=CHOICES, verbose_name = "ساعت")
-
-
-    def __str__(self):
-        return str(self.date) + str(self.time)
-
-    class Meta:
-        verbose_name = "زمان ارسال"
-        verbose_name_plural = "زمان ارسال"
-
-
-
-
-
-
 
 
 
@@ -120,12 +101,13 @@ class Order(models.Model):
         ('Canceled', 'لغو شده'),
     )
     PAY_WAY = ( ('online', 'آنلاین'), ('credit', 'اعتباری'), ('inperson', 'حضوری'))
+    TIME_CHOICES = ( ('۹ تا ۱۲','۹ تا ۱۲'), ('۱۲ تا ۱۵','۱۲ تا ۱۵'), ('۱۵ تا ۱۸','۱۵ تا ۱۸'), ('۱۸ تا ۲۱','۱۸ تا ۲۱') )
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='کاربر')
-    #code = models.CharField(max_length=10, editable=False, verbose_name='کد سفارش')
-    code = ShortUUIDField(length=8, max_length=15, alphabet="abcdefg1234", editable=False)
+    code = ShortUUIDField(length=8, max_length=15, alphabet="abcdefg1234", editable=False, verbose_name='کد سفارش')
     carts = models.ManyToManyField(Cart, verbose_name='سبد محصولات')
     address = models.ForeignKey(Address, on_delete=models.CASCADE, verbose_name='آدرس')
-    delivery_time = models.ForeignKey(ShippingTime, on_delete=models.CASCADE, verbose_name='زمان تحویل')
+    delivery_date = models.CharField(max_length=256, verbose_name = "تاریخ")
+    delivery_time = models.CharField(max_length=256, choices=TIME_CHOICES, verbose_name = "ساعت")
     post_way = models.ForeignKey(PostWay, on_delete=models.CASCADE, verbose_name='نحوه ارسال')
     pay_way = models.CharField(max_length=50, choices=PAY_WAY, default='online', verbose_name='نحوه پرداخت')
     total = models.IntegerField(verbose_name='جمع مبلغ کل سفارشات')

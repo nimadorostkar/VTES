@@ -1,18 +1,9 @@
 from rest_framework import serializers
-from .models import PostWay, Address, ShippingTime, Cart, Order
+from .models import PostWay, Address, Cart, Order
 
 
 
 
-
-
-
-
-#------------------------------------------------------------------------------
-class ShippingTimeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ShippingTime
-        fields = '__all__'
 
 
 
