@@ -103,6 +103,29 @@ class AddressItem(APIView):
 
 
 
+#----------------------------------------------------- Cart list ---------------
+class Cart(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        query = models.Cart.objects.filter(user=request.user, status='cart')
+        cart_list = []
+        for obj in query:
+            cart = { 'id':obj.id, 'quantity':obj.quantity, 'product_name':obj.product.product.name, 'product_approved':obj.product.product.approved,
+                     'product_code':obj.product.product.code, 'product_irancode':obj.product.product.irancode, 'product_brand_name':obj.product.product.brand.name, 'product_brand_fname':obj.product.product.brand.fname,
+                     'product_link':obj.product.product.link, 'product_description':obj.product.product.description, 'product_banner':obj.product.product.banner.url,
+                     'product_internal_code':obj.product.internal_code, 'product_unit':obj.product.unit, 'product_price_model':obj.product.price_model, 'product_one_price':obj.product.one_price,
+                     'product_medium_volume_price':obj.product.medium_volume_price, 'product_medium_volume_qty':obj.product.medium_volume_qty, 'product_wholesale_volume_price':obj.product.wholesale_volume_price, 'product_wholesale_volume_qty':obj.product.wholesale_volume_qty,
+                     'product_category_id':obj.product.product.category.id, 'product_category_name':obj.product.product.category.name, 'product_shop':obj.product.shop.name, 'product_shop_id':obj.product.shop.id     }
+            cart_list.append(cart)
+        return Response(cart_list, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
 
 #---------------------------------------------------------- Cart ---------------
 class AddToCart(APIView):
@@ -137,6 +160,15 @@ class AddToCartItem(APIView):
         query = get_object_or_404(Cart, id=self.kwargs["id"])
         serializer = CartSerializer(query)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        request.data['user']=request.user.id
+        query = get_object_or_404(Cart, id=self.kwargs["id"])
+        serializer = CartSerializer(query, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
     def delete(self, request, *args, **kwargs):
