@@ -67,7 +67,6 @@ class Address(APIView):
 
 
 
-
 #----------------------------------------------------- AddressItem -------------
 class AddressItem(APIView):
     permission_classes = [IsAuthenticated]
