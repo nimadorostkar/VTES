@@ -110,10 +110,16 @@ class Cart(APIView):
         query = models.Cart.objects.filter(user=request.user, status='cart')
         cart_list = []
         for obj in query:
+
+            if obj.product.unit:
+                unit = obj.product.unit.name
+            else:
+                unit = None
+
             cart = { 'id':obj.id, 'quantity':obj.quantity, 'product_name':obj.product.product.name, 'product_approved':obj.product.product.approved,
                      'product_code':obj.product.product.code, 'product_irancode':obj.product.product.irancode, 'product_brand_name':obj.product.product.brand.name, 'product_brand_fname':obj.product.product.brand.fname,
                      'product_link':obj.product.product.link, 'product_description':obj.product.product.description, 'product_banner':obj.product.product.banner.url,
-                     'product_internal_code':obj.product.internal_code, 'product_unit':obj.product.unit, 'product_price_model':obj.product.price_model, 'product_one_price':obj.product.one_price,
+                     'product_internal_code':obj.product.internal_code, 'product_unit':unit, 'product_price_model':obj.product.price_model, 'product_one_price':obj.product.one_price,
                      'product_medium_volume_price':obj.product.medium_volume_price, 'product_medium_volume_qty':obj.product.medium_volume_qty, 'product_wholesale_volume_price':obj.product.wholesale_volume_price, 'product_wholesale_volume_qty':obj.product.wholesale_volume_qty,
                      'product_category_id':obj.product.product.category.id, 'product_category_name':obj.product.product.category.name, 'product_shop':obj.product.shop.name, 'product_shop_id':obj.product.shop.id     }
             cart_list.append(cart)
