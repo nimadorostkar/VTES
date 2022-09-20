@@ -162,13 +162,13 @@ class AddToCartItem(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        query = get_object_or_404(Cart, id=self.kwargs["id"])
+        query = get_object_or_404(models.Cart, id=self.kwargs["id"])
         serializer = CartSerializer(query)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
         request.data['user']=request.user.id
-        query = get_object_or_404(Cart, id=self.kwargs["id"])
+        query = get_object_or_404(models.Cart, id=self.kwargs["id"])
         serializer = CartSerializer(query, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -177,7 +177,7 @@ class AddToCartItem(APIView):
 
 
     def delete(self, request, *args, **kwargs):
-        query = get_object_or_404(Cart, id=self.kwargs["id"])
+        query = get_object_or_404(models.Cart, id=self.kwargs["id"])
         query.delete()
         return Response(status=status.HTTP_200_OK)
 
