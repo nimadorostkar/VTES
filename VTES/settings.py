@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'django_filters',
     'shop',
     'cart',
+    'accounting',
     'ticket',
     'notice',
     'partners',

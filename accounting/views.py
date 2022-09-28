@@ -37,6 +37,18 @@ class Exchanges(APIView):
 
 
 
+#----------------------------------------------------- ExchangesItem ---------------
+class ExchangesItem(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        return Response('data', status=status.HTTP_200_OK)
+
+
+
+
+
+
 
 #----------------------------------------------------- Sales ---------------
 class Sales(APIView):
@@ -63,7 +75,7 @@ class SalesItem(APIView):
 
 
 #----------------------------------------------------- purchases ---------------
-class purchases(APIView):
+class Purchases(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
@@ -77,7 +89,7 @@ class purchases(APIView):
 
 
 
-#----------------------------------------------------- purchases ---------------
+#----------------------------------------------------- PurchasesItem ---------------
 class PurchasesItem(APIView):
     permission_classes = [IsAuthenticated]
 
