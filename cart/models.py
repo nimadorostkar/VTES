@@ -143,5 +143,33 @@ class Order(models.Model):
 
 
 
+#------------------------------------------------------------------------------
+class SalesOrder(models.Model):
+    STATUS = (
+        ('waiting', 'در انتظار پاسخ'),
+        ('answered', 'پاسخ داده شده'),
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='کاربر')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='سفارش')
+    status = models.CharField(max_length=30, choices=STATUS, default='New', verbose_name='وضعیت')
+
+    def __str__(self):
+        return str(self.user)
+
+    class Meta:
+        verbose_name = 'سفارش فروش'
+        verbose_name_plural = 'سفارش فروش ها'
+
+
+
+
+
+
+
+
+
+
+
+
 
 #End

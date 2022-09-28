@@ -71,6 +71,16 @@ admin.site.register(models.Order, OrderAdmin)
 
 
 
+#------------------------------------------------------------------------------
+class SalesOrderAdmin(admin.ModelAdmin):
+    list_display = ('user', 'order', 'status')
+    raw_id_fields = ['user', 'order']
+admin.site.register(models.SalesOrder, SalesOrderAdmin)
+
+
+
+
+
 
 
 
