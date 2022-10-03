@@ -64,6 +64,9 @@ class PartnerNotice(GenericAPIView):
                 continue
             if partnering.type == 'exchange-request-answer' and partnering.shop_product.shop in usershops:
                 continue
+            if partnering.type == 'buyer_response' and partnering.shop_product.shop in usershops:
+                continue
+
             if partnering.deposit_slip_image:
                 deposit_slip_image = partnering.deposit_slip_image.url
             else:
