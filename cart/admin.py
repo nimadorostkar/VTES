@@ -55,6 +55,7 @@ admin.site.register(models.Cart, CartAdmin)
 
 
 
+
 #------------------------------------------------------------------------------
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('code', 'total', 'status', 'pay_way', 'user')
@@ -62,6 +63,8 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ['code', 'phone_number', 'postal_code']
     raw_id_fields = ['user', 'address', 'carts']
 admin.site.register(models.Order, OrderAdmin)
+
+
 
 
 
