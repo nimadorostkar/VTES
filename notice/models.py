@@ -50,7 +50,7 @@ class PartnerExchangeNotice(models.Model):
     accountingId = models.CharField(max_length=256, null=True, blank=True, verbose_name="شناسه حسابداری")
     description = models.TextField(null=True, blank=True, verbose_name="توضیحات")
     deposit_slip_image = models.ImageField(upload_to='PartnerExchangeNotice', null=True, blank=True , verbose_name = "تصویر فیش واریزی")
-    answer_status = models.CharField(max_length=70, choices=ANS_STATUS, verbose_name='وضعیت پاسخ')
+    answer_status = models.CharField(max_length=70, choices=ANS_STATUS, null=True, blank=True, verbose_name='وضعیت پاسخ')
 
     def __str__(self):
         return str(self.status) + "|" + str(self.type)
