@@ -36,7 +36,6 @@ class CustomPagination(PageNumberPagination):
 
 
 
-
 #--------------------------------------------------- PartnerNotice -------------
 class PartnerNotice(GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -265,7 +264,6 @@ class PartnerNoticeItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Gener
 
         else:
             return Response('specify the answer status', status=status.HTTP_400_BAD_REQUEST)
-
 
 
 
