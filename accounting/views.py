@@ -9,7 +9,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework import pagination
-from shop.models import Shop, ShopProducts #Product, Category , ProductAttr, ProductImgs, Attributes, ProductColor, Unit
+from shop.models import Shop, ShopProducts, Product, Category , ProductAttr, ProductImgs, Attributes, ProductColor, Unit
 from cart import models
 from cart.models import PostWay, Address, Cart, Order
 from cart.serializers import CartSerializer, AddressSerializer, OrderSerializer, PostWaySerializer
@@ -89,13 +89,26 @@ class Purchases(APIView):
         purchase_list=[]
         for obj in query:
 
+            '''
+
+            shops=[]
             for cart in obj.carts.all():
-                print(cart.product.shop)
-                print(cart.product)
+                shops.append(cart.product.shop.id)
+                products = ShopProducts.objects.filter(id=cart.product.id)
+            shops_id = list(set(shops))
+
+            for shop in shops_id:
+                for product in products:
+                    product_list=[]
+                    if product.shop.id == shop.id:
+                        item = ShopProducts.objects.get(id=product.id)
+                        product_list.append(item)
+                aa = {'shop':shop.name, 'products':product_list }
+            '''
 
             purchase = { 'id':obj.id, 'code':obj.code, 'delivery_date':obj.delivery_date, 'delivery_time':obj.delivery_time, 'pay_way':obj.pay_way,
                          'total':obj.total, 'amount':obj.amount, 'status':obj.status, 'admin_note':obj.admin_note,
-                         'create_at':obj.create_at, 'update_at':obj.update_at, 'address':obj.address.id, 'post_way':obj.post_way.id, 'cart':'obj.carts.all() ' }
+                         'create_at':obj.create_at, 'update_at':obj.update_at, 'address':obj.address.id, 'post_way':obj.post_way.id, 'cart':'' }
         purchase_list.append(purchase)
         return Response(purchase_list, status=status.HTTP_200_OK)
 
