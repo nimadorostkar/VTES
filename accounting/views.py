@@ -125,8 +125,22 @@ class Purchases(APIView):
 class PurchasesItem(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, format=None):
-        return Response('data', status=status.HTTP_200_OK)
+
+    def get(self, request, *args, **kwargs):
+        query = get_object_or_404(Order, id=self.kwargs["id"])
+        serializer = OrderSerializer(query)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        request.data['user']=request.user.id
+        query = get_object_or_404(Order, id=self.kwargs["id"])
+        serializer = OrderSerializer(query, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 
