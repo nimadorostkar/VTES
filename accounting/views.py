@@ -85,7 +85,19 @@ class Purchases(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
-        return Response('data', status=status.HTTP_200_OK)
+        query = Order.objects.filter(user=request.user)
+        purchase_list=[]
+        for obj in query:
+
+            for cart in obj.carts.all():
+                print(cart.product.shop)
+                print(cart.product)
+
+            purchase = { 'id':obj.id, 'code':obj.code, 'delivery_date':obj.delivery_date, 'delivery_time':obj.delivery_time, 'pay_way':obj.pay_way,
+                         'total':obj.total, 'amount':obj.amount, 'status':obj.status, 'admin_note':obj.admin_note,
+                         'create_at':obj.create_at, 'update_at':obj.update_at, 'address':obj.address.id, 'post_way':obj.post_way.id, 'cart':'obj.carts.all() ' }
+        purchase_list.append(purchase)
+        return Response(purchase_list, status=status.HTTP_200_OK)
 
 
 
