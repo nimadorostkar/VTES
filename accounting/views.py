@@ -57,7 +57,17 @@ class Sales(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
-        return Response('data', status=status.HTTP_200_OK)
+        usershops = Shop.objects.filter(user=request.user)
+        query = Order.objects.filter(carts__product__shop__in=usershops)
+        sales_list=[]
+        for obj in query:
+            sale = { 'id':obj.id, 'code':obj.code, 'delivery_date':obj.delivery_date, 'delivery_time':obj.delivery_time, 'pay_way':obj.pay_way,
+                     'total':obj.total, 'amount':obj.amount, 'status':obj.status, 'admin_note':obj.admin_note,
+                     'create_at':obj.create_at, 'update_at':obj.update_at, 'address':obj.address.id, 'post_way':obj.post_way.id, 'cart':'' }
+            sales_list.append(sale)
+        return Response(sales_list, status=status.HTTP_200_OK)
+
+
 
 
 

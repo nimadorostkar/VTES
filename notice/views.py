@@ -224,7 +224,7 @@ class PartnerNoticeItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Gener
             ans_notice.shop_product = pe.shop_product
             ans_notice.quantity = pe.quantity
             ans_notice.status = 'unanswerable'
-            ans_notice.type = 'buyer_response'
+            ans_notice.type = 'exchange-request-answer'
             ans_notice.offer_price = pe.offer_price
             ans_notice.date_contract = pe.date_contract
             ans_notice.answer_status = 'accepted'
@@ -239,7 +239,7 @@ class PartnerNoticeItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Gener
             ans_notice.shop_product = pe.shop_product
             ans_notice.quantity = pe.quantity
             ans_notice.status = 'unanswerable'
-            ans_notice.type = 'buyer_response'
+            ans_notice.type = 'exchange-request-answer'
             ans_notice.offer_price = pe.offer_price
             ans_notice.date_contract = pe.date_contract
             ans_notice.answer_status = 'declined'
@@ -254,7 +254,7 @@ class PartnerNoticeItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Gener
             ans_notice.shop_product = pe.shop_product
             ans_notice.quantity = pe.quantity
             ans_notice.status = 'unanswered'
-            ans_notice.type = 'exchange-request-answer'
+            ans_notice.type = 'buyer_response'
             ans_notice.offer_price = request.data['offer_price']
             ans_notice.date_contract = request.data['date_contract']
             ans_notice.description = request.data['description']
