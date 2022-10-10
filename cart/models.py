@@ -142,7 +142,7 @@ class Order(models.Model):
 
 
 
-
+'''
 #------------------------------------------------------------------------------
 class SalesOrder(models.Model):
     STATUS = (
@@ -160,10 +160,30 @@ class SalesOrder(models.Model):
         verbose_name = 'سفارش فروش'
         verbose_name_plural = 'سفارش فروش ها'
 
+'''
 
 
 
 
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+class DetermineAvailability(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, verbose_name='آیتم سبد خرید')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='سفارش')
+    STATUS = ( ('confirmed', 'تایید موجودی'), ('not-confirmed', 'عدم موجودی') )
+    status = models.CharField(max_length=30, choices=STATUS, default='New', verbose_name='وضعیت')
+
+    def __str__(self):
+        return str(self.order.code)
+
+    class Meta:
+        verbose_name = 'تعیین موجود بودن'
+        verbose_name_plural = 'تعیین موجود بودن کالا ها'
 
 
 

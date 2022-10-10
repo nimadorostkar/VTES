@@ -17,6 +17,7 @@ from .serializers import PartnerExchangeNoticeSerializer
 import json
 from ticket.models import Ticket
 from ticket.serializers import TicketSerializer
+from cart.models import Order
 
 
 
@@ -358,6 +359,44 @@ class TicketNotice(GenericAPIView):
             return self.get_paginated_response(serializer.data)
         serializer = TicketSerializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#----------------------------------------------------- SalesOrders -------------
+class SalesOrders(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        usershops = Shop.objects.filter(user=request.user)
+        query = Order.objects.filter(user=request.user, status='New')
+
+        orders=[]
+        for obj in query:
+            items=[]
+            for cart in obj.carts.all():
+                if cart.product.shop in usershops:
+                    item = {'product':cart.product.product.name, 'quantity':cart.quantity}
+                    items.append(item)
+            order = {'orders_code':obj.code, 'orders_status':obj.status, 'items':items}
+            orders.append(order)
+
+        return Response(orders, status=status.HTTP_200_OK)
+
+
+
 
 
 

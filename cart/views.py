@@ -234,7 +234,7 @@ class Order(APIView):
 
 
     def post(self, request, format=None):
-        carts = Cart.objects.filter(user=request.user, status='cart')
+        carts = models.Cart.objects.filter(user=request.user, status='cart')
 
         request.data['user'] = request.user.id
         request.data['amount'] = carts.count()

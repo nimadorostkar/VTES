@@ -9,5 +9,7 @@ urlpatterns = [
   path('product_exchange_req', views.ProductExchangeReq.as_view(), name='product_exchange_req'),
   #
   path('ticket_notice', views.TicketNotice.as_view(), name='ticket_notice'),
+  #
+  path('sales_orders', views.SalesOrders.as_view(), name='sales_orders'),
 
 ]
