@@ -73,13 +73,18 @@ admin.site.register(models.Order, OrderAdmin)
 
 
 
-'''
+
 #------------------------------------------------------------------------------
-class SalesOrderAdmin(admin.ModelAdmin):
-    list_display = ('user', 'order', 'status')
-    raw_id_fields = ['user', 'order']
-admin.site.register(models.SalesOrder, SalesOrderAdmin)
-'''
+class DetermineAvailabilityAdmin(admin.ModelAdmin):
+    list_display = ('cart', 'order', 'status')
+    list_filter = ("status", "order")
+    raw_id_fields = ['cart', 'order']
+admin.site.register(models.DetermineAvailability, DetermineAvailabilityAdmin)
+
+
+
+
+
 
 
 
