@@ -423,25 +423,18 @@ class PurchaseOrders(APIView):
         orders=[]
         for obj in query:
             items=[]
-            #shops=[]
             for cart in obj.carts.all():
-                #shops.append(cart.product.shop.id)
                 for da in DA:
                     if obj == da.order and cart==da.cart:
                         s=da.status
                     else:
                         s='در انتظار تایید فروشگاه'
-
                 item = {'shop':cart.product.shop.name, 'product':cart.product.product.name, 'quantity':cart.quantity, 'status':s}
                 items.append(item)
-
             order = {'orders_code':obj.code, 'orders_status':obj.status, 'items':items}
             orders.append(order)
         return Response(orders, status=status.HTTP_200_OK)
 
-
-
-#shops=list(set(shops))
 
 
 
