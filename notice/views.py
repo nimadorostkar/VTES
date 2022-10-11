@@ -17,7 +17,7 @@ from .serializers import PartnerExchangeNoticeSerializer
 import json
 from ticket.models import Ticket
 from ticket.serializers import TicketSerializer
-from cart.models import Order
+from cart.models import Order, Cart, DetermineAvailability
 
 
 
@@ -382,7 +382,6 @@ class SalesOrders(APIView):
     def get(self, request, format=None):
         usershops = Shop.objects.filter(user=request.user)
         query = Order.objects.filter(user=request.user, status='New')
-
         orders=[]
         for obj in query:
             items=[]
@@ -392,8 +391,19 @@ class SalesOrders(APIView):
                     items.append(item)
             order = {'orders_code':obj.code, 'orders_status':obj.status, 'items':items}
             orders.append(order)
-
         return Response(orders, status=status.HTTP_200_OK)
+
+
+    def post(self, request, format=None):
+        DA = DetermineAvailability()
+        DA.order = Order.objects.get(code=request.data['order_code'])
+        DA.cart = Cart.objects.get(id=request.data['cart_id'])
+        DA.status = request.data['status']
+        DA.save()
+        return Response(status=status.HTTP_200_OK)
+
+
+
 
 
 
