@@ -91,7 +91,6 @@ class Cart(models.Model):
 
 
 
-
 #------------------------------------------------------------------------------
 class Order(models.Model):
     STATUS = (
