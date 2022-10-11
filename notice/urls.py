@@ -11,5 +11,5 @@ urlpatterns = [
   path('ticket_notice', views.TicketNotice.as_view(), name='ticket_notice'),
   #
   path('sales_orders', views.SalesOrders.as_view(), name='sales_orders'),
-
+  path('purchase_orders', views.PurchaseOrders.as_view(), name='purchase_orders'),
 ]
