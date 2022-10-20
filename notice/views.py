@@ -254,7 +254,7 @@ class PartnerNoticeItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Gener
             ans_notice.exchange_partner = pe.exchange_partner
             ans_notice.shop_product = pe.shop_product
             ans_notice.quantity = pe.quantity
-            ans_notice.status = 'unanswered'
+            ans_notice.status = 'answered'   
             ans_notice.type = 'exchange-request-answer'
             ans_notice.offer_price = request.data['offer_price']
             ans_notice.quantity = request.data['quantity']
