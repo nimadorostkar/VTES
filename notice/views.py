@@ -254,7 +254,7 @@ class PartnerNoticeItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Gener
             ans_notice.exchange_partner = pe.exchange_partner
             ans_notice.shop_product = pe.shop_product
             ans_notice.quantity = pe.quantity
-            ans_notice.status = 'answered'   
+            ans_notice.status = 'answered'
             ans_notice.type = 'exchange-request-answer'
             ans_notice.offer_price = request.data['offer_price']
             ans_notice.quantity = request.data['quantity']
@@ -375,20 +375,25 @@ class TicketNotice(GenericAPIView):
 
 
 
-
 #----------------------------------------------------- SalesOrders -------------
 class SalesOrders(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         usershops = Shop.objects.filter(user=request.user)
-        query = Order.objects.filter(user=request.user, status='New')
+        query = Order.objects.filter(user=request.user)
         orders=[]
         for obj in query:
             items=[]
             for cart in obj.carts.all():
                 if cart.product.shop in usershops:
-                    item = {'product':cart.product.product.name, 'quantity':cart.quantity}
+                    if cart.quantity == cart.product.one_price:
+                        price = cart.product.one_price
+                    elif cart.quantity >= cart.product.medium_volume_qty:
+                        price = cart.product.medium_volume_qty
+                    elif cart.quantity >= cart.product.wholesale_volume_qty:
+                        price = cart.product.wholesale_volume_qty
+                    item = {'cart_id':cart.id, 'product':cart.product.product.name, 'price':price, 'quantity':cart.quantity, 'brand':cart.product.product.brand.name}
                     items.append(item)
             order = {'orders_code':obj.code, 'orders_status':obj.status, 'items':items}
             orders.append(order)
@@ -396,11 +401,17 @@ class SalesOrders(APIView):
 
 
     def post(self, request, format=None):
-        DA = DetermineAvailability()
-        DA.order = Order.objects.get(code=request.data['order_code'])
-        DA.cart = Cart.objects.get(id=request.data['cart_id'])
-        DA.status = request.data['status']
-        DA.save()
+        data=request.data
+        order_code=data['order_code']
+        carts=data['carts']
+
+        for cart in carts:
+            DA = DetermineAvailability()
+            DA.order = Order.objects.get(code=order_code)
+            DA.cart = Cart.objects.get(id=cart['cart_id'])
+            DA.status = cart['status']
+            DA.save()
+
         return Response(status=status.HTTP_200_OK)
 
 
@@ -424,13 +435,13 @@ class PurchaseOrders(APIView):
         orders=[]
         for obj in query:
             items=[]
+            s='در انتظار تایید فروشگاه'
             for cart in obj.carts.all():
                 for da in DA:
                     if obj == da.order and cart==da.cart:
                         s=da.status
-                    else:
-                        s='در انتظار تایید فروشگاه'
-                item = {'shop':cart.product.shop.name, 'product':cart.product.product.name, 'quantity':cart.quantity, 'status':s}
+
+                item = {'shop':cart.product.shop.name, 'product':cart.product.product.name, 'quantity':cart.quantity, 'status':s }
                 items.append(item)
             order = {'orders_code':obj.code, 'orders_status':obj.status, 'items':items}
             orders.append(order)
