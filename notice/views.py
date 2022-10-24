@@ -405,12 +405,28 @@ class SalesOrders(APIView):
         order_code=data['order_code']
         carts=data['carts']
 
+        carts_ids=[]
+        for c in carts:
+            carts_ids.append(c['cart_id'])
+        order_carts = list(Order.objects.filter(code=order_code).values_list('carts', flat=True))
+        not_found_carts=[]
+        for item in order_carts:
+            if item not in carts_ids:
+                not_found_carts.append(item)
+
+        if not_found_carts:
+            return Response('In this order, you must also specify this items: {}'.format(not_found_carts), status=status.HTTP_400_BAD_REQUEST)
+
         for cart in carts:
             DA = DetermineAvailability()
             DA.order = Order.objects.get(code=order_code)
             DA.cart = Cart.objects.get(id=cart['cart_id'])
             DA.status = cart['status']
             DA.save()
+
+        order=Order.objects.get(code=order_code)
+        order.status='Accepted'
+        order.save()
 
         return Response(status=status.HTTP_200_OK)
 
