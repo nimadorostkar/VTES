@@ -8,9 +8,6 @@ from .models import PostWay, Address, Cart, Order
 
 
 
-
-
-
 #------------------------------------------------------------------------------
 class PostWaySerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,6 +42,7 @@ class CartSerializer(serializers.ModelSerializer):
 
 #------------------------------------------------------------------------------
 class OrderSerializer(serializers.ModelSerializer):
+    #carts = CartSerializer(read_only=True)
     class Meta:
         model = Order
         fields = '__all__'

@@ -58,15 +58,19 @@ class Sales(APIView):
 
     def get(self, request, format=None):
         usershops = Shop.objects.filter(user=request.user)
-        query = Order.objects.filter(carts__product__shop__in=usershops)
+        orders = list(set(Order.objects.filter(carts__product__shop__in=usershops).values_list('code', flat=True)))
+        orders = Order.objects.filter(code__in=orders)
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+        '''
         sales_list=[]
         for obj in query:
             sale = { 'id':obj.id, 'code':obj.code, 'delivery_date':obj.delivery_date, 'delivery_time':obj.delivery_time, 'pay_way':obj.pay_way,
                      'total':obj.total, 'amount':obj.amount, 'status':obj.status, 'admin_note':obj.admin_note,
                      'create_at':obj.create_at, 'update_at':obj.update_at, 'address':obj.address.id, 'post_way':obj.post_way.id, 'cart':'' }
             sales_list.append(sale)
-        return Response(sales_list, status=status.HTTP_200_OK)
-
+        '''
 
 
 
@@ -90,16 +94,43 @@ class SalesItem(APIView):
 
 
 
+
+
 #----------------------------------------------------- purchases ---------------
 class Purchases(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
-        query = Order.objects.filter(user=request.user)
+        order = Order.objects.filter(user=request.user)
+        final_data=[]
+        for order_item in order:
+            shop=[]
+            for cart_item in order_item.carts.all():
+                shop.append(cart_item.product.shop.id)
+            shops=list(set(shop))
+            #print(shops)
+
+            ##########
+            for cart_item in order_item.carts.all():
+                shop_cart_items=[]
+                for S in shops:
+                    if cart_item.product.shop.id == S:
+                        shop_cart_items.append(cart_item.id)
+
+                shopcart={'shop':cart_item.product.shop.id, 'item':shop_cart_items}
+             #################
+
+            order_data={'order':order_item.code, 'shops':shopcart}
+            final_data.append(order_data)
+        return Response(final_data, status=status.HTTP_200_OK)
+
+
+
+        '''
         purchase_list=[]
         for obj in query:
 
-            '''
+
 
             shops=[]
             for cart in obj.carts.all():
@@ -114,14 +145,14 @@ class Purchases(APIView):
                         item = ShopProducts.objects.get(id=product.id)
                         product_list.append(item)
                 aa = {'shop':shop.name, 'products':product_list }
-            '''
+
 
             purchase = { 'id':obj.id, 'code':obj.code, 'delivery_date':obj.delivery_date, 'delivery_time':obj.delivery_time, 'pay_way':obj.pay_way,
                          'total':obj.total, 'amount':obj.amount, 'status':obj.status, 'admin_note':obj.admin_note,
                          'create_at':obj.create_at, 'update_at':obj.update_at, 'address':obj.address.id, 'post_way':obj.post_way.id, 'cart':'' }
         purchase_list.append(purchase)
         return Response(purchase_list, status=status.HTTP_200_OK)
-
+        '''
 
 
 

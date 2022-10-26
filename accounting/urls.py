@@ -3,7 +3,6 @@ from . import views
 
 
 
-
 urlpatterns = [
   #
   path('exchanges', views.Exchanges.as_view(), name='exchanges'),

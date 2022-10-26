@@ -71,7 +71,7 @@ class Cart(models.Model):
     status = models.CharField(max_length=30, choices=STATUS, default='cart')
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='کاربر')
     product = models.ForeignKey(ShopProducts, on_delete=models.CASCADE, verbose_name='محصول')
-    quantity = models.IntegerField(verbose_name='تعداد')
+    quantity = models.IntegerField(default=0, verbose_name='تعداد')
 
     def __str__(self):
         return self.product.product.name
