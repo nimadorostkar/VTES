@@ -13,7 +13,8 @@ from shop.models import Shop, ShopProducts, Product, Category , ProductAttr, Pro
 from cart import models
 from cart.models import PostWay, Address, Cart, Order
 from cart.serializers import CartSerializer, AddressSerializer, OrderSerializer, PostWaySerializer
-
+from partners.models import ExchangePartner
+from notice.models import PartnerExchangeNotice
 
 
 
@@ -29,7 +30,32 @@ class Exchanges(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
-        return Response('data', status=status.HTTP_200_OK)
+        usershops = Shop.objects.filter(user=request.user)
+        query = ExchangePartner.objects.filter( Q(user_shop__in=usershops) | Q(partner_shop__in=usershops) )
+
+        shop_ids = []
+        for partner in query:
+            if partner.user_shop not in usershops:
+                shop_ids.append(partner.user_shop.id)
+            if partner.partner_shop not in usershops:
+                shop_ids.append(partner.partner_shop.id)
+        shop_ids = list(set(shop_ids))
+        partner_shops = Shop.objects.filter(id__in=shop_ids)
+
+        #partner_exchanges = PartnerExchangeNotice.objects.filter(exchange_partner__user_shop__in=partner_shops, type='buyer_response', answer_status='accepted') # in exchange_partner__user_shop__in should add partner shop too
+        response_data=[]
+        for item in partner_shops:
+            item_data = { 'shop_id':item.id,
+                          'shop_name':item.name,
+                          'shop_user':item.user.mobile,
+                          'shop_user_fname':item.user.first_name,
+                          'shop_user_lname':item.user.last_name,
+                          'status':'بستانکار',
+                          'amount':30000
+                        }
+            response_data.append(item_data)
+
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 
@@ -43,10 +69,6 @@ class ExchangesItem(APIView):
 
     def get(self, request, format=None):
         return Response('data', status=status.HTTP_200_OK)
-
-
-
-
 
 
 
