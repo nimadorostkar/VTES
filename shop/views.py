@@ -32,7 +32,6 @@ class CustomPagination(PageNumberPagination):
 
 
 
-
 # --------------------------------------------------------- Brands -------------
 class Brands(APIView):
     permission_classes = [AllowAny]
@@ -47,7 +46,6 @@ class Brands(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 
