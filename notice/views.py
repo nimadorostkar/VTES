@@ -457,7 +457,7 @@ class PurchaseOrders(APIView):
                     if obj == da.order and cart==da.cart:
                         s=da.status
 
-                item = {'shop':cart.product.shop.name, 'product':cart.product.product.name, 'quantity':cart.quantity, 'status':s }
+                item = {'shop':cart.product.shop.name, 'product':cart.product.product.name, 'brand':cart.product.product.brand.name, 'brand_f':cart.product.product.brand.fname, 'quantity':cart.quantity, 'price':cart.product.one_price, 'status':s }
                 items.append(item)
             order = {'orders_code':obj.code, 'orders_status':obj.status, 'items':items}
             orders.append(order)
