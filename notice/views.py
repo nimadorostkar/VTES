@@ -418,11 +418,15 @@ class SalesOrders(APIView):
             return Response('In this order, you must also specify this items: {}'.format(not_found_carts), status=status.HTTP_400_BAD_REQUEST)
 
         for cart in carts:
-            DA = DetermineAvailability()
-            DA.order = Order.objects.get(code=order_code)
-            DA.cart = Cart.objects.get(id=cart['cart_id'])
-            DA.status = cart['status']
-            DA.save()
+            try:
+                DA = DetermineAvailability()
+                DA.order = Order.objects.get(code=order_code)
+                DA.cart = Cart.objects.get(id=cart['cart_id'])
+                DA.status = cart['status']
+                DA.save()
+            except:
+                return Response('Cart Id not found', status=status.HTTP_400_BAD_REQUEST)
+
 
         order=Order.objects.get(code=order_code)
         order.status='Accepted'
