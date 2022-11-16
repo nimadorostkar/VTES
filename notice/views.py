@@ -467,6 +467,8 @@ class PurchaseOrders(APIView):
                     price = cart.product.medium_volume_qty
                 elif cart.quantity >= cart.product.wholesale_volume_qty:
                     price = cart.product.wholesale_volume_qty
+                else:
+                    price = '-'
 
                 item = {'shop':cart.product.shop.name, 'product':cart.product.product.name, 'brand':cart.product.product.brand.name, 'brand_f':cart.product.product.brand.fname, 'quantity':cart.quantity, 'price':price, 'status':s }
                 items.append(item)
