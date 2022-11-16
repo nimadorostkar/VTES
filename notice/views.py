@@ -393,6 +393,8 @@ class SalesOrders(APIView):
                         price = cart.product.medium_volume_qty
                     elif cart.quantity >= cart.product.wholesale_volume_qty:
                         price = cart.product.wholesale_volume_qty
+                    else:
+                        price = '-'
                     item = {'cart_id':cart.id, 'product':cart.product.product.name, 'price':price, 'quantity':cart.quantity, 'brand':cart.product.product.brand.name, 'brand_f':cart.product.product.brand.fname, 'product_img':cart.product.product.banner.url}
                     items.append(item)
             order = {'orders_code':obj.code, 'orders_status':obj.status, 'items':items}
