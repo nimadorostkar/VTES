@@ -12,4 +12,6 @@ urlpatterns = [
   #
   path('sales_orders', views.SalesOrders.as_view(), name='sales_orders'),
   path('purchase_orders', views.PurchaseOrders.as_view(), name='purchase_orders'),
+  #
+  path('notice_count', views.Count.as_view(), name='count'),
 ]

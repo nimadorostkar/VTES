@@ -22,7 +22,7 @@ SECRET_KEY = '2d0qjb7q3gzq+(ad0hh#elqcvvxa-x4j@inomsl)&0()!icp0h'
 DEBUG = True
 #DEBUG = int(os.environ.get("DEBUG", default=0))
 
-ALLOWED_HOSTS = ['*','.herokuapp.com']
+ALLOWED_HOSTS = ['*']
 #ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
 #ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
@@ -109,8 +109,8 @@ WSGI_APPLICATION = 'VTES.wsgi.application'
 
 
 
-CORS_ALLOWED_ORIGINS = ["https://herokuapp.com", "https://vtesapi.herokuapp.com"]
-CSRF_TRUSTED_ORIGINS = ["https://herokuapp.com", "https://vtesapi.herokuapp.com"]
+CORS_ALLOWED_ORIGINS = ["https://miranco.tech", "http://localhost", "http://127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = ["https://miranco.tech", "http://localhost", "http://127.0.0.1"]
 CORS_ORIGIN_ALLOW_ALL = True
 
 

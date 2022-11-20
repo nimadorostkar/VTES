@@ -488,6 +488,36 @@ class PurchaseOrders(APIView):
 
 
 
+#----------------------------------------------------------- Count ------------
+class Count(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        usershops = Shop.objects.filter(user=request.user)
+        query = PartnerExchangeNotice.objects.filter( Q(exchange_partner__partner_shop__in=usershops) | Q(exchange_partner__user_shop__in=usershops) )
+
+        data = {
+                'all_notices':query.count(),
+                'answered_status':query.filter(status='answered').count(),
+                'unanswered_status':query.filter(status='unanswered').count(),
+                'unanswerable_status':query.filter(status='unanswerable').count(),
+                'accepted_answer_status':query.filter(answer_status='accepted').count(),
+                'declined_answer_status':query.filter(answer_status='declined').count(),
+                'changed_value_answer_status':query.filter(answer_status='changed-value').count(),
+                'cooperation_req_type':query.filter(type='cooperation-request').count(),
+                'cooperation_req_answer_type':query.filter(type='cooperation-request-answer').count(),
+                'exchange_req_answer_type':query.filter(type='exchange-request-answer').count(),
+                'buyer_response_type':query.filter(type='buyer_response').count(),
+                'debtor_reposnse_accounting_type':query.filter(type='debtor-reposnse-accounting').count(),
+                'creditor_alert_accounting_type':query.filter(type='creditor-alert-accounting').count(),
+                'creditor_answer_accounting_type':query.filter(type='creditor-answer-accounting').count()
+               }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+
+
 
 
 
