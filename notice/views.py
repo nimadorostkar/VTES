@@ -387,15 +387,16 @@ class SalesOrders(APIView):
             items=[]
             for cart in obj.carts.all():
                 if cart.product.shop in usershops:
-                    if cart.quantity == cart.product.one_price:
+                    if cart.quantity >= 1:
                         price = cart.product.one_price
                     elif cart.quantity >= cart.product.medium_volume_qty:
-                        price = cart.product.medium_volume_qty
+                        price = cart.product.medium_volume_price
                     elif cart.quantity >= cart.product.wholesale_volume_qty:
-                        price = cart.product.wholesale_volume_qty
+                        price = cart.product.wholesale_volume_price
                     else:
                         price = '-'
-                    item = {'cart_id':cart.id, 'product':cart.product.product.name, 'price':price, 'quantity':cart.quantity, 'brand':cart.product.product.brand.name, 'brand_f':cart.product.product.brand.fname, 'product_img':cart.product.product.banner.url}
+
+                    item = {'cart_id':cart.id, 'product_id':cart.product.id, 'product':cart.product.product.name, 'price':price, 'quantity':cart.quantity, 'unit':cart.product.unit.name, 'brand':cart.product.product.brand.name, 'brand_f':cart.product.product.brand.fname, 'product_img':cart.product.product.banner.url}
                     items.append(item)
             order = {'orders_code':obj.code, 'orders_status':obj.status, 'items':items}
             orders.append(order)
@@ -463,16 +464,16 @@ class PurchaseOrders(APIView):
                     if obj == da.order and cart==da.cart:
                         s=da.status
 
-                if cart.quantity == cart.product.one_price:
+                if cart.quantity >= 1:
                     price = cart.product.one_price
                 elif cart.quantity >= cart.product.medium_volume_qty:
-                    price = cart.product.medium_volume_qty
+                    price = cart.product.medium_volume_price
                 elif cart.quantity >= cart.product.wholesale_volume_qty:
-                    price = cart.product.wholesale_volume_qty
+                    price = cart.product.wholesale_volume_price
                 else:
                     price = '-'
 
-                item = {'shop':cart.product.shop.name, 'product':cart.product.product.name, 'brand':cart.product.product.brand.name, 'brand_f':cart.product.product.brand.fname, 'quantity':cart.quantity, 'price':price, 'status':s }
+                item = {'shop':cart.product.shop.name, 'product':cart.product.product.name, 'unit':cart.product.unit.name, 'brand':cart.product.product.brand.name, 'brand_f':cart.product.product.brand.fname, 'quantity':cart.quantity, 'price':price, 'status':s, 'product_img':cart.product.product.banner.url }
                 items.append(item)
             order = {'orders_code':obj.code, 'orders_status':obj.status, 'items':items}
             orders.append(order)
