@@ -283,22 +283,28 @@ class ProductExchangeReq(APIView):
     def post(self, request, format=None):
         data=request.data
 
-        user_shop = Shop.objects.filter(user=request.user).first().id
-        partner_shop = ShopProducts.objects.get(id=data['shop_product']).shop.id
+        try:
+            user_shop = Shop.objects.filter(user=request.user).first().id
+            partner_shop = ShopProducts.objects.get(id=data['shop_product']).shop.id
+            exchange = PartnerExchangeNotice()
+            exchange.status = "unanswered"
+            exchange.type = "exchange-request"
+            exchange.exchange_partner = ExchangePartner.objects.get( Q(user_shop=user_shop, partner_shop=partner_shop ) | Q( user_shop=partner_shop, partner_shop=user_shop) )
+            exchange.shop_product = ShopProducts.objects.get(id=data['shop_product'])
+            exchange.quantity = data['quantity']
+            exchange.offer_price = data['offer_price']
+            exchange.date_contract = data['date_contract']
+            exchange.description = data['description']
+            exchange.save()
+            serializer = PartnerExchangeNoticeSerializer(exchange)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-        exchange = PartnerExchangeNotice()
-        exchange.status = "unanswered"
-        exchange.type = "exchange-request"
-        exchange.exchange_partner = ExchangePartner.objects.get( Q(user_shop=user_shop, partner_shop=partner_shop ) | Q( user_shop=partner_shop, partner_shop=user_shop) )
-        exchange.shop_product = ShopProducts.objects.get(id=data['shop_product'])
-        exchange.quantity = data['quantity']
-        exchange.offer_price = data['offer_price']
-        exchange.date_contract = data['date_contract']
-        exchange.description = data['description']
-        exchange.save()
+        except:
+            return Response('partner shop not found', status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = PartnerExchangeNoticeSerializer(exchange)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
 
 
 
@@ -428,7 +434,7 @@ class SalesOrders(APIView):
                 DA.status = cart['status']
                 DA.save()
             except:
-                return Response('Cart Id not found', status=status.HTTP_400_BAD_REQUEST)
+                return Response('Cart Id not found ({})'.format(cart['cart_id']), status=status.HTTP_400_BAD_REQUEST)
 
 
         order=Order.objects.get(code=order_code)
@@ -496,9 +502,20 @@ class Count(APIView):
     def get(self, request, format=None):
         usershops = Shop.objects.filter(user=request.user)
         query = PartnerExchangeNotice.objects.filter( Q(exchange_partner__partner_shop__in=usershops) | Q(exchange_partner__user_shop__in=usershops) )
+        tickets = Ticket.objects.filter(user=request.user)
+        purchase_orders = Order.objects.filter(carts__product__shop__in=usershops)
+
 
         data = {
                 'all_notices':query.count(),
+                'unanswered_notices':query.filter(status='unanswered').count(),
+                'tickets':tickets.count(),
+                'new_tickets':tickets.filter(status='New').count(),
+                'answered_new_tickets':tickets.filter(status='Accepted', state=True).count(),
+                'purchase_orders': purchase_orders.count(),
+                'unconfirmed_purchase_orders': purchase_orders.filter(status="New").count(),
+                'sale_orders':Order.objects.filter(user=request.user).count(),
+                'new_sale_orders':Order.objects.filter(user=request.user, status='New').count(),
                 'answered_status':query.filter(status='answered').count(),
                 'unanswered_status':query.filter(status='unanswered').count(),
                 'unanswerable_status':query.filter(status='unanswerable').count(),

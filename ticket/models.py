@@ -10,7 +10,7 @@ from authentication.models import User
 
 
 
-
+ 
 
 
 #------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ class Ticket(models.Model):
         ('declined', 'declined'),
         ('not-declinable', 'not-declinable'),
     )
-    TYPE = ( 
+    TYPE = (
         ('suggestion', 'suggestion'),
         ('support', 'support'),
         ('add-attributes', 'add-attributes'),
