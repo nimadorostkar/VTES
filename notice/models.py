@@ -5,6 +5,7 @@ from django_jalali.db import models as jmodels
 from authentication.models import User
 from shop.models import Shop, Product, Category , ProductAttr, ProductImgs, ShopProducts, Attributes, ProductColor, Unit
 from partners.models import ExchangePartner
+from cart.models import Order
 
 
 
@@ -61,6 +62,23 @@ class PartnerExchangeNotice(models.Model):
 
 
 
+
+
+
+
+
+
+#-------------------------------------------------------------------------------
+class ReturnedMoney(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name = "سفارش")
+    amount = models.IntegerField(default=0, verbose_name='مبلغ')
+
+    def __str__(self):
+        return str(self.order) + "|" + str(self.amount)
+
+    class Meta:
+        verbose_name = "پول برگشت داده"
+        verbose_name_plural = "پول های برگشتی"
 
 
 

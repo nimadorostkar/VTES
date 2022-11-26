@@ -12,7 +12,7 @@ from rest_framework import pagination
 from partners.models import ExchangePartner
 from partners.serializers import ExchangePartnerSerializer
 from shop.models import Shop, ShopProducts #Product, Category , ProductAttr, ProductImgs, Attributes, ProductColor, Unit
-from .models import PartnerExchangeNotice
+from .models import PartnerExchangeNotice, ReturnedMoney
 from .serializers import PartnerExchangeNoticeSerializer
 import json
 from ticket.models import Ticket
@@ -20,16 +20,10 @@ from ticket.serializers import TicketSerializer
 from cart.models import Order, Cart, DetermineAvailability
 
 
-
-
 class CustomPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 100
-
-
-
-
 
 
 
@@ -273,9 +267,6 @@ class PartnerNoticeItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, Gener
 
 
 
-
-
-
 #---------------------------------- ProductExchangeReq in partners -------------
 class ProductExchangeReq(APIView):
     permission_classes = [IsAuthenticated]
@@ -306,46 +297,6 @@ class ProductExchangeReq(APIView):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #--------------------------------------------------- PartnerNotice -------------
 class TicketNotice(GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -356,7 +307,6 @@ class TicketNotice(GenericAPIView):
     filterset_fields = ['status', 'answer_status', 'type', 'state', 'user', 'title']
     search_fields = ['title', 'user__first_name', 'user__last_name', 'description', 'admin_ans']
     ordering_fields = ['id', 'created_date', 'status']
-
 
     def get(self, request, format=None):
         query = self.filter_queryset(Ticket.objects.filter(user=request.user))
@@ -374,17 +324,9 @@ class TicketNotice(GenericAPIView):
 
 
 
-
-
-
-
-
-
-
 #----------------------------------------------------- SalesOrders -------------
 class SalesOrders(APIView):
     permission_classes = [IsAuthenticated]
-
     def get(self, request, format=None):
         usershops = Shop.objects.filter(user=request.user)
         query = Order.objects.filter(user=request.user)
@@ -436,18 +378,11 @@ class SalesOrders(APIView):
             except:
                 return Response('Cart Id not found ({})'.format(cart['cart_id']), status=status.HTTP_400_BAD_REQUEST)
 
-
         order=Order.objects.get(code=order_code)
         order.status='Accepted'
         order.save()
 
         return Response(status=status.HTTP_200_OK)
-
-
-
-
-
-
 
 
 
@@ -461,6 +396,7 @@ class PurchaseOrders(APIView):
     def get(self, request, format=None):
         DA = DetermineAvailability.objects.all()
         query = Order.objects.filter(user=request.user)
+        returned_money=0
         orders=[]
         for obj in query:
             items=[]
@@ -477,17 +413,23 @@ class PurchaseOrders(APIView):
                 elif cart.quantity >= cart.product.wholesale_volume_qty:
                     price = cart.product.wholesale_volume_price
                 else:
-                    price = '-'
+                    price = 0
+
+                if s=="not-confirmed":
+                    returned_money+=price
 
                 item = {'shop':cart.product.shop.name, 'product':cart.product.product.name, 'unit':cart.product.unit.name, 'brand':cart.product.product.brand.name, 'brand_f':cart.product.product.brand.fname, 'quantity':cart.quantity, 'price':price, 'status':s, 'product_img':cart.product.product.banner.url }
                 items.append(item)
-            order = {'orders_code':obj.code, 'orders_status':obj.status, 'items':items}
+
+            re_money, created = ReturnedMoney.objects.update_or_create(order=obj)
+            re_money.amount=returned_money
+            re_money.save()
+
+            order = {'order_code':obj.code, 'orders_status':obj.status, 'items':items}
             orders.append(order)
-        return Response(orders, status=status.HTTP_200_OK)
 
-
-
-
+            response = {'orders':orders, 'returned_money':returned_money}
+        return Response(response, status=status.HTTP_200_OK)
 
 
 
@@ -498,13 +440,11 @@ class PurchaseOrders(APIView):
 #----------------------------------------------------------- Count ------------
 class Count(APIView):
     permission_classes = [IsAuthenticated]
-
     def get(self, request, format=None):
         usershops = Shop.objects.filter(user=request.user)
         query = PartnerExchangeNotice.objects.filter( Q(exchange_partner__partner_shop__in=usershops) | Q(exchange_partner__user_shop__in=usershops) )
         tickets = Ticket.objects.filter(user=request.user)
         purchase_orders = Order.objects.filter(carts__product__shop__in=usershops)
-
 
         data = {
                 'all_notices':query.count(),
@@ -530,10 +470,7 @@ class Count(APIView):
                 'creditor_alert_accounting_type':query.filter(type='creditor-alert-accounting').count(),
                 'creditor_answer_accounting_type':query.filter(type='creditor-answer-accounting').count()
                }
-
         return Response(data, status=status.HTTP_200_OK)
-
-
 
 
 
