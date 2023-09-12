@@ -26,12 +26,6 @@ class CustomPagination(PageNumberPagination):
 
 
 
-
-
-
-
-
-
 # --------------------------------------------------------- Brands -------------
 class Brands(APIView):
     permission_classes = [AllowAny]
@@ -46,10 +40,6 @@ class Brands(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
 
 
 
@@ -73,10 +63,6 @@ class Attributes(GenericAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
 
 
 # ------------------------------------------------------- Attributes ------------
@@ -124,12 +110,6 @@ class AttrsItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIVie
 
 
 
-
-
-
-
-
-
 # ---------------------------------------------------- Main Category ----------
 
 class MainCat(GenericAPIView):
@@ -145,8 +125,6 @@ class MainCat(GenericAPIView):
         serializer = MainCatSerializer(query, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 
 
 
@@ -194,13 +172,6 @@ class CategoryItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPI
         category = get_object_or_404(Category, id=self.kwargs["id"])
         category.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-
-
-
-
-
 
 
 
@@ -277,14 +248,6 @@ class ShopItem(mixins.DestroyModelMixin, mixins.UpdateModelMixin, GenericAPIView
         shop = get_object_or_404(Shop, slug=self.kwargs["slug"])
         shop.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-
-
-
-
-
-
 
 
 
