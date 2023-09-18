@@ -11,11 +11,6 @@ import string
 import json
 
 
-
-
-
-
-
 def otpsend(mobile, otp):
     try:
         api = KavenegarAPI(Kavenegar_API)
@@ -31,9 +26,6 @@ def otpsend(mobile, otp):
         print(e)
     except HTTPException as e:
         print(e)
-
-
-
 
 
 
@@ -59,11 +51,6 @@ def send_otp_soap(mobile, otp):
     result = client.service.SendSimpleByApikey(api_key, sender, message, receptors, 1, 1, status, status_message)
     print(result)
     print('OTP: ', otp)
-
-
-
-
-
 
 
 
