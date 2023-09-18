@@ -22,9 +22,6 @@ from rest_framework.decorators import api_view, permission_classes
 from shop.models import Shop
 
 
-
-
-
 # ------------------------------------------------------- Login ---------------
 
 class Login(APIView):
@@ -107,16 +104,6 @@ class Verify(APIView):
 
         login(request, user)
         return Response(user_data, status=status.HTTP_200_OK)
-
-
-
-
-
-
-
-
-
-
 
 
 
