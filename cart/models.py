@@ -7,11 +7,6 @@ from shortuuid.django_fields import ShortUUIDField
 
 
 
-
-
-
-
-#------------------------------------------------------------------------------
 class PostWay(models.Model):
     way = models.CharField(max_length=60, verbose_name='روش سفارش')
     price = models.IntegerField(verbose_name='هزینه ارسال')
@@ -26,12 +21,6 @@ class PostWay(models.Model):
 
 
 
-
-
-
-
-
-#------------------------------------------------------------------------------
 class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_address', verbose_name = "کاربر")
     CHOICES = ( ('خانه','خانه'), ('فروشگاه','فروشگاه'), ('انبار','انبار'))
@@ -55,17 +44,6 @@ class Address(models.Model):
 
 
 
-
-
-
-
-
-
-
-
-
-
-#------------------------------------------------------------------------------
 class Cart(models.Model):
     STATUS = (('cart', 'cart'), ('ordered', 'ordered'),)
     status = models.CharField(max_length=30, choices=STATUS, default='cart')
